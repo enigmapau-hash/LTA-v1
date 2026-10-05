@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#111318" />
+    <meta
+      name="description"
+      content="Mini app de League of Legends basada en la pestaña Composición del Excel."
+    />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="stage3-spacing.css" />
+    <link rel="stylesheet" href="stage3-visual.css" />
+    <link rel="stylesheet" href="stage3-animations.css" />
+    <link rel="stylesheet" href="result-summary.css" />
+    <title>LoL Team Analyzer</title>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Rift Architect</p>
+          <h1>LoL Team Analyzer</h1>
+          <p class="subhead">
+            La app replica la pestaña <strong>Composición</strong> leyendo el Excel del repositorio y se actualiza al escribir.
+          </p>
+        </div>
+        <div class="status-pill" id="statusPill">Listo</div>
+      </header>
+
+      <section class="card form-card">
+        <div class="card-head">
+          <h2>Composición</h2>
+          <p>Rellena los 5 roles. Cada uno usa su propia tabla.</p>
+        </div>
+
+        <div class="roles-grid">
+          <label class="picker">
+            <span>Top</span>
+            <div class="picker-shell">
+              <input id="top" type="text" autocomplete="off" spellcheck="false" placeholder="Aatrox" aria-autocomplete="list" aria-expanded="false" />
+              <div id="topMenu" class="picker-menu" hidden></div>
+            </div>
+          </label>
+
+          <label class="picker">
+            <span>Jungla</span>
+            <div class="picker-shell">
+              <input id="jungle" type="text" autocomplete="off" spellcheck="false" placeholder="Briar" aria-autocomplete="list" aria-expanded="false" />
+              <div id="jungleMenu" class="picker-menu" hidden></div>
+            </div>
+          </label>
+
+          <label class="picker">
+            <span>Mid</span>
+            <div class="picker-shell">
+              <input id="mid" type="text" autocomplete="off" spellcheck="false" placeholder="Anivia" aria-autocomplete="list" aria-expanded="false" />
+              <div id="midMenu" class="picker-menu" hidden></div>
+            </div>
+          </label>
+
+          <label class="picker">
+            <span>Botline</span>
+            <div class="picker-shell">
+              <input id="adc" type="text" autocomplete="off" spellcheck="false" placeholder="Draven" aria-autocomplete="list" aria-expanded="false" />
+              <div id="botlineMenu" class="picker-menu" hidden></div>
+            </div>
+          </label>
+
+          <label class="picker">
+            <span>Support</span>
+            <div class="picker-shell">
+              <input id="support" type="text" autocomplete="off" spellcheck="false" placeholder="Janna" aria-autocomplete="list" aria-expanded="false" />
+              <div id="supportMenu" class="picker-menu" hidden></div>
+            </div>
+          </label>
+        </div>
+
+        <div class="actions">
+          <button id="analyzeBtn" type="button">Analizar</button>
+          <button id="demoBtn" class="secondary" type="button">Limpiar selección</button>
+        </div>
+      </section>
+
+      <section class="card result-card">
+        <div class="card-head">
+          <h2>Resultado</h2>
+          <p>Salida igual al Excel.</p>
+        </div>
+        <div id="result" class="result-empty">Aquí aparecerá la tabla Composición.</div>
+      </section>
+    </main>
+
+    <button id="versionBadge" class="version-badge" type="button" aria-expanded="false" aria-controls="versionPanel">
+      <span class="version-badge__version">v1.2.0</span>
+      <span class="version-badge__label">Preview</span>
+    </button>
+
+    <section id="versionPanel" class="version-panel" hidden aria-live="polite"></section>
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="shared-utils.js"></script>
+    <script src="app.js"></script>
+    <script src="result-summary.js"></script>
+    <script src="smart-search.js"></script>
+    <script src="realtime-mode.js"></script>
+    <script src="no-duplicate-options.js"></script>
+    <script src="selected-preview.js"></script>
+    <script src="menu-icons.js"></script>
+    <script src="version.js"></script>
+  </body>
+</html>

@@ -1,0 +1,138 @@
+:root {
+  --stage3-motion-fast: 140ms;
+  --stage3-motion-medium: 220ms;
+  --stage3-motion-slow: 320ms;
+}
+
+.card,
+.status-pill,
+.version-badge,
+.version-panel,
+input,
+button,
+.picker-menu,
+.picker-item,
+.table-wrap,
+.result-empty,
+.champion-icon {
+  transition:
+    transform var(--stage3-motion-fast) ease,
+    opacity var(--stage3-motion-fast) ease,
+    box-shadow var(--stage3-motion-fast) ease,
+    border-color var(--stage3-motion-fast) ease,
+    background-color var(--stage3-motion-fast) ease,
+    color var(--stage3-motion-fast) ease,
+    filter var(--stage3-motion-fast) ease;
+}
+
+.card:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.38),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+}
+
+.status-pill:hover,
+.version-badge:hover,
+.version-panel__close:hover,
+button:hover,
+.picker-item:hover {
+  transform: translateY(-1px);
+}
+
+input:focus-visible,
+button:focus-visible,
+.version-badge:focus-visible,
+.version-panel__close:focus-visible,
+.picker-item:focus-visible {
+  transform: translateY(-1px);
+}
+
+input:focus-visible {
+  box-shadow:
+    0 0 0 3px rgba(226, 41, 47, 0.16),
+    0 14px 28px rgba(0, 0, 0, 0.16);
+}
+
+button:active,
+.version-badge:active,
+.version-panel__close:active,
+.picker-item:active {
+  transform: translateY(0);
+}
+
+.picker-menu {
+  transform: translateY(4px) scale(0.99);
+  transform-origin: top center;
+}
+
+.picker-menu:not([hidden]) {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.picker-item {
+  position: relative;
+}
+
+.picker-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 35%);
+  opacity: 0;
+  transition: opacity var(--stage3-motion-fast) ease;
+  pointer-events: none;
+}
+
+.picker-item:hover::after,
+.picker-item:focus-visible::after,
+.picker-item.is-active::after {
+  opacity: 1;
+}
+
+.result-box {
+  animation: stage3-fade-in var(--stage3-motion-medium) ease-out both;
+}
+
+.result-empty {
+  animation: stage3-fade-in var(--stage3-motion-fast) ease-out both;
+}
+
+.version-panel:not([hidden]) {
+  animation: stage3-pop-in var(--stage3-motion-medium) ease-out both;
+}
+
+@keyframes stage3-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes stage3-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

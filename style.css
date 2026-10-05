@@ -1,0 +1,577 @@
+:root {
+  color-scheme: dark;
+  --bg: #0d0f14;
+  --panel: #151922;
+  --panel-2: #10141b;
+  --text: #f3f5f7;
+  --muted: #98a2b3;
+  --line: rgba(255, 255, 255, 0.08);
+  --accent: #e2292f;
+  --accent-2: #ff4d57;
+  --good: #48d597;
+  --shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+  --radius: 18px;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at top, rgba(226, 41, 47, 0.15), transparent 30%),
+    linear-gradient(180deg, #0b0d12 0%, #0d0f14 100%);
+  color: var(--text);
+}
+
+body {
+  padding: clamp(12px, 2vw, 20px);
+}
+
+body.picker-open {
+  overflow: hidden;
+}
+
+.app-shell {
+  width: min(100%, 1280px);
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+}
+
+.hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 4px 2px 8px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--accent-2);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.05;
+}
+
+.subhead {
+  margin: 10px 0 0;
+  max-width: 64ch;
+  color: var(--muted);
+}
+
+.status-pill {
+  flex: 0 0 auto;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
+  backdrop-filter: blur(8px);
+  overflow: visible;
+}
+
+.form-card {
+  position: relative;
+  z-index: 3;
+}
+
+.result-card {
+  position: relative;
+  z-index: 1;
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+  margin-bottom: 14px;
+}
+
+.card-head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.card-head p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.roles-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+label {
+  display: grid;
+  gap: 8px;
+}
+
+label span {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.picker-shell {
+  position: relative;
+}
+
+input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel-2);
+  color: var(--text);
+  padding: 13px 14px;
+  outline: none;
+  font-size: 1rem;
+  min-height: 48px;
+}
+
+input:focus {
+  border-color: rgba(226, 41, 47, 0.7);
+  box-shadow: 0 0 0 3px rgba(226, 41, 47, 0.18);
+}
+
+input.input-error {
+  border-color: rgba(255, 90, 96, 0.95);
+  box-shadow: 0 0 0 3px rgba(255, 90, 96, 0.12);
+}
+
+.picker-menu {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9999;
+  display: block;
+  width: auto;
+  max-height: 320px;
+  overflow: auto;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #10141b;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.08s ease;
+}
+
+.picker-menu.is-above {
+  transform-origin: bottom center;
+}
+
+.picker-menu[hidden] {
+  display: none;
+}
+
+.picker-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text);
+  padding: 10px 12px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.picker-item:hover,
+.picker-item:focus-visible,
+.picker-item.is-active {
+  background: rgba(226, 41, 47, 0.16);
+  outline: none;
+}
+
+.picker-name {
+  font-weight: 600;
+}
+
+.picker-empty {
+  padding: 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+button {
+  border: 0;
+  border-radius: 14px;
+  background: var(--accent);
+  color: white;
+  font-weight: 700;
+  padding: 13px 18px;
+  min-height: 44px;
+  cursor: pointer;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button.secondary {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
+.result-empty {
+  color: var(--muted);
+  min-height: 140px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 10px;
+}
+
+.result-box {
+  display: block;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.composition-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1080px;
+}
+
+.composition-table th,
+.composition-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.composition-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: rgba(17, 19, 24, 0.98);
+  color: var(--muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+}
+
+.composition-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.composition-table tbody tr.is-missing td {
+  color: #ffb9bd;
+}
+
+.composition-table tbody tr.is-unknown td {
+  background: rgba(255, 90, 96, 0.06);
+}
+
+.role-cell {
+  font-weight: 700;
+  color: var(--accent-2);
+}
+
+.champion-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.champion-copy {
+  min-width: 0;
+}
+
+.champion-name {
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.champion-sub {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.champion-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: 0 0 auto;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+}
+
+.champion-icon.placeholder {
+  display: grid;
+  place-items: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.version-badge {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 12000;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: rgba(17, 19, 24, 0.92);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
+  color: var(--text);
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+
+.version-badge__version {
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.version-badge__label {
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.version-panel {
+  position: fixed;
+  right: 16px;
+  bottom: 68px;
+  z-index: 12000;
+  width: min(320px, calc(100vw - 32px));
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: rgba(17, 19, 24, 0.96);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  color: var(--text);
+}
+
+.version-panel__title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.version-panel__title h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.version-panel__meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.version-panel__section {
+  margin-top: 10px;
+}
+
+.version-panel__section h3 {
+  margin: 0 0 6px;
+  font-size: 0.82rem;
+  color: var(--accent-2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.version-panel__section ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text);
+}
+
+.version-panel__section li {
+  margin: 4px 0;
+  color: var(--muted);
+}
+
+.version-panel__close {
+  margin-top: 12px;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  padding: 10px 12px;
+  font: inherit;
+}
+
+@media (max-width: 1180px) {
+  .roles-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .roles-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .hero {
+    flex-direction: column;
+  }
+
+  .roles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .picker-menu {
+    max-height: min(48vh, 360px);
+    border-radius: 18px;
+  }
+
+  .version-badge {
+    right: 12px;
+    bottom: 12px;
+    padding: 9px 10px;
+  }
+
+  .version-panel {
+    right: 12px;
+    left: 12px;
+    bottom: 66px;
+    width: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .table-wrap {
+    overflow: visible;
+    border: 0;
+    background: transparent;
+  }
+
+  .composition-table,
+  .composition-table thead,
+  .composition-table tbody,
+  .composition-table tr,
+  .composition-table th,
+  .composition-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .composition-table {
+    min-width: 0;
+  }
+
+  .composition-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  .composition-table tr {
+    margin-bottom: 12px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    overflow: hidden;
+  }
+
+  .composition-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid var(--line);
+    padding: 12px 14px;
+  }
+
+  .composition-table td::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-weight: 700;
+    flex: 0 0 42%;
+  }
+
+  .composition-table td:last-child {
+    border-bottom: 0;
+  }
+
+  .champion-cell {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .champion-copy {
+    text-align: right;
+  }
+}
