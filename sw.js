@@ -1,4 +1,4 @@
-const CACHE_NAME = "lol-team-analyzer-v12";
+const CACHE_NAME = "lol-team-analyzer-v13";
 const ASSETS = [
   "./",
   "./index.html",
@@ -7,6 +7,8 @@ const ASSETS = [
   "./app.js",
   "./manifest.json",
   "./icon.svg",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png",
   "./version.json",
   "./version.js",
   "./realtime-mode.js",
@@ -22,9 +24,25 @@ const ASSETS = [
   "./Draft Pool.xlsx",
 ];
 
+const OFFLINE_SCRIPT = new Request(
+  "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js",
+  { mode: "no-cors" }
+);
+
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting())
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      await cache.addAll(ASSETS);
+
+      // Classic script requests are no-cors, so preserve the opaque response for offline reloads.
+      const response = await fetch(OFFLINE_SCRIPT);
+      if (response.type !== "opaque" && !response.ok) {
+        throw new Error("No se pudo almacenar SheetJS para el modo offline.");
+      }
+      await cache.put(OFFLINE_SCRIPT, response);
+      await self.skipWaiting();
+    })()
   );
 });
 
@@ -39,6 +57,12 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request).catch(() => caches.match("./index.html")))
+    caches.match(event.request).then(
+      (cached) => cached || fetch(event.request).catch(() =>
+        event.request.mode === "navigate"
+          ? caches.match("./index.html")
+          : Response.error()
+      )
+    )
   );
 });
