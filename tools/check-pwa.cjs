@@ -97,6 +97,19 @@ async function waitForBaseLoaded(page) {
   );
 }
 
+async function waitForCacheMigration(page) {
+  const deadline = Date.now() + 30_000;
+  let names = [];
+  while (Date.now() < deadline) {
+    names = await page.evaluate(() => caches.keys());
+    if (names.includes("lol-team-analyzer-v13") && !names.includes("lol-team-analyzer-v12")) {
+      return names;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 200));
+  }
+  throw new Error("No se completó la migración de caché v12 a v13: " + JSON.stringify(names));
+}
+
 async function main() {
   validateInstallMetadata();
   const { server, setServeCurrentWorker } = createServer();
@@ -142,13 +155,7 @@ async function main() {
 
     setServeCurrentWorker();
     await page.evaluate(async () => (await navigator.serviceWorker.ready).update());
-    await page.waitForFunction(
-      () => caches.keys().then((names) =>
-        names.includes("lol-team-analyzer-v13") && !names.includes("lol-team-analyzer-v12")
-      ),
-      null,
-      { timeout: 30_000 }
-    );
+    await waitForCacheMigration(page);
 
     const parserCache = await page.evaluate(async ({ current, url }) => {
       const names = await caches.keys();
