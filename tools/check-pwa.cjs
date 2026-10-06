@@ -116,6 +116,18 @@ async function main() {
     await page.goto(`${origin}/__seed`, { waitUntil: "domcontentloaded" });
     await page.waitForURL(`${origin}/`);
     await waitForBaseLoaded(page);
+    const iconDimensions = await page.evaluate(async () => {
+      const data = await (await fetch("manifest.json")).json();
+      return Promise.all(data.icons.filter((icon) => icon.type === "image/png").map((icon) =>
+        new Promise((resolve, reject) => {
+          const image = new Image();
+          image.onload = () => resolve([image.naturalWidth, image.naturalHeight]);
+          image.onerror = reject;
+          image.src = icon.src;
+        })
+      ));
+    });
+    assert.deepEqual(iconDimensions, [[192, 192], [512, 512]], "Los iconos declarados deben existir con sus dimensiones reales.");
     await page.waitForFunction(
       () => Boolean(navigator.serviceWorker.controller),
       null,
