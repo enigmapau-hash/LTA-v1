@@ -1,6 +1,6 @@
 {
   "name": "lol-team-analyzer",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "private": true,
   "description": "Mini app de League of Legends basada en la pestaña Composición del Excel.",
   "scripts": {
