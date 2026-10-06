@@ -4,7 +4,7 @@ Mini PWA para reproducir en el navegador la pestaña **Composición** del Excel 
 
 ## Estado actual
 
-- Versión visible: `v1.2.0`
+- Versión visible: `v1.2.2`
 - Fuente de datos: `Draft Pool.xlsx` de este repositorio.
 - La app lee el Excel en el navegador y genera el resultado a partir de la hoja **Composición**.
 - Cada rol usa su lista de campeones de la hoja correspondiente.
@@ -20,9 +20,10 @@ Mini PWA para reproducir en el navegador la pestaña **Composición** del Excel 
 - `app.js`: carga del Excel, selector, validaciones y resultado.
 - `shared-utils.js`, `smart-search.js`, `no-duplicate-options.js`, `selected-preview.js`, `menu-icons.js` y `realtime-mode.js`: comportamiento del selector.
 - `result-summary.js` y `result-summary.css`: resumen del resultado.
-- `version.json` y `version.js`: versión visible.
+- `version.json` y `version.js`: versión visible y detalle de cambios.
 - `sw.js`: caché offline de los recursos de la app.
 - `Draft Pool.xlsx`: workbook usado por la app.
+- `tools/bump-version.cjs`: sincroniza la versión y el changelog.
 
 ## Uso local
 
@@ -38,6 +39,12 @@ Abre `http://localhost:8000`. La app carga SheetJS desde CDN; para usar la app p
 
 El proyecto contiene los archivos de una web estática y puede publicarse con un hosting estático, incluido GitHub Pages. La configuración de publicación depende de los ajustes del repositorio.
 
-## Mantenimiento
+## Versionado de cambios
 
-Mantén `version.json`, `version.js`, el badge de `index.html` y `CHANGELOG.md` sincronizados al publicar una versión nueva.
+Actualiza la versión en la misma rama y PR que introduce cada cambio que se vaya a publicar:
+
+```bash
+npm run version:bump -- patch "Resumen del cambio"
+```
+
+Usa `minor` para una mejora funcional compatible y `major` para un cambio incompatible. El comando sincroniza `index.html`, `version.json`, el fallback de `version.js`, `package.json` y `CHANGELOG.md`. No requiere instalar dependencias.
