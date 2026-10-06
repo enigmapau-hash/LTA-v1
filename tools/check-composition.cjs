@@ -170,6 +170,13 @@ async function main() {
       await page.locator(duplicatePair.firstRole.input).fill(duplicatePair.champion);
       await page.locator(duplicatePair.secondRole.input).click({ force: true });
       await page.locator(duplicatePair.secondRole.menu + " .picker-item").first().waitFor({ state: "visible" });
+      await page.waitForFunction(
+        ({ menuSelector, champion }) => Array.from(document.querySelectorAll(menuSelector + " .picker-item")).every((item) =>
+          item.getAttribute("data-champion").toLowerCase() !== champion.toLowerCase()
+        ),
+        { menuSelector: duplicatePair.secondRole.menu, champion: duplicatePair.champion },
+        { timeout: 5_000 }
+      );
       const secondRoleOptions = await page.locator(duplicatePair.secondRole.menu + " .picker-item").evaluateAll((items) =>
         items.map((item) => item.getAttribute("data-champion"))
       );
