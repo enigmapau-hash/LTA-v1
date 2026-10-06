@@ -98,17 +98,17 @@ async function waitForBaseLoaded(page) {
   assert.notEqual(status, "Sin base", "La app no debe mostrar error de carga del Excel.");
 }
 
-async function waitForCacheMigration(page) {
+async function waitForCacheMigration(page, currentCacheName) {
   const deadline = Date.now() + 30_000;
   let names = [];
   while (Date.now() < deadline) {
     names = await page.evaluate(() => caches.keys());
-    if (names.includes("lol-team-analyzer-v13") && !names.includes("lol-team-analyzer-v12")) {
+    if (names.includes(currentCacheName) && !names.includes(previousCacheName)) {
       return names;
     }
     await new Promise((resolve) => setTimeout(resolve, 200));
   }
-  throw new Error("No se completó la migración de caché v12 a v13: " + JSON.stringify(names));
+  throw new Error("No se completó la migración desde " + previousCacheName + " a " + currentCacheName + ": " + JSON.stringify(names));
 }
 
 async function main() {
@@ -156,7 +156,7 @@ async function main() {
 
     setServeCurrentWorker();
     await page.evaluate(async () => (await navigator.serviceWorker.ready).update());
-    await waitForCacheMigration(page);
+    await waitForCacheMigration(page, cacheName);
 
     const parserCache = await page.evaluate(async ({ current, url }) => {
       const names = await caches.keys();
