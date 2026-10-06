@@ -43,10 +43,19 @@ const date = new Date().toISOString().slice(0, 10);
 const packageJson = JSON.parse(readText("package.json"));
 let html = readText("index.html");
 let versionJs = readText("version.js");
+let serviceWorker = readText("sw.js");
 let changelog = readText("CHANGELOG.md");
 
 const badgePattern = /(<span class="version-badge__version">)[^<]*(<\/span>)/;
 if (!badgePattern.test(html)) fail("No se encontró el badge de versión en index.html");
+
+const cacheMatch = serviceWorker.match(/const CACHE_NAME = "lol-team-analyzer-v(\\d+)";/);
+if (!cacheMatch) fail("No se encontró la versión de caché en sw.js");
+const nextCacheVersion = Number(cacheMatch[1]) + 1;
+serviceWorker = serviceWorker.replace(
+  cacheMatch[0],
+  `const CACHE_NAME = "lol-team-analyzer-v${nextCacheVersion}";`
+);
 
 const fallbackFields = [
   [/version:\s*["'][^"']*["']/, `version: "${version}"`],
@@ -79,6 +88,7 @@ html = html.replace(badgePattern, `$1${version}$2`);
 const files = new Map([
   ["version.json", JSON.stringify(metadata, null, 2) + "\n"],
   ["version.js", versionJs],
+  ["sw.js", serviceWorker],
   ["index.html", html],
   ["package.json", JSON.stringify(packageJson, null, 2) + "\n"],
   ["CHANGELOG.md", changelog],
@@ -89,4 +99,4 @@ for (const [relativePath, contents] of files) {
 }
 
 console.log(`Versión actualizada a ${version} (${releaseType}).`);
-console.log("Incluye los cambios sincronizados en index.html, version.json, version.js, package.json y CHANGELOG.md.");
+console.log("Incluye los cambios sincronizados en index.html, version.json, version.js, sw.js, package.json y CHANGELOG.md.");
