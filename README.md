@@ -9,6 +9,7 @@ Mini PWA para reproducir en el navegador la pestaña **Composición** del Excel 
 - La app lee el Excel en el navegador y genera el resultado a partir de la hoja **Composición**.
 - Cada rol usa su lista de campeones de la hoja correspondiente.
 - No permite campeones repetidos.
+- Muestra iconos oficiales de campeones cuando están disponibles.
 - El selector, la vista rápida y el resultado se actualizan sin recargar.
 - Las librerías del navegador se cargan desde CDN.
 
