@@ -27,7 +27,7 @@
             La app replica la pestaña <strong>Composición</strong> leyendo el Excel del repositorio y se actualiza al escribir.
           </p>
         </div>
-        <div class="status-pill" id="statusPill">Listo</div>
+        <div class="status-pill" id="statusPill" role="status" aria-live="polite" aria-atomic="true">Listo</div>
       </header>
 
       <section class="card form-card">
@@ -79,7 +79,6 @@
         </div>
 
         <div class="actions">
-          <button id="analyzeBtn" type="button">Analizar</button>
           <button id="demoBtn" class="secondary" type="button">Limpiar selección</button>
         </div>
       </section>
@@ -94,7 +93,7 @@
     </main>
 
     <button id="versionBadge" class="version-badge" type="button" aria-expanded="false" aria-controls="versionPanel">
-      <span class="version-badge__version">v1.2.4</span>
+      <span class="version-badge__version">v1.2.5</span>
       <span class="version-badge__label">Preview</span>
     </button>
 
