@@ -4,14 +4,12 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.2.3",
+    version: "v1.2.4",
     track: "Actualización funcional",
     label: "Preview",
-    updated: "2026-10-06",
+    updated: "2026-10-07",
     summary: [
-      "Añadidos iconos de 192 y 512 px para instalar la PWA.",
-      "SheetJS se incluye localmente y se almacena en la caché offline.",
-      "Validada la actualización desde v1.2.2 y la selección offline.",
+      "Pruebas Chromium para listas por rol, duplicados, entradas inválidas y resultado en tiempo real."
     ],
     pending: [],
   };

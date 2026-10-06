@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.2.4
+
+### Added
+- Comprobación Chromium de las listas por rol frente a `Draft Pool.xlsx`.
+- Casos reproducibles para duplicados, entradas inválidas y resultado en tiempo real.
+
+
 ## v1.2.3
 
 ### Fixed
