@@ -4,7 +4,7 @@ Mini PWA para reproducir en el navegador la pestaña **Composición** del Excel 
 
 ## Estado actual
 
-- Versión visible: `v1.2.2`
+- Versión visible: `v1.2.3`
 - Fuente de datos: `Draft Pool.xlsx` de este repositorio.
 - La app lee el Excel en el navegador y genera el resultado a partir de la hoja **Composición**.
 - Cada rol usa su lista de campeones de la hoja correspondiente.
@@ -21,7 +21,8 @@ Mini PWA para reproducir en el navegador la pestaña **Composición** del Excel 
 - `shared-utils.js`, `smart-search.js`, `no-duplicate-options.js`, `selected-preview.js`, `menu-icons.js` y `realtime-mode.js`: comportamiento del selector.
 - `result-summary.js` y `result-summary.css`: resumen del resultado.
 - `version.json` y `version.js`: versión visible y detalle de cambios.
-- `sw.js`: caché offline de los recursos de la app.
+- `sw.js`: caché offline de los recursos de la app, incluida la librería SheetJS.
+- `.github/workflows/pwa-validation.yml`: prueba de instalación, actualización y uso offline con Chromium.
 - `Draft Pool.xlsx`: workbook usado por la app.
 - `tools/bump-version.cjs`: sincroniza la versión y el changelog.
 
@@ -33,7 +34,7 @@ No hay paso de compilación ni dependencias npm necesarias. Sirve los archivos c
 python -m http.server 8000
 ```
 
-Abre `http://localhost:8000`. La app carga SheetJS desde CDN; para usar la app por primera vez se necesita conexión a internet.
+Abre `http://localhost:8000`. La app carga SheetJS desde CDN y guarda esa librería junto con el workbook en la caché al instalar el service worker. La primera visita y la creación inicial de la caché requieren conexión a internet. Después, la app permite seleccionar campeones y generar el resultado sin conexión.
 
 ## Despliegue
 
@@ -47,4 +48,4 @@ Actualiza la versión en la misma rama y PR que introduce cada cambio que se vay
 npm run version:bump -- patch "Resumen del cambio"
 ```
 
-Usa `minor` para una mejora funcional compatible y `major` para un cambio incompatible. El comando sincroniza el badge y la versión de `README.md`, `version.json`, el fallback de `version.js`, `package.json`, `CHANGELOG.md` y la caché del service worker en `sw.js`. Ejecuta `npm run version:check` para comprobar que los números visibles y el changelog siguen sincronizados. No requiere instalar dependencias.
+Usa `minor` para una mejora funcional compatible y `major` para un cambio incompatible. El comando sincroniza el badge y la versión de `README.md`, `version.json`, el fallback de `version.js`, `package.json`, `CHANGELOG.md` y la caché del service worker en `sw.js`. Ejecuta `npm run version:check` para comprobar que los números visibles y el changelog siguen sincronizados. No requiere instalar dependencias para versionar. El workflow de PWA instala Chromium de forma temporal y prueba primera carga, actualización desde la caché anterior y selección offline.
