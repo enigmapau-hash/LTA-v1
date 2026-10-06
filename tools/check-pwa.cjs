@@ -184,7 +184,6 @@ async function main() {
     await context.setOffline(true);
     await page.reload({ waitUntil: "domcontentloaded" });
     await waitForBaseLoaded(page);
-    await page.locator("#top").click();
     const firstOption = page.locator("#topMenu .picker-item").first();
     await firstOption.waitFor({ state: "visible", timeout: 15_000 });
     await firstOption.click();
