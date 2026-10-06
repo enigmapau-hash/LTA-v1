@@ -10,7 +10,7 @@ const widths = [320, 375, 768, 1280];
 const champions = ["Aatrox", "Briar", "Anivia", "Draven", "Janna"];
 function serverForApp() {
  const mime={".css":"text/css",".html":"text/html",".js":"text/javascript",".json":"application/json",".png":"image/png",".svg":"image/svg+xml",".xlsx":"application/octet-stream"};
- return http.createServer((req,res)=>{const file=path.resolve(root,"."+decodeURIComponent(new URL(req.url,"http://localhost").pathname));const rel=path.relative(root,file);if(rel.startsWith("..")||path.isAbsolute(rel)){res.writeHead(403);res.end();return;}fs.stat(file,(e,s)=>fs.readFile(e||s.isDirectory()?path.join(file,"index.html"):file,(err,data)=>{if(err){res.writeHead(404);res.end();return;}res.writeHead(200,{"Content-Type":mime[path.extname(file)]||"application/octet-stream","Cache-Control":"no-store"});res.end(data);}));});
+ return http.createServer((req,res)=>{const file=path.resolve(root,"."+decodeURIComponent(new URL(req.url,"http://localhost").pathname));const rel=path.relative(root,file);if(rel.startsWith("..")||path.isAbsolute(rel)){res.writeHead(403);res.end();return;}fs.stat(file,(e,s)=>{const resolved=e||s.isDirectory()?path.join(file,"index.html"):file;fs.readFile(resolved,(err,data)=>{if(err){res.writeHead(404);res.end();return;}res.writeHead(200,{"Content-Type":mime[path.extname(resolved)]||"application/octet-stream","Cache-Control":"no-store"});res.end(data);});});});
 }
 async function main(){
  const server=serverForApp();await new Promise(r=>server.listen(0,"127.0.0.1",r));let browser;
