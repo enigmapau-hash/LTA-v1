@@ -1,0 +1,37 @@
+name: Version metadata
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  versioning:
+    name: Check and smoke-test versioning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Check published metadata
+        run: npm run version:check
+
+      - name: Check patch bump command in a disposable copy
+        shell: bash
+        run: |
+          set -euo pipefail
+          test_dir="$(mktemp -d)"
+          git archive HEAD | tar -x -C "$test_dir"
+          cd "$test_dir"
+          before="$(node -p "require('./package.json').version")"
+          expected="$(node -e "const p=require('./package.json').version.split('.'); p[2]=String(Number(p[2])+1); console.log(p.join('.'))")"
+          npm run version:bump -- patch "CI smoke test"
+          after="$(node -p "require('./package.json').version")"
+          test "$after" = "$expected"
+          npm run version:check
