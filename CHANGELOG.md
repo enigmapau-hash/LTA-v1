@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.2.2
+
+### Added
+- Activado el service worker para que la caché offline se registre en la app.
+
+## v1.2.1
+
+### Fixed
+- Corregida la fuente del Excel para cargar `Draft Pool.xlsx` desde este repositorio.
+
 ## v1.2.0
 
 ### Added
@@ -43,7 +53,6 @@
 
 ### Notes
 - El pulido visual mejora la lectura sin tocar la lógica.
-- La versión visible avanza con cada entrega publicada.
 
 ## v1.1.5
 
@@ -51,10 +60,6 @@
 - Sinergia global plegable por defecto.
 - Menos ruido visual en el resultado cuando la composición ya está completa.
 - Lectura rápida más clara sin perder el detalle.
-
-### Notes
-- La auditoría UX reduce distracciones y mantiene el contexto accesible.
-- La versión visible avanza con cada entrega publicada.
 
 ## v1.1.4
 
@@ -64,10 +69,6 @@
 - Funciones resumidas por frecuencia.
 - Fortalezas y debilidades destacadas.
 
-### Notes
-- El resumen visual queda más orientado a lectura rápida.
-- La versión visible avanza con cada entrega publicada.
-
 ## v1.1.3
 
 ### Added
@@ -75,20 +76,12 @@
 - Función en la vista rápida.
 - Resumen rápido más completo sobre la tabla.
 
-### Notes
-- La vista rápida gana contexto sin tocar la lógica del Excel.
-- La versión visible avanza con cada entrega publicada.
-
 ## v1.1.2
 
 ### Added
 - Resumen visual compacto encima de la tabla de resultado.
 - Vista rápida con estado general y chips por rol.
 - Mantiene el detalle tabulado sin cambiar la lógica del Excel.
-
-### Notes
-- La presentación del resultado es más clara y ocupa menos atención visual.
-- La versión visible avanza con cada entrega publicada.
 
 ## v1.1.1
 
@@ -98,10 +91,6 @@
 - Acrónimos como MF, KOG o LEE.
 - Ordenación mejorada de resultados.
 
-### Notes
-- Se mantiene la base estable y el selector sin duplicados.
-- La versión visible avanza con cada entrega publicada.
-
 ## v1.1.0
 
 ### Added
@@ -109,10 +98,6 @@
 - Campeones duplicados ocultos en el desplegable.
 - Análisis en tiempo real.
 - Despliegue de Pages y caché corregidos para incluir los assets nuevos.
-
-### Notes
-- La base estable se mantiene como punto de partida.
-- La versión visible avanza con cada entrega publicada.
 
 ## v1.0.0
 
