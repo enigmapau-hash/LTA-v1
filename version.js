@@ -4,13 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.2.4",
+    version: "v1.2.5",
     track: "Actualización funcional",
     label: "Preview",
-    updated: "2026-10-07",
-    summary: [
-      "Pruebas Chromium para listas por rol, duplicados, entradas inválidas y resultado en tiempo real."
-    ],
+    updated: "2026-10-06",
+    summary: ["Mejoras de accesibilidad, navegación por teclado y experiencia responsive"],
     pending: [],
   };
 

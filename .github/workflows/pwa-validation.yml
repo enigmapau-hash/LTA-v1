@@ -29,3 +29,9 @@ jobs:
 
       - name: Validate composition logic against the workbook
         run: node tools/check-composition.cjs
+
+      - name: Check responsive layout and keyboard accessibility
+        run: node tools/check-ux.cjs
+
+      - name: Check release metadata synchronization
+        run: npm run version:check

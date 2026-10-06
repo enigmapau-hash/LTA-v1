@@ -36,7 +36,6 @@ const els = {
   midMenu: document.getElementById("midMenu"),
   botlineMenu: document.getElementById("botlineMenu"),
   supportMenu: document.getElementById("supportMenu"),
-  analyzeBtn: document.getElementById("analyzeBtn"),
   demoBtn: document.getElementById("demoBtn"),
   result: document.getElementById("result"),
   statusPill: document.getElementById("statusPill"),
@@ -64,7 +63,6 @@ function setStatus(text) {
 }
 
 function setBusy(isBusy) {
-  els.analyzeBtn.disabled = isBusy;
   els.demoBtn.disabled = isBusy;
 }
 
@@ -487,7 +485,7 @@ function analyze() {
     const input = roleInput(invalidRole.role);
     setInputValidity(input, true);
     renderComposition(comp);
-    setStatus(`No válido en ${invalidRole.role.toUpperCase()}: ${invalidRole.champion}`);
+    setStatus(`${invalidRole.champion} no está en la lista de ${ROLE_FIELDS.find((role) => role.key === invalidRole.role)?.label || invalidRole.role}.`);
     return;
   }
 
@@ -601,7 +599,7 @@ async function loadWorkbook() {
   workbookReady = false;
   renderChampionOptions();
   setStatus("Sin base");
-  renderEmpty("No se ha podido leer el Excel.");
+  renderEmpty("No se pudo cargar la base de campeones (Draft Pool.xlsx).");
 }
 
 function bindPickers() {
@@ -695,7 +693,6 @@ portalizeMenus();
 bindPickers();
 bindViewportListeners();
 
-els.analyzeBtn.addEventListener("click", analyze);
 els.demoBtn.addEventListener("click", clearSelection);
 
 renderNeedMoreData();

@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.2.5
+
+### Fixed
+- Mejoras de accesibilidad, navegación por teclado y experiencia responsive
+
+
 ## v1.2.4
 
 ### Added
