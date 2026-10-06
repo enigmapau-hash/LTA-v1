@@ -575,3 +575,10 @@ button.secondary {
     text-align: right;
   }
 }
+
+
+/* Keyboard users need a clear focus target on every control. */
+:where(input, button):focus-visible {
+  outline: 3px solid #ff7479;
+  outline-offset: 3px;
+}
