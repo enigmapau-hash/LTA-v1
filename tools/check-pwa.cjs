@@ -152,14 +152,22 @@ async function main() {
     );
 
     const parserCache = await page.evaluate(async ({ current, url }) => {
-      const cache = await caches.open(current);
-      const keys = await cache.keys();
+      const names = await caches.keys();
+      const cacheEntries = await Promise.all(names.map(async (name) => [
+        name,
+        (await caches.open(name)).keys().then((keys) => keys.map((request) => request.url)),
+      ]));
+      const currentCache = await caches.open(current);
+      const keys = await currentCache.keys();
       const key = keys.find((request) => request.url === url);
-      const response = key ? await cache.match(key) : null;
+      const response = key ? await currentCache.match(key) : null;
       return {
         type: response?.type || null,
         status: response?.status ?? null,
         cachedUrls: keys.map((request) => request.url),
+        cacheNames: names,
+        allEntries: await Promise.all(cacheEntries.map(async ([name, entries]) => [name, await entries])),
+        controller: navigator.serviceWorker.controller?.scriptURL,
       };
     }, { current: cacheName, url: xlsxUrl });
     assert.ok(parserCache.type, "SheetJS debe estar guardado en la caché nueva: " + JSON.stringify(parserCache));
