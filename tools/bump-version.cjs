@@ -49,7 +49,7 @@ let changelog = readText("CHANGELOG.md");
 const badgePattern = /(<span class="version-badge__version">)[^<]*(<\/span>)/;
 if (!badgePattern.test(html)) fail("No se encontró el badge de versión en index.html");
 
-const cacheMatch = serviceWorker.match(/const CACHE_NAME = "lol-team-analyzer-v(\\d+)";/);
+const cacheMatch = serviceWorker.match(/const CACHE_NAME = "lol-team-analyzer-v(\d+)";/);
 if (!cacheMatch) fail("No se encontró la versión de caché en sw.js");
 const nextCacheVersion = Number(cacheMatch[1]) + 1;
 serviceWorker = serviceWorker.replace(
