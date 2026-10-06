@@ -70,7 +70,7 @@ const summaryBody = fallbackBlock
 let fallbackSummary = null;
 if (summaryBody !== null) {
   try {
-    fallbackSummary = JSON.parse("[" + summaryBody + "]");
+    fallbackSummary = JSON.parse("[" + summaryBody.replace(/,\s*$/, "") + "]");
   } catch {
     errors.push("El resumen del fallback de version.js no es JSON válido.");
   }
@@ -82,7 +82,7 @@ const changelogVersion = extract(
   errors
 );
 const cacheName = extract(
-  /^const CACHE_NAME = "(lol-team-analyzer-v\d+)";$/,
+  /const CACHE_NAME = "(lol-team-analyzer-v\d+)";/,
   serviceWorker,
   "la versión de caché de sw.js",
   errors
