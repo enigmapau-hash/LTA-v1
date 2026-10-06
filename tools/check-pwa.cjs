@@ -166,7 +166,7 @@ async function main() {
       ]));
       const currentCache = await caches.open(current);
       const keys = await currentCache.keys();
-      const key = keys.find((request) => request.url === url);
+      const key = keys.find((request) => request.url === new URL(url, location.origin).href);
       const response = key ? await currentCache.match(key) : null;
       return {
         type: response?.type || null,
