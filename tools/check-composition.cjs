@@ -191,7 +191,7 @@ async function main() {
     const invalidChampion = "NoEsUnCampeon";
     await page.locator("#top").fill(invalidChampion);
     await page.waitForFunction(
-      (name) => document.querySelector("#statusPill")?.textContent.includes("No válido en TOP: " + name),
+      (name) => document.querySelector("#statusPill")?.textContent.includes(name + " no está en la lista de TOP"),
       invalidChampion,
       { timeout: 5_000 }
     );
