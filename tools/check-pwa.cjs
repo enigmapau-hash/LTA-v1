@@ -153,10 +153,16 @@ async function main() {
 
     const parserCache = await page.evaluate(async ({ current, url }) => {
       const cache = await caches.open(current);
-      const response = await cache.match(new Request(url, { mode: "no-cors" }));
-      return response ? { type: response.type, status: response.status } : null;
+      const keys = await cache.keys();
+      const key = keys.find((request) => request.url === url);
+      const response = key ? await cache.match(key) : null;
+      return {
+        type: response?.type || null,
+        status: response?.status ?? null,
+        cachedUrls: keys.map((request) => request.url),
+      };
     }, { current: cacheName, url: xlsxUrl });
-    assert.ok(parserCache, "SheetJS debe estar guardado en la caché nueva.");
+    assert.ok(parserCache.type, "SheetJS debe estar guardado en la caché nueva: " + JSON.stringify(parserCache));
     assert.equal(parserCache.type, "opaque", "SheetJS debe conservarse como respuesta no-cors del script clásico.");
 
     // A controlled reload with the network disconnected must load the workbook and picker.
