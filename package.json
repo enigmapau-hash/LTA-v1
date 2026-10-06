@@ -4,6 +4,7 @@
   "private": true,
   "description": "Mini app de League of Legends basada en la pestaña Composición del Excel.",
   "scripts": {
-    "version:bump": "node tools/bump-version.cjs"
+    "version:bump": "node tools/bump-version.cjs",
+    "version:check": "node tools/check-version-sync.cjs"
   }
 }
