@@ -143,11 +143,10 @@ async function main() {
     setServeCurrentWorker();
     await page.evaluate(async () => (await navigator.serviceWorker.ready).update());
     await page.waitForFunction(
-      async ({ current, previous }) => {
-        const names = await caches.keys();
-        return names.includes(current) && !names.includes(previous);
-      },
-      { current: cacheName, previous: previousCacheName },
+      () => caches.keys().then((names) =>
+        names.includes("lol-team-analyzer-v13") && !names.includes("lol-team-analyzer-v12")
+      ),
+      null,
       { timeout: 30_000 }
     );
 
