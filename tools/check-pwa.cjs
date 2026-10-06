@@ -13,7 +13,7 @@ const serviceWorker = fs.readFileSync(path.join(root, "sw.js"), "utf8");
 const legacyWorker = fs.readFileSync(path.join(__dirname, "fixtures", "sw-v12.js"), "utf8");
 const cacheName = serviceWorker.match(/const CACHE_NAME = "([^"]+)";/)?.[1];
 const previousCacheName = "lol-team-analyzer-v12";
-const xlsxUrl = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
+const xlsxUrl = "/vendor/xlsx.full.min.js";
 
 function validateInstallMetadata() {
   assert.equal(manifest.name, "LoL Team Analyzer");
@@ -177,7 +177,7 @@ async function main() {
       };
     }, { current: cacheName, url: xlsxUrl });
     assert.ok(parserCache.type, "SheetJS debe estar guardado en la caché nueva: " + JSON.stringify(parserCache));
-    assert.equal(parserCache.type, "opaque", "SheetJS debe conservarse como respuesta no-cors del script clásico.");
+    assert.equal(parserCache.status, 200, "SheetJS debe servirse desde la caché local.");
 
     // A controlled reload with the network disconnected must load the workbook and picker.
     await context.setOffline(true);

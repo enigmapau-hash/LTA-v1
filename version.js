@@ -10,7 +10,7 @@
     updated: "2026-10-06",
     summary: [
       "Añadidos iconos de 192 y 512 px para instalar la PWA.",
-      "SheetJS se guarda en la caché para usar la app sin conexión.",
+      "SheetJS se incluye localmente y se almacena en la caché offline.",
       "Validada la actualización desde v1.2.2 y la selección offline.",
     ],
     pending: [],

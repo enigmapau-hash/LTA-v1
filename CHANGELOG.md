@@ -3,7 +3,7 @@
 ## v1.2.3
 
 ### Fixed
-- SheetJS se guarda en la caché del service worker para que el Excel se pueda leer sin conexión.
+- SheetJS se incluye en el repositorio y en la caché del service worker para leer el Excel sin conexión.
 - Las solicitudes offline fallidas ya no reciben el HTML de la app como si fuera un recurso solicitado.
 
 ### Added

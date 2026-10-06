@@ -21,28 +21,13 @@ const ASSETS = [
   "./stage3-spacing.css",
   "./stage3-visual.css",
   "./stage3-animations.css",
+  "./vendor/xlsx.full.min.js",
   "./Draft Pool.xlsx",
 ];
 
-const OFFLINE_SCRIPT = new Request(
-  "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js",
-  { mode: "no-cors" }
-);
-
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    (async () => {
-      const cache = await caches.open(CACHE_NAME);
-      await cache.addAll(ASSETS);
-
-      // Classic script requests are no-cors, so preserve the opaque response for offline reloads.
-      const response = await fetch(OFFLINE_SCRIPT);
-      if (response.type !== "opaque" && !response.ok) {
-        throw new Error("No se pudo almacenar SheetJS para el modo offline.");
-      }
-      await cache.put(OFFLINE_SCRIPT, response);
-      await self.skipWaiting();
-    })()
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting())
   );
 });
 
@@ -57,12 +42,10 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   event.respondWith(
-    caches.match(event.request).then(
-      (cached) => cached || fetch(event.request).catch(() =>
-        event.request.mode === "navigate"
-          ? caches.match("./index.html")
-          : Response.error()
-      )
-    )
+    caches.match(event.request).then((cached) => cached || fetch(event.request).catch(() =>
+      event.request.mode === "navigate"
+        ? caches.match("./index.html")
+        : Response.error()
+    ))
   );
 });

@@ -11,7 +11,7 @@ Mini PWA para reproducir en el navegador la pestaña **Composición** del Excel 
 - No permite campeones repetidos.
 - Muestra iconos oficiales de campeones cuando están disponibles.
 - El selector, la vista rápida y el resultado se actualizan sin recargar.
-- Las librerías del navegador se cargan desde CDN.
+- SheetJS se incluye localmente; Data Dragon aporta iconos opcionales cuando hay conexión.
 
 ## Estructura del proyecto
 
@@ -22,9 +22,11 @@ Mini PWA para reproducir en el navegador la pestaña **Composición** del Excel 
 - `result-summary.js` y `result-summary.css`: resumen del resultado.
 - `version.json` y `version.js`: versión visible y detalle de cambios.
 - `sw.js`: caché offline de los recursos de la app, incluida la librería SheetJS.
+- `vendor/xlsx.full.min.js`: versión local de SheetJS para que la lectura del Excel funcione offline.
 - `.github/workflows/pwa-validation.yml`: prueba de instalación, actualización y uso offline con Chromium.
 - `Draft Pool.xlsx`: workbook usado por la app.
 - `tools/bump-version.cjs`: sincroniza la versión y el changelog.
+- `vendor/README.md` y `vendor/LICENSE.txt`: procedencia y licencia de SheetJS.
 
 ## Uso local
 
@@ -34,7 +36,7 @@ No hay paso de compilación ni dependencias npm necesarias. Sirve los archivos c
 python -m http.server 8000
 ```
 
-Abre `http://localhost:8000`. La app carga SheetJS desde CDN y guarda esa librería junto con el workbook en la caché al instalar el service worker. La primera visita y la creación inicial de la caché requieren conexión a internet. Después, la app permite seleccionar campeones y generar el resultado sin conexión.
+Abre `http://localhost:8000`. SheetJS está incluido en el repositorio y el service worker guarda sus archivos junto con el workbook. Tras cargar la página una vez, se pueden seleccionar campeones y generar el resultado sin conexión. Los iconos de Data Dragon son opcionales y solo aparecen cuando hay conexión.
 
 ## Despliegue
 
