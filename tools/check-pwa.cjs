@@ -89,22 +89,13 @@ function createServer() {
 }
 
 async function waitForBaseLoaded(page) {
-  await page.locator("#statusPill").waitFor({ state: "visible" });
-  try {
-    await page.waitForFunction(
-      () => document.querySelector("#statusPill")?.textContent === "Base cargada",
-      null,
-      { timeout: 30_000 }
-    );
-  } catch (error) {
-    const diagnostics = await page.evaluate(() => ({
-      status: document.querySelector("#statusPill")?.textContent,
-      xlsxAvailable: typeof window.XLSX !== "undefined",
-      scripts: Array.from(document.scripts, (script) => script.src).filter(Boolean),
-      result: document.querySelector("#result")?.textContent,
-    }));
-    throw new Error(error.message + " " + JSON.stringify(diagnostics));
-  }
+  await page.locator("#top").click();
+  await page.locator("#topMenu .picker-item").first().waitFor({
+    state: "visible",
+    timeout: 30_000,
+  });
+  const status = await page.locator("#statusPill").innerText();
+  assert.notEqual(status, "Sin base", "La app no debe mostrar error de carga del Excel.");
 }
 
 async function waitForCacheMigration(page) {
