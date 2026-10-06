@@ -47,4 +47,4 @@ Actualiza la versión en la misma rama y PR que introduce cada cambio que se vay
 npm run version:bump -- patch "Resumen del cambio"
 ```
 
-Usa `minor` para una mejora funcional compatible y `major` para un cambio incompatible. El comando sincroniza `index.html`, `version.json`, el fallback de `version.js`, `package.json` y `CHANGELOG.md`. No requiere instalar dependencias.
+Usa `minor` para una mejora funcional compatible y `major` para un cambio incompatible. El comando sincroniza `index.html`, `version.json`, el fallback de `version.js`, `package.json`, `CHANGELOG.md` y la caché del service worker en `sw.js`. No requiere instalar dependencias.
