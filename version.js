@@ -4,13 +4,14 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.2.2",
+    version: "v1.2.3",
     track: "Actualización funcional",
     label: "Preview",
     updated: "2026-10-06",
     summary: [
       "El workbook se carga desde el repositorio v2",
       "Modo offline activado mediante el service worker",
+      "Añadidos iconos instalables y caché offline de SheetJS",
     ],
     pending: [],
   };
