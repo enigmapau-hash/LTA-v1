@@ -4,6 +4,7 @@
 
 ### Added
 - Activado el service worker para que la caché offline se registre en la app.
+- Actualizada la caché a v12 para propagar la versión visible a instalaciones existentes.
 
 ## v1.2.1
 
