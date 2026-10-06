@@ -90,11 +90,21 @@ function createServer() {
 
 async function waitForBaseLoaded(page) {
   await page.locator("#statusPill").waitFor({ state: "visible" });
-  await page.waitForFunction(
-    () => document.querySelector("#statusPill")?.textContent === "Base cargada",
-    null,
-    { timeout: 30_000 }
-  );
+  try {
+    await page.waitForFunction(
+      () => document.querySelector("#statusPill")?.textContent === "Base cargada",
+      null,
+      { timeout: 30_000 }
+    );
+  } catch (error) {
+    const diagnostics = await page.evaluate(() => ({
+      status: document.querySelector("#statusPill")?.textContent,
+      xlsxAvailable: typeof window.XLSX !== "undefined",
+      scripts: Array.from(document.scripts, (script) => script.src).filter(Boolean),
+      result: document.querySelector("#result")?.textContent,
+    }));
+    throw new Error(error.message + " " + JSON.stringify(diagnostics));
+  }
 }
 
 async function waitForCacheMigration(page) {
