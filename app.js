@@ -1,6 +1,6 @@
 const WORKBOOK_URLS = [
-  "https://raw.githubusercontent.com/enigmapau-hash/lol-team-analyzer-v2/main/Draft%20Pool.xlsx",
   encodeURI("Draft Pool.xlsx"),
+  "https://raw.githubusercontent.com/enigmapau-hash/lol-team-analyzer-v2/main/Draft%20Pool.xlsx",
 ];
 
 const DDragonVersionsURL = "https://ddragon.leagueoflegends.com/api/versions.json";

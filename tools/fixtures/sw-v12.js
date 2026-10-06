@@ -1,4 +1,4 @@
-const CACHE_NAME = "lol-team-analyzer-v13";
+const CACHE_NAME = "lol-team-analyzer-v12";
 const ASSETS = [
   "./",
   "./index.html",
@@ -7,8 +7,6 @@ const ASSETS = [
   "./app.js",
   "./manifest.json",
   "./icon.svg",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
   "./version.json",
   "./version.js",
   "./realtime-mode.js",
@@ -21,7 +19,6 @@ const ASSETS = [
   "./stage3-spacing.css",
   "./stage3-visual.css",
   "./stage3-animations.css",
-  "./vendor/xlsx.full.min.js",
   "./Draft Pool.xlsx",
 ];
 
@@ -42,10 +39,6 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request).catch(() =>
-      event.request.mode === "navigate"
-        ? caches.match("./index.html")
-        : Response.error()
-    ))
+    caches.match(event.request).then((cached) => cached || fetch(event.request).catch(() => caches.match("./index.html")))
   );
 });

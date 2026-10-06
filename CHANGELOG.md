@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.2.3
+
+### Fixed
+- SheetJS se incluye en el repositorio y en la caché del service worker para leer el Excel sin conexión.
+- Las solicitudes offline fallidas ya no reciben el HTML de la app como si fuera un recurso solicitado.
+
+### Added
+- Iconos PNG de 192 y 512 px para la instalación de la PWA.
+- Prueba con Chromium para primera carga, migración desde la caché v12 y selección offline.
+
+
 ## v1.2.2
 
 ### Added

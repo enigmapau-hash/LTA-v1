@@ -6,8 +6,18 @@
   "display": "standalone",
   "background_color": "#0d0f14",
   "theme_color": "#111318",
-  "description": "Analizador simple de composiciones de League of Legends con IA.",
+  "description": "Analizador de composiciones de League of Legends basado en el Excel.",
   "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
     {
       "src": "icon.svg",
       "sizes": "any",
