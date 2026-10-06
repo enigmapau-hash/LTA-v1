@@ -45,9 +45,12 @@ let html = readText("index.html");
 let versionJs = readText("version.js");
 let serviceWorker = readText("sw.js");
 let changelog = readText("CHANGELOG.md");
+let readme = readText("README.md");
 
 const badgePattern = /(<span class="version-badge__version">)[^<]*(<\/span>)/;
 if (!badgePattern.test(html)) fail("No se encontró el badge de versión en index.html");
+const readmePattern = /(- Versión visible: `)[^\`]+(`)/;
+if (!readmePattern.test(readme)) fail("No se encontró la versión visible en README.md");
 
 const cacheMatch = serviceWorker.match(/const CACHE_NAME = "lol-team-analyzer-v(\d+)";/);
 if (!cacheMatch) fail("No se encontró la versión de caché en sw.js");
@@ -84,6 +87,7 @@ metadata.pending = [];
 
 packageJson.version = numericVersion;
 html = html.replace(badgePattern, `$1${version}$2`);
+readme = readme.replace(readmePattern, `$1${version}$2`);
 
 const files = new Map([
   ["version.json", JSON.stringify(metadata, null, 2) + "\n"],
@@ -92,6 +96,7 @@ const files = new Map([
   ["index.html", html],
   ["package.json", JSON.stringify(packageJson, null, 2) + "\n"],
   ["CHANGELOG.md", changelog],
+  ["README.md", readme],
 ]);
 
 for (const [relativePath, contents] of files) {
@@ -99,4 +104,4 @@ for (const [relativePath, contents] of files) {
 }
 
 console.log(`Versión actualizada a ${version} (${releaseType}).`);
-console.log("Incluye los cambios sincronizados en index.html, version.json, version.js, sw.js, package.json y CHANGELOG.md.");
+console.log("Incluye los cambios sincronizados en index.html, README.md, version.json, version.js, sw.js, package.json y CHANGELOG.md.");
