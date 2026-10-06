@@ -4,15 +4,13 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.2.0",
-    track: "Documentación final",
+    version: "v1.2.2",
+    track: "Actualización funcional",
     label: "Preview",
-    updated: "2026-10-02",
+    updated: "2026-10-06",
     summary: [
-      "README ampliado con flujo, estructura y uso",
-      "Capturas de referencia añadidas al repositorio",
-      "Arquitectura actualizada",
-      "Base estable mantenida",
+      "El workbook se carga desde el repositorio v2",
+      "Modo offline activado mediante el service worker",
     ],
     pending: [],
   };
