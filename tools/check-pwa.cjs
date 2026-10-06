@@ -189,7 +189,10 @@ async function main() {
     await firstOption.click();
     const selected = await page.locator("#top").inputValue();
     assert.ok(selected, "El selector debe permitir elegir un campeón sin conexión.");
-    assert.equal(await page.locator("#result .champion-name").first().innerText(), selected, "El resultado debe reflejar el campeón elegido sin conexión.");
+    const resultChampion = page.locator("#result .champion-name").first();
+    await resultChampion.waitFor({ state: "visible", timeout: 5_000 });
+    await page.waitForFunction((name) => document.querySelector("#result .champion-name")?.textContent.trim() === name, selected);
+    assert.equal(await resultChampion.innerText(), selected, "El resultado debe reflejar el campeón elegido sin conexión.");
     assert.deepEqual(pageErrors, [], "La app no debe lanzar errores JavaScript durante la carga o el uso offline.");
 
     console.log("PWA validada: manifiesto instalable, carga inicial, actualización v12→v13, caché de SheetJS y selección offline.");
