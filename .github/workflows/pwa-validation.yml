@@ -1,0 +1,28 @@
+name: PWA lifecycle
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  pwa:
+    name: Validate install, update, and offline use
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Install Chromium test runner
+        run: |
+          npm install --no-save --no-package-lock playwright@1.63.0
+          npx playwright install --with-deps chromium
+
+      - name: Exercise the PWA lifecycle
+        run: node tools/check-pwa.cjs
