@@ -9,9 +9,9 @@
     label: "Preview",
     updated: "2026-10-06",
     summary: [
-      "El workbook se carga desde el repositorio v2",
-      "Modo offline activado mediante el service worker",
-      "Añadidos iconos instalables y caché offline de SheetJS",
+      "Añadidos iconos de 192 y 512 px para instalar la PWA.",
+      "SheetJS se guarda en la caché para usar la app sin conexión.",
+      "Validada la actualización desde v1.2.2 y la selección offline.",
     ],
     pending: [],
   };
