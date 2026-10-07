@@ -28,6 +28,18 @@ function validateInstallMetadata() {
 
 function createServer() {
   let serveCurrentWorker = false;
+  const legacyAssetPaths = {
+    "/shared-utils.js": "/src/utils/text.js",
+    "/app.js": "/src/ui/app.js",
+    "/version.js": "/src/ui/version.js",
+    "/realtime-mode.js": "/src/ui/realtime-mode.js",
+    "/smart-search.js": "/src/ui/smart-search.js",
+    "/no-duplicate-options.js": "/src/ui/no-duplicate-options.js",
+    "/selected-preview.js": "/src/ui/selected-preview.js",
+    "/menu-icons.js": "/src/ui/menu-icons.js",
+    "/result-summary.js": "/src/report/result-summary.js",
+    "/result-summary.css": "/src/report/result-summary.css",
+  };
   const mimeTypes = {
     ".css": "text/css; charset=utf-8",
     ".html": "text/html; charset=utf-8",
@@ -62,7 +74,11 @@ function createServer() {
     }
 
     const pathname = decodeURIComponent(url.pathname);
-    const filePath = path.resolve(root, "." + pathname);
+    const servedPath =
+      !serveCurrentWorker && legacyAssetPaths[pathname]
+        ? legacyAssetPaths[pathname]
+        : pathname;
+    const filePath = path.resolve(root, "." + servedPath);
     const relative = path.relative(root, filePath);
     if (relative.startsWith("..") || path.isAbsolute(relative)) {
       response.writeHead(403);

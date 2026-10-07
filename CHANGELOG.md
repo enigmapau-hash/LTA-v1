@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.2.6
+
+### Fixed
+- Reorganización interna de UI, datos, lógica de composición e informes
+
+
 ## v1.2.5
 
 ### Fixed

@@ -42,7 +42,7 @@ const version = `v${numericVersion}`;
 const date = new Date().toISOString().slice(0, 10);
 const packageJson = JSON.parse(readText("package.json"));
 let html = readText("index.html");
-let versionJs = readText("version.js");
+let versionJs = readText("src/ui/version.js");
 let serviceWorker = readText("sw.js");
 let changelog = readText("CHANGELOG.md");
 let readme = readText("README.md");
@@ -91,7 +91,7 @@ readme = readme.replace(readmePattern, `$1${version}$2`);
 
 const files = new Map([
   ["version.json", JSON.stringify(metadata, null, 2) + "\n"],
-  ["version.js", versionJs],
+  ["src/ui/version.js", versionJs],
   ["sw.js", serviceWorker],
   ["index.html", html],
   ["package.json", JSON.stringify(packageJson, null, 2) + "\n"],
@@ -104,4 +104,4 @@ for (const [relativePath, contents] of files) {
 }
 
 console.log(`Versión actualizada a ${version} (${releaseType}).`);
-console.log("Incluye los cambios sincronizados en index.html, README.md, version.json, version.js, sw.js, package.json y CHANGELOG.md.");
+console.log("Incluye los cambios sincronizados en index.html, README.md, version.json, src/ui/version.js, sw.js, package.json y CHANGELOG.md.");

@@ -1,14 +1,3 @@
-const WORKBOOK_URLS = [
-  encodeURI("Draft Pool.xlsx"),
-  "https://raw.githubusercontent.com/enigmapau-hash/lol-team-analyzer-v2/main/Draft%20Pool.xlsx",
-];
-
-const DDragonVersionsURL = "https://ddragon.leagueoflegends.com/api/versions.json";
-const DDragonChampionDataURL = (version) =>
-  `https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/champion.json`;
-const DDragonIconURL = (version, id) =>
-  `https://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${id}.png`;
-
 const ROLE_FIELDS = [
   { key: "top", label: "TOP", inputId: "top", menuId: "topMenu" },
   { key: "jungle", label: "JUNGLA", inputId: "jungle", menuId: "jungleMenu" },
@@ -17,13 +6,7 @@ const ROLE_FIELDS = [
   { key: "support", label: "SUPPORT", inputId: "support", menuId: "supportMenu" },
 ];
 
-const SHEET_MAP = {
-  top: "Tabla Top",
-  jungle: "Tabla Jungla",
-  mid: "Tabla Mid",
-  botline: "Tabla Botline",
-  support: "Tabla Support",
-};
+const { normalizeText, escapeHtml } = window.LTAUtils;
 
 const els = {
   top: document.getElementById("top"),
@@ -66,24 +49,6 @@ function setBusy(isBusy) {
   els.demoBtn.disabled = isBusy;
 }
 
-function normalizeText(value) {
-  return String(value || "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/["'`´’]/g, "")
-    .trim()
-    .toLowerCase();
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
 function readComposition() {
   return {
     top: els.top.value.trim(),
@@ -99,16 +64,8 @@ function renderEmpty(message) {
   els.result.innerHTML = message;
 }
 
-function getRoleRows(roleKey) {
-  return draftData?.roles?.[roleKey] || [];
-}
-
 function buildChampionList(roleKey) {
-  const champions = new Set();
-  for (const row of getRoleRows(roleKey)) {
-    if (row?.champion) champions.add(row.champion);
-  }
-  return [...champions].sort((a, b) => a.localeCompare(b, "es"));
+  return window.LTACompositionLogic.buildChampionList(draftData, roleKey);
 }
 
 function getChampionMeta(name) {
@@ -116,32 +73,7 @@ function getChampionMeta(name) {
 }
 
 function findRoleRow(roleKey, championName) {
-  const roleRows = getRoleRows(roleKey);
-  if (!Array.isArray(roleRows) || !championName) return null;
-  const target = normalizeText(championName);
-  return roleRows.find((row) => normalizeText(row?.champion) === target) || null;
-}
-
-function findDuplicateChampion(comp) {
-  const seen = new Set();
-  for (const champion of Object.values(comp)) {
-    if (!champion) continue;
-    const key = normalizeText(champion);
-    if (!key) continue;
-    if (seen.has(key)) return champion;
-    seen.add(key);
-  }
-  return null;
-}
-
-function firstInvalidRole(comp) {
-  for (const role of ROLE_FIELDS) {
-    const champ = comp[role.key === "botline" ? "adc" : role.key];
-    if (champ && !findRoleRow(role.key, champ)) {
-      return { role: role.key, champion: champ };
-    }
-  }
-  return null;
+  return window.LTACompositionLogic.findRoleRow(draftData, roleKey, championName);
 }
 
 function setInputValidity(input, isInvalid) {
@@ -305,16 +237,6 @@ function positionRoleMenu(roleKey) {
   menu.style.maxHeight = `${estimatedHeight}px`;
 }
 
-function schedulePositionActiveMenu() {
-  if (!activeRoleKey) return;
-  if (viewportUpdateQueued) return;
-  viewportUpdateQueued = true;
-  window.requestAnimationFrame(() => {
-    viewportUpdateQueued = false;
-    positionRoleMenu(activeRoleKey);
-  });
-}
-
 function renderRoleMenu(roleKey, query = "") {
   const menu = roleMenu(roleKey);
   const input = roleInput(roleKey);
@@ -393,60 +315,14 @@ function renderChampionOptions() {
 }
 
 function renderComposition(comp) {
-  const rows = ROLE_FIELDS.map((role) => {
-    const valueKey = role.key === "botline" ? "adc" : role.key;
-    const champ = comp[valueKey];
-    const data = findRoleRow(role.key, champ);
-    const meta = champ ? getChampionMeta(champ) : null;
-    const missing = Boolean(champ) && !data;
-    const unknown = Boolean(champ) && !findRoleRow(role.key, champ);
-
-    const iconMarkup = meta
-      ? `<img class="champion-icon" src="${escapeHtml(meta.iconUrl)}" alt="" loading="lazy" />`
-      : `<div class="champion-icon placeholder" aria-hidden="true">${escapeHtml(
-          champ ? champ.slice(0, 2).toUpperCase() : "—"
-        )}</div>`;
-
-    return `
-      <tr class="${missing ? "is-missing" : ""} ${unknown ? "is-unknown" : ""}">
-        <td data-label="Rol" class="role-cell">${escapeHtml(role.label)}</td>
-        <td data-label="Campeón">
-          <div class="champion-cell">
-            ${iconMarkup}
-            <div class="champion-copy">
-              <div class="champion-name">${escapeHtml(champ || "—")}</div>
-              ${meta?.id ? `<div class="champion-sub">${escapeHtml(meta.id)}</div>` : ""}
-            </div>
-          </div>
-        </td>
-        <td data-label="Identidad">${escapeHtml(data?.identity || (champ ? "No encontrado" : ""))}</td>
-        <td data-label="Función">${escapeHtml(data?.function || "")}</td>
-        <td data-label="Ritmo">${escapeHtml(data?.tempo || "")}</td>
-        <td data-label="Fortalezas">${escapeHtml(data?.strengths || "")}</td>
-        <td data-label="Debilidades">${escapeHtml(data?.weaknesses || "")}</td>
-      </tr>
-    `;
-  }).join("");
-
-  els.result.className = "result-box";
-  els.result.innerHTML = `
-    <div class="table-wrap">
-      <table class="composition-table">
-        <thead>
-          <tr>
-            <th>Rol</th>
-            <th>Campeón</th>
-            <th>Identidad</th>
-            <th>Función</th>
-            <th>Ritmo</th>
-            <th>Fortalezas</th>
-            <th>Debilidades</th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>
-  `;
+  window.LTACompositionReport.render({
+    container: els.result,
+    comp,
+    roles: ROLE_FIELDS,
+    findRoleRow,
+    getChampionMeta,
+    escapeHtml,
+  });
 }
 
 function renderNeedMoreData() {
@@ -471,7 +347,7 @@ function analyze() {
     return;
   }
 
-  const duplicate = findDuplicateChampion(comp);
+  const duplicate = window.LTACompositionLogic.findDuplicateChampion(comp);
   if (duplicate) {
     markDuplicateInputs(duplicate);
     renderEmpty(`No repitas campeones. Corrige ${escapeHtml(duplicate)}.`);
@@ -480,7 +356,7 @@ function analyze() {
   }
 
   clearInputValidity();
-  const invalidRole = firstInvalidRole(comp);
+  const invalidRole = window.LTACompositionLogic.firstInvalidRole(comp, ROLE_FIELDS, findRoleRow);
   if (invalidRole) {
     const input = roleInput(invalidRole.role);
     setInputValidity(input, true);
@@ -522,84 +398,22 @@ function clearSelection() {
 }
 
 async function loadChampionMeta() {
-  try {
-    const versionsResponse = await fetch(DDragonVersionsURL);
-    const versions = await versionsResponse.json();
-    const version = Array.isArray(versions) && versions.length ? versions[0] : null;
-    if (!version) throw new Error("No se encontró versión de Data Dragon");
-
-    const response = await fetch(DDragonChampionDataURL(version));
-    const payload = await response.json();
-    const data = Object.values(payload?.data || {});
-
-    championMeta = new Map(
-      data.map((champ) => {
-        const name = String(champ?.name || "").trim();
-        const id = String(champ?.id || "").trim();
-        return [
-          normalizeText(name),
-          {
-            name,
-            id,
-            iconUrl: DDragonIconURL(version, id),
-          },
-        ];
-      })
-    );
-  } catch {
-    championMeta = new Map();
-  }
+  championMeta = await window.LTAChampionMetadata.loadChampionMeta();
 }
 
 async function loadWorkbook() {
-  for (const url of WORKBOOK_URLS) {
-    try {
-      if (typeof XLSX === "undefined") {
-        throw new Error("No se pudo cargar la librería XLSX");
-      }
-
-      const response = await fetch(url, { cache: "no-store" });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-      const buffer = await response.arrayBuffer();
-      const workbook = XLSX.read(buffer, { type: "array" });
-
-      const roles = {};
-      for (const [roleKey, sheetName] of Object.entries(SHEET_MAP)) {
-        const sheet = workbook.Sheets[sheetName];
-        if (!sheet) {
-          throw new Error(`Falta la hoja ${sheetName}`);
-        }
-
-        const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
-        roles[roleKey] = rows
-          .map((row) => ({
-            champion: String(row["Campeón"] || "").trim(),
-            identity: String(row["Identidad"] || "").trim(),
-            function: String(row["Función"] || "").trim(),
-            tempo: String(row["Ritmo"] || "").trim(),
-            strengths: String(row["Fortalezas"] || "").trim(),
-            weaknesses: String(row["Debilidades"] || "").trim(),
-          }))
-          .filter((row) => row.champion);
-      }
-
-      draftData = { roles };
-      workbookReady = true;
-      renderChampionOptions();
-      setStatus("Base cargada");
-      scheduleAnalyze();
-      return;
-    } catch (error) {
-      console.warn(`No se pudo cargar el workbook desde ${url}:`, error);
-    }
+  draftData = await window.LTAWorkbookReader.loadWorkbook();
+  workbookReady = Boolean(draftData);
+  if (!workbookReady) {
+    renderChampionOptions();
+    setStatus("Sin base");
+    renderEmpty("No se pudo cargar la base de campeones (Draft Pool.xlsx).");
+    return;
   }
 
-  draftData = null;
-  workbookReady = false;
   renderChampionOptions();
-  setStatus("Sin base");
-  renderEmpty("No se pudo cargar la base de campeones (Draft Pool.xlsx).");
+  setStatus("Base cargada");
+  scheduleAnalyze();
 }
 
 function bindPickers() {

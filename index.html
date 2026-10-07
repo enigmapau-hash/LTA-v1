@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="stage3-spacing.css" />
     <link rel="stylesheet" href="stage3-visual.css" />
     <link rel="stylesheet" href="stage3-animations.css" />
-    <link rel="stylesheet" href="result-summary.css" />
+    <link rel="stylesheet" href="src/report/result-summary.css" />
     <title>LoL Team Analyzer</title>
   </head>
   <body>
@@ -93,22 +93,26 @@
     </main>
 
     <button id="versionBadge" class="version-badge" type="button" aria-expanded="false" aria-controls="versionPanel">
-      <span class="version-badge__version">v1.2.5</span>
+      <span class="version-badge__version">v1.2.6</span>
       <span class="version-badge__label">Preview</span>
     </button>
 
     <section id="versionPanel" class="version-panel" hidden aria-live="polite"></section>
 
     <script src="vendor/xlsx.full.min.js"></script>
-    <script src="shared-utils.js"></script>
-    <script src="app.js"></script>
-    <script src="result-summary.js"></script>
-    <script src="smart-search.js"></script>
-    <script src="realtime-mode.js"></script>
-    <script src="no-duplicate-options.js"></script>
-    <script src="selected-preview.js"></script>
-    <script src="menu-icons.js"></script>
-    <script src="version.js"></script>
+    <script src="src/utils/text.js"></script>
+    <script src="src/domain/composition-logic.js"></script>
+    <script src="src/data/workbook-reader.js"></script>
+    <script src="src/data/champion-metadata.js"></script>
+    <script src="src/report/composition-table.js"></script>
+    <script src="src/ui/app.js"></script>
+    <script src="src/report/result-summary.js"></script>
+    <script src="src/ui/smart-search.js"></script>
+    <script src="src/ui/realtime-mode.js"></script>
+    <script src="src/ui/no-duplicate-options.js"></script>
+    <script src="src/ui/selected-preview.js"></script>
+    <script src="src/ui/menu-icons.js"></script>
+    <script src="src/ui/version.js"></script>
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {

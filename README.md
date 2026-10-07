@@ -4,7 +4,7 @@ Mini PWA para reproducir en el navegador la pestaña **Composición** del Excel 
 
 ## Estado actual
 
-- Versión visible: `v1.2.5`
+- Versión visible: `v1.2.6`
 - Fuente de datos: `Draft Pool.xlsx` de este repositorio.
 - La app lee el Excel en el navegador y genera el resultado a partir de la hoja **Composición**.
 - Cada rol usa su lista de campeones de la hoja correspondiente.
@@ -15,12 +15,12 @@ Mini PWA para reproducir en el navegador la pestaña **Composición** del Excel 
 
 ## Estructura del proyecto
 
-- `index.html`: estructura principal de la app.
-- `style.css` y los archivos `stage3-*.css`: estilos de la interfaz.
-- `app.js`: carga del Excel, selector, validaciones y resultado.
-- `shared-utils.js`, `smart-search.js`, `no-duplicate-options.js`, `selected-preview.js`, `menu-icons.js` y `realtime-mode.js`: comportamiento del selector.
-- `result-summary.js` y `result-summary.css`: resumen del resultado.
-- `version.json` y `version.js`: versión visible y detalle de cambios.
+- `index.html` y los CSS de la raíz: documento y estilos de la interfaz.
+- `src/ui/`: controlador de la aplicación y comportamiento de los selectores, la navegación, la vista previa y la versión.
+- `src/data/`: lectura y normalización del workbook y metadatos opcionales de campeones.
+- `src/domain/composition-logic.js`: validación y búsquedas puras sobre la composición actual. Esta separación prepara un lugar para el futuro motor; el Composition Engine aún no existe.
+- `src/report/`: renderizado de la tabla de resultado y resumen visible.
+- `src/utils/`: utilidades compartidas de texto.
 - `sw.js`: caché offline de los recursos de la app, incluida la librería SheetJS.
 - `vendor/xlsx.full.min.js`: versión local de SheetJS para que la lectura del Excel funcione offline.
 - `.github/workflows/pwa-validation.yml`: pruebas con Chromium para el ciclo PWA, la lógica de composición, el flujo de teclado y los tamaños responsive.
@@ -52,4 +52,4 @@ Actualiza la versión en la misma rama y PR que introduce cada cambio que se vay
 npm run version:bump -- patch "Resumen del cambio"
 ```
 
-Usa `minor` para una mejora funcional compatible y `major` para un cambio incompatible. El comando sincroniza el badge y la versión de `README.md`, `version.json`, el fallback de `version.js`, `package.json`, `CHANGELOG.md` y la caché del service worker en `sw.js`. Ejecuta `npm run version:check` para comprobar que los números visibles y el changelog siguen sincronizados. No requiere instalar dependencias para versionar. El workflow instala Chromium de forma temporal y prueba el ciclo PWA, los cinco selectores, duplicados, entradas inválidas, actualización en tiempo real, el uso por teclado y el diseño en varios anchos; también detecta errores de JavaScript y consola.
+Usa `minor` para una mejora funcional compatible y `major` para un cambio incompatible. El comando sincroniza el badge y la versión de `README.md`, `version.json`, el fallback de `src/ui/version.js`, `package.json`, `CHANGELOG.md` y la caché del service worker en `sw.js`. Ejecuta `npm run version:check` para comprobar que los números visibles y el changelog siguen sincronizados. No requiere instalar dependencias para versionar. El workflow instala Chromium de forma temporal y prueba el ciclo PWA, los cinco selectores, duplicados, entradas inválidas, actualización en tiempo real, el uso por teclado y el diseño en varios anchos; también detecta errores de JavaScript y consola.
