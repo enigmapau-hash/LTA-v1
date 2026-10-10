@@ -352,13 +352,13 @@
 
           const candidatePick = { ...candidate, role, champion };
           const scores = rankArchetypes([...picks, candidatePick], 5);
-          const { primary } = selectIdentities(scores);
+          const { primary, primaryScore } = selectIdentities(scores);
           const topScore = scores[0];
           const archetype = primary || ARCHETYPES.find((item) => item.id === topScore?.id);
           ranked.set(key, {
             role,
             champion,
-            affinity: topScore?.score || 0,
+            affinity: primaryScore?.score || topScore?.score || 0,
             identity: primary?.label || null,
             direction: archetype?.label || null,
             coherent: Boolean(primary),
