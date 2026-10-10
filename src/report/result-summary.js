@@ -34,18 +34,26 @@
 
   function renderPlanSupport(planSupport) {
     if (!planSupport) return "";
-    const strongestPicks = planSupport.strongestPicks.map((pick) => pick.champion).join(", ");
+    const strongest = planSupport.strongestPicks;
+    const strongestPicks = strongest.map((pick) => pick.champion).join(", ");
+    const scoreLoss = strongest[0]?.scoreLoss || 0;
     const support = strongestPicks
-      ? `<p class="result-summary__strategy-note"><strong>Mayor soporte de la identidad:</strong> ${escapeHtml(strongestPicks)}.</p>`
+      ? `<p><strong>Mayor soporte:</strong> ${escapeHtml(strongestPicks)}. ${strongest.length > 1 ? `Quitar cualquiera reduce ${scoreLoss} puntos de ajuste.` : `Quitar ${escapeHtml(strongestPicks)} reduce ${scoreLoss} puntos de ajuste.`}</p>`
       : "";
     const changes = new Map();
     for (const item of planSupport.identityChanges) {
       const identity = item.identityWithout || "sin identidad clara";
-      changes.set(identity, [...(changes.get(identity) || []), item.champion]);
+      const gamePlan = item.gamePlanWithout?.join(" ") || "";
+      const key = JSON.stringify([identity, gamePlan]);
+      const group = changes.get(key) || { identity, gamePlan, champions: [] };
+      group.champions.push(item.champion);
+      changes.set(key, group);
     }
     const fragility = changes.size
-      ? [...changes.entries()].map(([identity, champions]) =>
-        `<li>Si falta ${escapeHtml(champions.join(", "))}, el análisis cambia a ${escapeHtml(identity)}.</li>`
+      ? [...changes.values()].map(({ identity, gamePlan, champions }) =>
+        identity === "sin identidad clara"
+          ? `<li>Si falta ${escapeHtml(champions.join(", "))}, el análisis no conserva una identidad principal clara.</li>`
+          : `<li>Si falta ${escapeHtml(champions.join(", "))}, el plan cambia a ${escapeHtml(identity)}: ${escapeHtml(gamePlan)}</li>`
       ).join("")
       : "<li>La identidad se mantiene al retirar cualquiera de los cinco picks.</li>";
     return `<div class="result-summary__strategy-insight">${support}<p><strong>Si falta una pieza:</strong></p><ul>${fragility}</ul></div>`;
