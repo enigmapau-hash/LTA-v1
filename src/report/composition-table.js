@@ -6,7 +6,6 @@
     return `
       <section class="pick-recommendations" aria-labelledby="pick-recommendations-title">
         <div class="pick-recommendations__heading">
-          <p class="result-summary__eyebrow">Composición incompleta</p>
           <h3 id="pick-recommendations-title">Candidatos por rol</h3>
         </div>
         <div class="pick-recommendations__grid">

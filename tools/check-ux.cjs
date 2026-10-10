@@ -85,6 +85,7 @@ async function main(){
    assert.equal(await page.locator(".result-summary__strategy").count(),0,"no se muestra el informe antes de completar cinco campeones");
    assert.equal(await page.locator(".result-summary__header").innerText().then(text=>text.includes(`${count}/5`)),true,"se indica el progreso con "+count+" picks");
    assert.equal(await page.locator(".pick-recommendations__role").count(),5-count,"se conservan recomendaciones solo para los roles vacíos con "+count+" picks");
+   assert.equal(await page.locator(".pick-recommendations__heading .result-summary__eyebrow").count(),0,"las recomendaciones no repiten que la composición está incompleta");
   }
   const suggestions=page.locator(".pick-recommendations");
   await page.waitForFunction(()=>["Ornn","Sejuani","Orianna","Jinx"].every((champion,index)=>document.querySelector(["#top","#jungle","#mid","#adc"][index])?.value===champion)&&document.querySelectorAll(".pick-recommendations__role").length===1);

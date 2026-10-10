@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.19.0
+
+### Added
+- Eliminar etiqueta redundante en recomendaciones
+
+
 ## v1.18.0
 
 ### Added

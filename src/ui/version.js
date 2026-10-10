@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.18.0",
+    version: "v1.19.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-10",
-    summary: ["Reducir ruido en estados intermedios"],
+    summary: ["Eliminar etiqueta redundante en recomendaciones"],
     pending: [],
   };
 
