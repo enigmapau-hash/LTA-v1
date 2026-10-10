@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.10.0
+
+### Added
+- Clarify pick recommendation affinity and rationale
+
 ## v1.9.0
 
 ### Added

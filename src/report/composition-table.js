@@ -17,16 +17,37 @@
                 ${items.map((item) => `
                   <li>
                     <strong>${escapeHtml(item.champion)}</strong>
-                    <small>${escapeHtml(item.direction || "Sin identidad clara")} · Afinidad ${item.affinity}/100${item.coherent ? " · plan cohesionado" : " · orientación inicial"}</small>
-                    <small>Fortalezas: ${escapeHtml(item.strengths.join(", ") || "sin señales suficientes")}</small>
-                    ${item.gamePlan.map((step) => `<small>Plan: ${escapeHtml(step)}</small>`).join("")}
+                    <span class="pick-recommendations__quality${item.quality === "Mejor afinidad" ? " is-best" : ""}">${escapeHtml(item.quality)}</span>
+                    <small>${escapeHtml(item.direction || "Sin identidad clara")} · Afinidad ${item.affinity}/100</small>
+                    <small>Aporta: ${escapeHtml(item.strengths.join(", ") || "sin señales suficientes")}</small>
                   </li>
                 `).join("")}
               </ol>
+              ${renderRolePlans(items, escapeHtml)}
             </article>
           `).join("")}
         </div>
       </section>
+    `;
+  }
+
+  function renderRolePlans(items, escapeHtml) {
+    const plans = new Map();
+    for (const item of items) {
+      const steps = item.gamePlan || [];
+      const key = JSON.stringify([item.direction, steps]);
+      if (!item.direction || !steps.length || plans.has(key)) continue;
+      plans.set(key, { direction: item.direction, steps });
+    }
+    if (!plans.size) return "";
+
+    return `
+      <div class="pick-recommendations__plans">
+        <p>Plan asociado</p>
+        <ul>${[...plans.values()].map(({ direction, steps }) => `
+          <li><strong>${escapeHtml(direction)}:</strong> ${steps.map(escapeHtml).join(" ")}</li>
+        `).join("")}</ul>
+      </div>
     `;
   }
 
