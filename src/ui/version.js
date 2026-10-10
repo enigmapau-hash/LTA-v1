@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.22.0",
+    version: "v1.23.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-10",
-    summary: ["Aclarar el subtítulo de la lectura estratégica"],
+    summary: ["Reducir repetición durante la carga de campeones"],
     pending: [],
   };
 
