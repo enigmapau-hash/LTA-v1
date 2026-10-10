@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.6.0
+
+### Changed
+- Simplify strategic report for faster reading
+
+
 ## v1.5.0
 
 ### Added

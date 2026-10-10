@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.5.0",
+    version: "v1.6.0",
     track: "Actualización funcional",
     label: "Preview",
     updated: "2026-10-10",
-    summary: ["Improve champion selection and replacement flow"],
+    summary: ["Simplify strategic report for faster reading"],
     pending: [],
   };
 
