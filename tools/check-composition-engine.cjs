@@ -5,7 +5,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const XLSX = require("../vendor/xlsx.full.min.js");
-const { analyzeComposition } = require("../src/domain/composition-engine.js");
+const { analyzeComposition, recommendPicks } = require("../src/domain/composition-engine.js");
 
 const root = path.resolve(__dirname, "..");
 const workbook = XLSX.read(fs.readFileSync(path.join(root, "Draft Pool.xlsx")), { type: "buffer" });
@@ -91,6 +91,20 @@ function evaluate(reference) {
   const picks = Object.entries(reference.picks).map(([role, champion]) => pickFromWorkbook(role, champion));
   return { picks, result: analyzeComposition(picks) };
 }
+
+const candidatesByRole = Object.fromEntries(
+  Object.entries(roleSheets).map(([role, sheetName]) => [
+    role,
+    rowsForSheet(sheetName).map((row) => ({
+      champion: row["Campeón"],
+      identity: row["Identidad"],
+      function: row["Función"],
+      tempo: row["Ritmo"],
+      strengths: row["Fortalezas"],
+      weaknesses: row["Debilidades"],
+    })),
+  ])
+);
 
 const results = new Map();
 for (const reference of references) {
@@ -190,4 +204,41 @@ for (const { picks, result } of results.values()) {
   assert.deepEqual(analyzeComposition(picks), result, "El análisis debe ser determinista para la misma composición");
 }
 
-console.log("Composition Engine validado: 8 arquetipos de referencia, identidad híbrida, composición descompensada y resultados deterministas.");
+const frontToBackPicks = results.get("Front to Back").picks;
+const partialRecommendationCases = [
+  { count: 1, role: "jungle", expectedDirection: "Front to Back" },
+  { count: 2, role: "mid", expectedDirection: "Front to Back" },
+  { count: 3, role: "botline", expectedDirection: "Teamfight" },
+  { count: 4, role: "support", expectedDirection: "Front to Back", expectedChampion: "Lulu" },
+];
+
+for (const testCase of partialRecommendationCases) {
+  const partial = frontToBackPicks.slice(0, testCase.count);
+  const recommendations = recommendPicks(partial, candidatesByRole);
+  const roleRecommendations = recommendations[testCase.role];
+  assert.ok(roleRecommendations, `Una composición con ${testCase.count} picks debe recomendar para ${testCase.role}`);
+  assert.equal(roleRecommendations.length, 3, `Deben mostrarse tres candidatos para ${testCase.role}`);
+  for (const pick of partial) {
+    assert.equal(recommendations[pick.role], undefined, `No se debe recomendar el rol ya ocupado ${pick.role}`);
+  }
+  assert.equal(roleRecommendations[0].direction, testCase.expectedDirection, `El mejor candidato para ${testCase.role} debe apuntar a ${testCase.expectedDirection}`);
+  assert.ok(roleRecommendations.every((item) => item.strengths.length && item.gamePlan.length), "Cada recomendación debe explicar fortalezas y plan");
+  assert.ok(roleRecommendations.every((item) => item.affinity >= 0 && item.affinity <= 100), "La afinidad debe usar la escala del motor");
+  assert.ok(roleRecommendations.every((item, index) => index === 0 || roleRecommendations[index - 1].affinity >= item.affinity), "Los candidatos deben ordenarse por afinidad descendente");
+  assert.deepEqual(
+    recommendPicks(partial, candidatesByRole),
+    recommendations,
+    "Las recomendaciones deben ser deterministas"
+  );
+  if (testCase.expectedChampion) {
+    assert.equal(roleRecommendations[0].champion, testCase.expectedChampion, "La pieza de referencia debe encabezar el rol que completa Front to Back");
+  }
+}
+
+assert.equal(
+  recommendPicks(frontToBackPicks, candidatesByRole).support,
+  undefined,
+  "Una composición completa no debe recomendar cambios para roles ocupados"
+);
+
+console.log("Composition Engine validado: 8 arquetipos, composición híbrida/descompensada y recomendaciones deterministas para 1-4 picks.");

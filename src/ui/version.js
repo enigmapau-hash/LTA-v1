@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.8.0",
+    version: "v1.9.0",
     track: "Actualización funcional",
     label: "Preview",
     updated: "2026-10-10",
-    summary: ["Clarify counterfactual composition stability and fallback plans"],
+    summary: ["Add deterministic recommendations for incomplete compositions"],
     pending: [],
   };
 

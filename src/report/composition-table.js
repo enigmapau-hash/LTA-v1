@@ -1,5 +1,36 @@
 (() => {
-  function render({ container, comp, roles, findRoleRow, getChampionMeta, escapeHtml }) {
+  function renderRecommendations(recommendations, roles, escapeHtml) {
+    const roleCards = Object.entries(recommendations || {}).filter(([, items]) => items?.length);
+    if (!roleCards.length) return "";
+
+    return `
+      <section class="pick-recommendations" aria-labelledby="pick-recommendations-title">
+        <div class="pick-recommendations__heading">
+          <p class="result-summary__eyebrow">Composición incompleta</p>
+          <h3 id="pick-recommendations-title">Candidatos por rol</h3>
+        </div>
+        <div class="pick-recommendations__grid">
+          ${roleCards.map(([role, items]) => `
+            <article class="pick-recommendations__role">
+              <h4>${escapeHtml(roles.find((item) => item.key === role)?.label || role)}</h4>
+              <ol>
+                ${items.map((item) => `
+                  <li>
+                    <strong>${escapeHtml(item.champion)}</strong>
+                    <small>${escapeHtml(item.direction || "Sin identidad clara")} · Afinidad ${item.affinity}/100${item.coherent ? " · plan cohesionado" : " · orientación inicial"}</small>
+                    <small>Fortalezas: ${escapeHtml(item.strengths.join(", ") || "sin señales suficientes")}</small>
+                    ${item.gamePlan.map((step) => `<small>Plan: ${escapeHtml(step)}</small>`).join("")}
+                  </li>
+                `).join("")}
+              </ol>
+            </article>
+          `).join("")}
+        </div>
+      </section>
+    `;
+  }
+
+  function render({ container, comp, roles, findRoleRow, getChampionMeta, escapeHtml, recommendations }) {
     const rows = roles.map((role) => {
       const valueKey = role.key === "botline" ? "adc" : role.key;
       const champion = comp[valueKey];
@@ -52,6 +83,7 @@
           <tbody>${rows}</tbody>
         </table>
       </div>
+      ${renderRecommendations(recommendations, roles, escapeHtml)}
     `;
   }
 

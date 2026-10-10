@@ -335,5 +335,48 @@
     };
   }
 
-  return { analyzeComposition };
+  function recommendPicks(input, candidatesByRole, limit = 3) {
+    const picks = Array.isArray(input) ? input.filter(Boolean) : [];
+    const selectedRoles = new Set(picks.map((pick) => String(pick.role || "").toLowerCase()));
+    const selectedChampions = new Set(picks.map((pick) => normalize(pick.champion)).filter(Boolean));
+    const safeLimit = Number.isFinite(limit) ? Math.max(1, Math.floor(limit)) : 3;
+
+    return Object.entries(candidatesByRole || {})
+      .filter(([role]) => !selectedRoles.has(role.toLowerCase()))
+      .map(([role, candidates]) => {
+        const ranked = new Map();
+        for (const candidate of Array.isArray(candidates) ? candidates : []) {
+          const champion = String(candidate?.champion || "").trim();
+          const key = normalize(champion);
+          if (!key || selectedChampions.has(key) || ranked.has(key)) continue;
+
+          const candidatePick = { ...candidate, role, champion };
+          const scores = rankArchetypes([...picks, candidatePick], 5);
+          const { primary, primaryScore } = selectIdentities(scores);
+          const topScore = scores[0];
+          const archetype = primary || ARCHETYPES.find((item) => item.id === topScore?.id);
+          ranked.set(key, {
+            role,
+            champion,
+            affinity: primaryScore?.score || topScore?.score || 0,
+            identity: primary?.label || null,
+            direction: archetype?.label || null,
+            coherent: Boolean(primary),
+            strengths: listField(candidate.strengths).slice(0, 3),
+            gamePlan: archetype ? [...GAME_PLANS[archetype.id]] : [],
+          });
+        }
+
+        return [role, [...ranked.values()]
+          .sort((a, b) => b.affinity - a.affinity || a.champion.localeCompare(b.champion, "es"))
+          .slice(0, safeLimit)];
+      })
+      .filter(([, recommendations]) => recommendations.length)
+      .reduce((result, [role, recommendations]) => {
+        result[role] = recommendations;
+        return result;
+      }, {});
+  }
+
+  return { analyzeComposition, recommendPicks };
 });
