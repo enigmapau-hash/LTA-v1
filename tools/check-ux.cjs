@@ -41,8 +41,8 @@ async function main(){
   assert.match(await strategy.innerText(),/Protege al ADC/i);assert.match(await strategy.innerText(),/Frontline/i);assert.match(await strategy.innerText(),/Poca presión lateral/i);
   assert.match(await strategy.innerText(),/Pieza clave: Lulu \(−18 puntos de ajuste si falta\)/i);assert.match(await strategy.innerText(),/Estabilidad: la identidad se mantiene aunque falte cualquier pick/i);
   assert.equal(await page.locator(".result-summary__header").evaluate(n=>getComputedStyle(n).display),"none","el estado de validación se omite en composiciones completas");
-  assert.equal(await page.locator(".result-summary__global").count(),0,"el resumen global redundante se oculta en una composición completa");
-  assert.equal(await page.locator(".result-summary__roles").evaluate(n=>getComputedStyle(n).display),"none","la fila de campeones duplicada se oculta para priorizar el informe y la tabla");
+  assert.equal(await page.locator(".result-summary__global").count(),0,"no aparece el resumen global redundante");
+  assert.equal(await page.locator(".result-summary__roles").count(),0,"no se genera una segunda lista de campeones redundante");
   assert.equal(await strategy.evaluate(n=>n.closest(".table-wrap")===null),true,"el informe estratégico debe quedar fuera del contenedor desplazable de la tabla");
   assert.match(await page.locator(".composition-table").innerText(),/Ornn/);assert.match(await page.locator(".composition-table").innerText(),/Sejuani/);
   for(const width of widths){await page.setViewportSize({width,height:900});const layout=await page.evaluate(()=>({strategy:document.querySelector(".result-summary__strategy").getBoundingClientRect(),table:document.querySelector(".composition-table").getBoundingClientRect()}));assert.equal(layout.strategy.width<=width,true,"el informe estratégico cabe en "+width+" px");assert.equal(layout.strategy.top<layout.table.top,true,"el informe estratégico precede a la tabla en "+width+" px");}
@@ -60,7 +60,21 @@ async function main(){
   await page.waitForFunction(champion=>document.querySelector("#top")?.value===champion,replacement);
   assert.equal(await page.evaluate(()=>document.activeElement.id),"top","el foco vuelve al selector tras cambiar un campeón con clic");
   await page.locator("#demoBtn").click();
-  for(const [role,champion] of Object.entries({top:"Ornn",jungle:"Sejuani",mid:"Orianna",adc:"Jinx"}))await page.locator("#"+role).fill(champion);
+  const partialPicks=[
+   ["top","Ornn"],
+   ["jungle","Sejuani"],
+   ["mid","Orianna"],
+   ["adc","Jinx"],
+  ];
+  const remainingRoles=["JUNGLA","MID","BOTLINE","SUPPORT"];
+  for(let count=1;count<=partialPicks.length;count++){
+   const [role,champion]=partialPicks[count-1];await page.locator("#"+role).fill(champion);
+   const remaining=remainingRoles.slice(count-1).join(" · ");
+   await page.waitForFunction(expected=>document.querySelector(".result-summary__subhead")?.textContent.includes(`Faltan: ${expected}.`),remaining);
+   assert.equal(await page.locator(".result-summary__strategy").count(),0,"no se muestra el informe antes de completar cinco campeones");
+   assert.equal(await page.locator(".result-summary__header").innerText().then(text=>text.includes(`${count}/5`)),true,"se indica el progreso con "+count+" picks");
+   assert.equal(await page.locator(".pick-recommendations__role").count(),5-count,"se conservan recomendaciones solo para los roles vacíos con "+count+" picks");
+  }
   const suggestions=page.locator(".pick-recommendations");
   await page.waitForFunction(()=>["Ornn","Sejuani","Orianna","Jinx"].every((champion,index)=>document.querySelector(["#top","#jungle","#mid","#adc"][index])?.value===champion)&&document.querySelectorAll(".pick-recommendations__role").length===1);
   const supportSuggestions=suggestions.locator(".pick-recommendations__role").filter({hasText:"SUPPORT"});

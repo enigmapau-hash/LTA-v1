@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.14.0
+
+### Added
+- Simplificar la vista de composición incompleta
+
+
 ## v1.13.0
 
 ### Added
