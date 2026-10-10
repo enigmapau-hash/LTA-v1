@@ -44,54 +44,33 @@
       weaknesses: item.weaknesses,
     })));
     const report = analysis.report;
+    const hasIdentity = Boolean(analysis.identity.primary);
     const identity = [analysis.identity.primary, analysis.identity.secondary]
       .filter(Boolean)
       .map(escapeHtml)
       .join(" · ") || "Sin identidad clara";
+    const howToPlay = report.gamePlan?.length ? report.gamePlan : report.winCondition ? [report.winCondition] : [];
+    const risks = [...new Set([...(report.weaknesses || []), ...(report.risks || [])])];
 
     return `
       <section class="result-summary__strategy" aria-labelledby="composition-analysis-title">
         <div class="result-summary__strategy-heading">
           <p class="result-summary__eyebrow">Análisis estratégico</p>
           <h3 id="composition-analysis-title">${identity}</h3>
-          <p>${escapeHtml(report.executiveSummary)}</p>
+          ${hasIdentity ? "" : `<p>${escapeHtml(report.executiveSummary)}</p>`}
         </div>
         <div class="result-summary__strategy-grid">
           <article class="result-summary__strategy-card">
-            <h4>Win condition</h4>
-            ${report.winCondition ? `<p>${escapeHtml(report.winCondition)}</p>` : `<p>${escapeHtml(report.executiveSummary)}</p>`}
-          </article>
-          <article class="result-summary__strategy-card">
-            <h4>Sinergia interna</h4>
-            <p>${escapeHtml(report.internalSynergy)}</p>
+            <h4>Cómo jugarla</h4>
+            ${renderList(howToPlay, "No hay un plan común definido.")}
           </article>
           <article class="result-summary__strategy-card">
             <h4>Fortalezas</h4>
             ${renderList(report.strengths, "No se identifican fortalezas compartidas suficientes.")}
           </article>
           <article class="result-summary__strategy-card">
-            <h4>Debilidades</h4>
-            ${renderList(report.weaknesses, "No se identifican debilidades dominantes.")}
-          </article>
-          <article class="result-summary__strategy-card">
-            <h4>Plan de partida</h4>
-            ${renderList(report.gamePlan, "No hay un plan común definido.")}
-          </article>
-          <article class="result-summary__strategy-card">
             <h4>Riesgos</h4>
-            ${renderList(report.risks, "No se han detectado riesgos principales.")}
-          </article>
-          <article class="result-summary__strategy-card">
-            <h4>Recomendaciones</h4>
-            ${renderList(report.recommendations, "No hay recomendaciones disponibles.")}
-          </article>
-          <article class="result-summary__strategy-card">
-            <h4>Picks</h4>
-            ${renderList(report.picks.map((pick) => `${pick.role}: ${pick.champion}`))}
-          </article>
-          <article class="result-summary__strategy-card">
-            <h4>Bans</h4>
-            <p>${escapeHtml(report.bans.explanation)}</p>
+            ${renderList(risks, "No se han detectado riesgos principales.")}
           </article>
         </div>
       </section>
@@ -141,9 +120,6 @@
     const identityCounts = new Map();
     const functionCounts = new Map();
     const tempoCounts = new Map();
-    const strengthCounts = new Map();
-    const weaknessCounts = new Map();
-
     for (const item of items) {
       for (const label of splitList(item.identity)) {
         const key = normalizeLabel(label);
@@ -160,23 +136,11 @@
         if (!key) continue;
         tempoCounts.set(key, (tempoCounts.get(key) || 0) + 1);
       }
-      for (const label of splitList(item.strengths)) {
-        const key = normalizeLabel(label);
-        if (!key) continue;
-        strengthCounts.set(key, (strengthCounts.get(key) || 0) + 1);
-      }
-      for (const label of splitList(item.weaknesses)) {
-        const key = normalizeLabel(label);
-        if (!key) continue;
-        weaknessCounts.set(key, (weaknessCounts.get(key) || 0) + 1);
-      }
     }
 
     const identityTop = topCounts(identityCounts, 2);
     const functionTop = topCounts(functionCounts, 2);
     const tempoTop = topCounts(tempoCounts, 2);
-    const strengthTop = topCounts(strengthCounts, 2);
-    const weaknessTop = topCounts(weaknessCounts, 2);
     const globalPreview = [identityTop[0]?.label, functionTop[0]?.label, tempoTop[0]?.label].filter(Boolean).join(" · ");
 
     const summary = document.createElement("section");
@@ -200,7 +164,7 @@
         </div>
       </div>
 
-      <details class="result-summary__global ${ready ? "is-ready" : "is-pending"}"${ready ? "" : " open"}>
+      ${ready ? "" : `<details class="result-summary__global is-pending" open>
         <summary class="result-summary__global-summary">
           <div>
             <p class="result-summary__eyebrow">Sinergia global</p>
@@ -217,18 +181,8 @@
             ${tempoTop.length ? tempoTop.map((item) => `<span class="result-summary__chip"><strong>${item.label}</strong><small>${item.count}</small></span>`).join("") : `<span class="result-summary__chip is-empty">Sin ritmo</span>`}
           </div>
 
-          <div class="result-summary__mini-grid">
-            <div class="result-summary__mini-card">
-              <span>Fortalezas destacadas</span>
-              <strong>${strengthTop.length ? strengthTop.map((item) => item.label).join(" · ") : ready ? "Sin datos" : "Pendiente"}</strong>
-            </div>
-            <div class="result-summary__mini-card">
-              <span>Debilidades visibles</span>
-              <strong>${weaknessTop.length ? weaknessTop.map((item) => item.label).join(" · ") : ready ? "Sin datos" : "Pendiente"}</strong>
-            </div>
-          </div>
         </div>
-      </details>
+      </details>`}
 
       ${ready ? renderStrategicReport(items) : ""}
 

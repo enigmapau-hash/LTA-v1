@@ -34,8 +34,12 @@ async function main(){
   await page.waitForFunction(()=>document.querySelector("#statusPill")?.textContent==="Listo");
   const strategy=page.locator(".result-summary__strategy");await strategy.waitFor({state:"visible"});
   assert.match(await strategy.locator("h3").first().innerText(),/Front to Back/);
-  for(const heading of ["Win condition","Sinergia interna","Fortalezas","Debilidades","Plan de partida","Riesgos","Recomendaciones","Picks","Bans"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),1,"el informe muestra "+heading);}
-  assert.match(await strategy.innerText(),/Proteger al ADC/i);assert.match(await strategy.innerText(),/TOP: Ornn/);assert.match(await strategy.innerText(),/JUNGLA: Sejuani/);assert.match(await strategy.innerText(),/No hay datos de campeones rivales para recomendar bans/i);
+  for(const heading of ["Cómo jugarla","Fortalezas","Riesgos"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),1,"el informe muestra "+heading);}
+  for(const heading of ["Win condition","Sinergia interna","Debilidades","Plan de partida","Recomendaciones","Picks","Bans"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),0,"el informe no repite el bloque "+heading);}
+  assert.equal(await strategy.locator(".result-summary__strategy-card").count(),3,"el resumen estratégico conserva solo tres bloques útiles");
+  assert.match(await strategy.innerText(),/Protege al ADC/i);assert.match(await strategy.innerText(),/Frontline/i);assert.match(await strategy.innerText(),/Poca presión lateral/i);
+  assert.equal(await page.locator(".result-summary__global").count(),0,"el resumen global redundante se oculta en una composición completa");
+  assert.match(await page.locator(".result-summary__roles").innerText(),/TOP\s+Ornn/);assert.match(await page.locator(".composition-table").innerText(),/Sejuani/);
   const topInput=page.locator("#top"),selectedTop=await topInput.inputValue();await topInput.click();
   assert.deepEqual(await topInput.evaluate(input=>[input.selectionStart,input.selectionEnd]),[0,selectedTop.length],"al enfocar un pick se selecciona todo el texto para reemplazarlo sin borrarlo");
   const topOptions=page.locator("#topMenu .picker-item");await topOptions.first().waitFor({state:"visible"});
