@@ -4,7 +4,7 @@ Mini PWA para reproducir en el navegador la pestaña **Composición** del Excel 
 
 ## Estado actual
 
-- Versión visible: `v1.2.6`
+- Versión visible: `v1.3.0`
 - Fuente de datos: `Draft Pool.xlsx` de este repositorio.
 - La app lee el Excel en el navegador y genera el resultado a partir de la hoja **Composición**.
 - Cada rol usa su lista de campeones de la hoja correspondiente.
@@ -18,12 +18,14 @@ Mini PWA para reproducir en el navegador la pestaña **Composición** del Excel 
 - `index.html` y los CSS de la raíz: documento y estilos de la interfaz.
 - `src/ui/`: controlador de la aplicación y comportamiento de los selectores, la navegación, la vista previa y la versión.
 - `src/data/`: lectura y normalización del workbook y metadatos opcionales de campeones.
-- `src/domain/composition-logic.js`: validación y búsquedas puras sobre la composición actual. Esta separación prepara un lugar para el futuro motor; el Composition Engine aún no existe.
+- `src/domain/composition-logic.js`: validación y búsquedas puras usadas por la interfaz actual.
+- `src/domain/composition-engine.js`: evaluación determinista, pura e independiente de una composición con los atributos del workbook. Informa identidad principal/secundaria, condición de victoria, fortalezas, debilidades y cohesión; todavía no altera la salida visible.
 - `src/report/`: renderizado de la tabla de resultado y resumen visible.
 - `src/utils/`: utilidades compartidas de texto.
 - `sw.js`: caché offline de los recursos de la app, incluida la librería SheetJS.
 - `vendor/xlsx.full.min.js`: versión local de SheetJS para que la lectura del Excel funcione offline.
-- `.github/workflows/pwa-validation.yml`: pruebas con Chromium para el ciclo PWA, la lógica de composición, el flujo de teclado y los tamaños responsive.
+- `.github/workflows/pwa-validation.yml`: pruebas de arquetipos del motor y pruebas con Chromium para el ciclo PWA, la lógica de composición, el flujo de teclado y los tamaños responsive.
+- `tools/check-composition-engine.cjs`: compara el análisis con ocho arquetipos de referencia, una composición híbrida y otra descompensada. Se ejecuta con `npm run test:composition-engine`.
 - `tools/check-composition.cjs`: compara cada selector con su hoja del Excel y comprueba duplicados, entradas inválidas y actualización en tiempo real.
 - `tools/check-ux.cjs`: verifica el flujo por teclado, las etiquetas, el foco visible y el desbordamiento en 320, 375, 768 y 1280 px.
 - `Draft Pool.xlsx`: workbook usado por la app.

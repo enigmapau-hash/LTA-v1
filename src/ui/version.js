@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.2.6",
+    version: "v1.3.0",
     track: "Actualización funcional",
     label: "Preview",
-    updated: "2026-10-07",
-    summary: ["Reorganización interna de UI, datos, lógica de composición e informes"],
+    updated: "2026-10-10",
+    summary: ["Motor determinista interno de análisis de composiciones y reconocimiento de arquetipos"],
     pending: [],
   };
 

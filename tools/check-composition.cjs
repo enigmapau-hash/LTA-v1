@@ -84,6 +84,11 @@ async function main() {
     });
 
     await page.goto(origin + "/", { waitUntil: "domcontentloaded" });
+    assert.equal(
+      await page.evaluate(() => typeof window.LTACompositionEngine?.analyzeComposition),
+      "function",
+      "El Composition Engine debe estar disponible sin alterar el flujo de UI"
+    );
 
     const expectedByRole = await page.evaluate(async (roleDefs) => {
       const response = await fetch("Draft Pool.xlsx");

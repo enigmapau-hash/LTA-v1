@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.3.0
+
+### Added
+- Motor determinista interno de análisis de composiciones y reconocimiento de arquetipos
+
+
 ## v1.2.6
 
 ### Fixed
