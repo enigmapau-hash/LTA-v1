@@ -388,13 +388,6 @@ button.secondary {
   letter-spacing: 0.02em;
 }
 
-.version-badge__label {
-  font-size: 0.72rem;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-}
-
 .version-panel {
   position: fixed;
   right: 16px;

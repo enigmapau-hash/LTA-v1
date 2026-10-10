@@ -204,7 +204,6 @@ button.secondary {
   color: #ffffff;
 }
 
-.version-badge__label,
 .version-panel__meta,
 .version-panel__section li {
   color: var(--stage3-muted-strong);

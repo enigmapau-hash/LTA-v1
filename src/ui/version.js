@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.20.0",
+    version: "v1.21.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-10",
-    summary: ["Eliminar categoría genérica del panel de versión"],
+    summary: ["Simplificar el distintivo de versión"],
     pending: [],
   };
 
@@ -21,7 +21,7 @@
     };
 
     badge.querySelector(".version-badge__version").textContent = current.version;
-    badge.querySelector(".version-badge__label").textContent = current.label;
+    badge.setAttribute("aria-label", `${current.label} ${current.version}`);
 
     panel.innerHTML = `
       <div class="version-panel__title">

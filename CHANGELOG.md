@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.21.0
+
+### Added
+- Simplificar el distintivo de versión
+
+
 ## v1.20.0
 
 ### Added
