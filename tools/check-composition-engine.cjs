@@ -112,6 +112,7 @@ for (const reference of references) {
   assert.ok(result.report.planSupport, `${reference.name} debe explicar qué picks sostienen su plan`);
   assert.ok(Array.isArray(result.report.planSupport.strongestPicks), `${reference.name} debe devolver los picks de mayor soporte`);
   assert.ok(Array.isArray(result.report.planSupport.identityChanges), `${reference.name} debe medir los cambios al retirar un pick`);
+  assert.ok(result.report.planSupport.identityChanges.every((item) => Array.isArray(item.gamePlanWithout)), `${reference.name} debe incluir un plan alternativo para cada cambio de identidad`);
   assert.equal(result.report.picks.length, 5, `${reference.name} debe conservar los cinco picks`);
   assert.match(result.report.bans.explanation, /No hay datos de campeones rivales/i);
 }
@@ -145,6 +146,10 @@ assert.ok(splitPush.weaknesses.some((weakness) => /teamfights prolongadas/i.test
 assert.ok(
   splitPush.report.planSupport.identityChanges.some((item) => item.champion === "Fiora" && item.identityWithout === null),
   "Split Push debe señalar a Fiora como una pieza cuya ausencia elimina una identidad principal clara"
+);
+assert.ok(
+  splitPush.report.planSupport.identityChanges.some((item) => item.champion === "Twisted Fate" && item.identityWithout === "Escalado" && item.gamePlanWithout.some((step) => /picos de poder/i.test(step))),
+  "Split Push debe ofrecer el plan de escalado existente cuando cambia a esa identidad"
 );
 
 const teamfight = results.get("Teamfight").result;

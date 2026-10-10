@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.8.0
+
+### Added
+- Clarify counterfactual composition stability and fallback plans
+
+
 ## v1.7.0
 
 ### Added

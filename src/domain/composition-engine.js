@@ -220,10 +220,14 @@
       const remainingScores = rankArchetypes(remaining, picks.length);
       const identityWithout = selectIdentities(remainingScores).primary;
       const scoreWithout = scoreArchetype(remaining, archetype, picks.length);
+      const replacementArchetype = identityWithout
+        ? ARCHETYPES.find((item) => item.id === identityWithout.id)
+        : null;
       return {
         role: String(pick.role || ""),
         champion: String(pick.champion),
         identityWithout: identityWithout?.label || null,
+        gamePlanWithout: replacementArchetype ? [...GAME_PLANS[replacementArchetype.id]] : [],
         scoreLoss: primaryScore.score - scoreWithout,
       };
     });
@@ -235,7 +239,7 @@
         : [],
       identityChanges: counterfactuals
         .filter((item) => item.identityWithout !== primary.label)
-        .map(({ role, champion, identityWithout }) => ({ role, champion, identityWithout })),
+        .map(({ role, champion, identityWithout, gamePlanWithout }) => ({ role, champion, identityWithout, gamePlanWithout })),
     };
   }
 
