@@ -94,6 +94,9 @@
 
 .result-summary.is-ready {
   margin-top: 14px;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 .result-summary__subhead {

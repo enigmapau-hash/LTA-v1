@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.16.0
+
+### Added
+- Eliminar el marco visual redundante del informe completo
+
+
 ## v1.15.0
 
 ### Added
