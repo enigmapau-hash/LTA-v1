@@ -318,6 +318,17 @@ function selectChampion(roleKey, championName) {
 }
 
 function renderComposition(comp) {
+  const picks = ROLE_FIELDS
+    .map((role) => {
+      const champion = comp[role.key === "botline" ? "adc" : role.key];
+      const row = findRoleRow(role.key, champion);
+      return row ? { ...row, role: role.key } : null;
+    })
+    .filter(Boolean);
+  const recommendations = picks.length < ROLE_FIELDS.length
+    ? window.LTACompositionEngine.recommendPicks(picks, draftData.roles)
+    : {};
+
   window.LTACompositionReport.render({
     container: els.result,
     comp,
@@ -325,6 +336,7 @@ function renderComposition(comp) {
     findRoleRow,
     getChampionMeta,
     escapeHtml,
+    recommendations,
   });
 }
 

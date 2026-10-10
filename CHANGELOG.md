@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.9.0
+
+### Added
+- Add deterministic recommendations for incomplete compositions
+
 ## v1.8.0
 
 ### Added

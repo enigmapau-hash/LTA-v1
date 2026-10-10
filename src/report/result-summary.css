@@ -335,6 +335,67 @@
   color: var(--muted);
 }
 
+.pick-recommendations {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.pick-recommendations__heading h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.pick-recommendations__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+}
+
+.pick-recommendations__role {
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.pick-recommendations__role h4 {
+  margin: 0 0 8px;
+  font-size: 0.84rem;
+}
+
+.pick-recommendations__role ol {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.pick-recommendations__role li {
+  padding-left: 2px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.pick-recommendations__role li strong,
+.pick-recommendations__role li small {
+  display: block;
+}
+
+.pick-recommendations__role li strong {
+  color: var(--text);
+}
+
+.pick-recommendations__role li small {
+  margin-top: 2px;
+  line-height: 1.35;
+}
+
 @media (max-width: 1180px) {
   .result-summary__roles {
     grid-template-columns: repeat(2, minmax(0, 1fr));
