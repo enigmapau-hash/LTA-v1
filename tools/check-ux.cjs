@@ -33,6 +33,7 @@ async function main(){
   const referencePicks={top:"Ornn",jungle:"Sejuani",mid:"Orianna",adc:"Jinx",support:"Lulu"};
   for(const [role,champion] of Object.entries(referencePicks))await page.locator("#"+role).fill(champion);
   await page.waitForFunction(()=>document.querySelector("#statusPill")?.textContent==="Análisis actualizado");
+  await page.waitForFunction(expected=>expected.every(champion=>Array.from(document.querySelectorAll(".composition-table .champion-name")).some(node=>node.textContent.trim()===champion)),Object.values(referencePicks));
   const strategy=page.locator(".result-summary__strategy");await strategy.waitFor({state:"visible"});
   assert.match(await strategy.locator("h3").first().innerText(),/Front to Back/);
   for(const heading of ["Plan de partida","Fortalezas","Riesgos"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),1,"el informe muestra "+heading);}
@@ -55,7 +56,7 @@ async function main(){
   await page.setViewportSize({width:1280,height:900});
   const splitPushPicks={top:"Fiora",jungle:"Viego",mid:"Twisted Fate",adc:"Ezreal",support:"Braum"};
   for(const [role,champion] of Object.entries(splitPushPicks))await page.locator("#"+role).fill(champion);
-  await page.waitForFunction(()=>document.querySelector(".result-summary__strategy h3")?.textContent.includes("Split Push"));
+  await page.waitForFunction(expected=>expected.every(champion=>Array.from(document.querySelectorAll(".composition-table .champion-name")).some(node=>node.textContent.trim()===champion))&&document.querySelector(".result-summary__strategy h3")?.textContent.includes("Split Push"),Object.values(splitPushPicks));
   const splitStrategy=await strategy.innerText();assert.match(splitStrategy,/Fiora.*el equipo pierde una identidad principal clara/i);assert.match(splitStrategy,/Twisted Fate.*plan cambia a Escalado.*picos de poder/i);
   const topInput=page.locator("#top"),selectedTop=await topInput.inputValue();await topInput.click();
   assert.deepEqual(await topInput.evaluate(input=>[input.selectionStart,input.selectionEnd]),[0,selectedTop.length],"al enfocar un pick se selecciona todo el texto para reemplazarlo sin borrarlo");
