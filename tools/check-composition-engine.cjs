@@ -225,6 +225,15 @@ for (const testCase of partialRecommendationCases) {
   assert.ok(roleRecommendations.every((item) => item.strengths.length && item.gamePlan.length), "Cada recomendación debe explicar fortalezas y plan");
   assert.ok(roleRecommendations.every((item) => item.affinity >= 0 && item.affinity <= 100), "La afinidad debe usar la escala del motor");
   assert.ok(roleRecommendations.every((item, index) => index === 0 || roleRecommendations[index - 1].affinity >= item.affinity), "Los candidatos deben ordenarse por afinidad descendente");
+  const bestAffinity = roleRecommendations[0].affinity;
+  for (const item of roleRecommendations) {
+    const expectedQuality = item.affinity === bestAffinity
+      ? "Mejor afinidad"
+      : item.coherent
+        ? "Buen encaje"
+        : "Orientación inicial";
+    assert.equal(item.quality, expectedQuality, "La etiqueta debe reflejar afinidad relativa y la confianza ya definida por el motor");
+  }
   assert.deepEqual(
     recommendPicks(partial, candidatesByRole),
     recommendations,

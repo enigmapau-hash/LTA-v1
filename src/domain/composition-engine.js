@@ -367,9 +367,18 @@
           });
         }
 
-        return [role, [...ranked.values()]
+        const recommendations = [...ranked.values()]
           .sort((a, b) => b.affinity - a.affinity || a.champion.localeCompare(b.champion, "es"))
-          .slice(0, safeLimit)];
+          .slice(0, safeLimit);
+        const bestAffinity = recommendations[0]?.affinity;
+        return [role, recommendations.map((item) => ({
+          ...item,
+          quality: item.affinity === bestAffinity
+            ? "Mejor afinidad"
+            : item.coherent
+              ? "Buen encaje"
+              : "Orientación inicial",
+        }))];
       })
       .filter(([, recommendations]) => recommendations.length)
       .reduce((result, [role, recommendations]) => {

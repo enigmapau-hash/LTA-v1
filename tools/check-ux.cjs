@@ -55,10 +55,13 @@ async function main(){
   assert.equal(await page.evaluate(()=>document.activeElement.id),"top","el foco vuelve al selector tras cambiar un campeón con clic");
   await page.locator("#demoBtn").click();
   for(const [role,champion] of Object.entries({top:"Ornn",jungle:"Sejuani",mid:"Orianna",adc:"Jinx"}))await page.locator("#"+role).fill(champion);
-  const suggestions=page.locator(".pick-recommendations");await suggestions.waitFor({state:"visible"});
-  const supportSuggestions=suggestions.locator(".pick-recommendations__role").filter({has:page.getByRole("heading",{name:"SUPPORT",exact:true})});
-  assert.equal(await supportSuggestions.locator("li").count(),3,"un rol vacío debe mostrar tres candidatos recomendados");
-  assert.match(await supportSuggestions.innerText(),/Lulu/);assert.match(await supportSuggestions.innerText(),/Afinidad/);assert.match(await supportSuggestions.innerText(),/Fortalezas:/);assert.match(await supportSuggestions.innerText(),/Plan:/);
+  const suggestions=page.locator(".pick-recommendations");
+  await page.waitForFunction(()=>["Ornn","Sejuani","Orianna","Jinx"].every((champion,index)=>document.querySelector(["#top","#jungle","#mid","#adc"][index])?.value===champion)&&document.querySelectorAll(".pick-recommendations__role").length===1);
+  const supportSuggestions=suggestions.locator(".pick-recommendations__role").filter({hasText:"SUPPORT"});
+  assert.equal(await supportSuggestions.locator("ol > li").count(),3,"un rol vacío debe mostrar tres candidatos recomendados");
+  assert.match(await supportSuggestions.innerText(),/Lulu/);assert.match(await supportSuggestions.innerText(),/Afinidad/);assert.match(await supportSuggestions.innerText(),/Aporta:/);assert.match(await supportSuggestions.innerText(),/Plan asociado/);
+  assert.equal(await supportSuggestions.locator(".pick-recommendations__quality.is-best").count(),2,"las opciones empatadas en la mejor puntuación comparten la etiqueta superior");
+  const planItems=await supportSuggestions.locator(".pick-recommendations__plans li").allInnerTexts();assert.equal(planItems.length,2,"el plan se muestra una vez por orientación distinta, no una vez por campeón");assert.equal(new Set(planItems).size,planItems.length,"no se repiten explicaciones de plan");
   await page.locator("#support").fill("Lulu");await page.waitForFunction(()=>document.querySelector(".result-summary__strategy h3")?.textContent.includes("Front to Back"));
   assert.equal(await page.locator(".pick-recommendations").count(),0,"las recomendaciones se ocultan al completar la composición");
   assert.deepEqual(pageErrors,[],"sin errores JavaScript");assert.deepEqual(consoleErrors,[],"sin errores en consola");console.log("UX validada: 320, 375, 768, 1280 px; flujo completo con teclado; etiquetas, estado accesible, foco visible, tabla y consola.");
