@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.4.0
+
+### Added
+- Integrate Composition Engine analysis into the visible report
+
+
 ## v1.3.0
 
 ### Added

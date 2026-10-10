@@ -136,7 +136,9 @@ async function main() {
   let browser;
 
   try {
-    browser = await chromium.launch({ headless: true });
+    const launchOptions = { headless: true };
+    if (process.env.LTA_CHROMIUM_PATH) launchOptions.executablePath = process.env.LTA_CHROMIUM_PATH;
+    browser = await chromium.launch(launchOptions);
     const context = await browser.newContext({ serviceWorkers: "allow" });
     const page = await context.newPage();
     const pageErrors = [];

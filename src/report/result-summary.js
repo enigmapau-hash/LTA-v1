@@ -3,6 +3,8 @@
   if (!result) return;
 
   const splitList = window.LTAUtils?.splitList;
+  const escapeHtml = window.LTAUtils?.escapeHtml || ((value) => String(value));
+  const analyzeComposition = window.LTACompositionEngine?.analyzeComposition;
   if (typeof splitList !== "function") return;
 
   let refreshQueued = false;
@@ -23,6 +25,77 @@
       .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "es"))
       .slice(0, limit)
       .map(([label, count]) => ({ label, count }));
+  }
+
+  function renderList(items, emptyText = "Sin datos disponibles.") {
+    if (!items?.length) return `<p class="result-summary__empty">${escapeHtml(emptyText)}</p>`;
+    return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+  }
+
+  function renderStrategicReport(items) {
+    if (typeof analyzeComposition !== "function") return "";
+    const analysis = analyzeComposition(items.map((item) => ({
+      role: item.role,
+      champion: item.champion,
+      identity: item.identity,
+      function: item.functionLabel,
+      tempo: item.tempo,
+      strengths: item.strengths,
+      weaknesses: item.weaknesses,
+    })));
+    const report = analysis.report;
+    const identity = [analysis.identity.primary, analysis.identity.secondary]
+      .filter(Boolean)
+      .map(escapeHtml)
+      .join(" · ") || "Sin identidad clara";
+
+    return `
+      <section class="result-summary__strategy" aria-labelledby="composition-analysis-title">
+        <div class="result-summary__strategy-heading">
+          <p class="result-summary__eyebrow">Análisis estratégico</p>
+          <h3 id="composition-analysis-title">${identity}</h3>
+          <p>${escapeHtml(report.executiveSummary)}</p>
+        </div>
+        <div class="result-summary__strategy-grid">
+          <article class="result-summary__strategy-card">
+            <h4>Win condition</h4>
+            ${report.winCondition ? `<p>${escapeHtml(report.winCondition)}</p>` : `<p>${escapeHtml(report.executiveSummary)}</p>`}
+          </article>
+          <article class="result-summary__strategy-card">
+            <h4>Sinergia interna</h4>
+            <p>${escapeHtml(report.internalSynergy)}</p>
+          </article>
+          <article class="result-summary__strategy-card">
+            <h4>Fortalezas</h4>
+            ${renderList(report.strengths, "No se identifican fortalezas compartidas suficientes.")}
+          </article>
+          <article class="result-summary__strategy-card">
+            <h4>Debilidades</h4>
+            ${renderList(report.weaknesses, "No se identifican debilidades dominantes.")}
+          </article>
+          <article class="result-summary__strategy-card">
+            <h4>Plan de partida</h4>
+            ${renderList(report.gamePlan, "No hay un plan común definido.")}
+          </article>
+          <article class="result-summary__strategy-card">
+            <h4>Riesgos</h4>
+            ${renderList(report.risks, "No se han detectado riesgos principales.")}
+          </article>
+          <article class="result-summary__strategy-card">
+            <h4>Recomendaciones</h4>
+            ${renderList(report.recommendations, "No hay recomendaciones disponibles.")}
+          </article>
+          <article class="result-summary__strategy-card">
+            <h4>Picks</h4>
+            ${renderList(report.picks.map((pick) => `${pick.role}: ${pick.champion}`))}
+          </article>
+          <article class="result-summary__strategy-card">
+            <h4>Bans</h4>
+            <p>${escapeHtml(report.bans.explanation)}</p>
+          </article>
+        </div>
+      </section>
+    `;
   }
 
   function buildSummary() {
@@ -156,6 +229,8 @@
           </div>
         </div>
       </details>
+
+      ${ready ? renderStrategicReport(items) : ""}
 
       <div class="result-summary__roles">
         ${items

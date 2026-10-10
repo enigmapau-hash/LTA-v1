@@ -104,6 +104,13 @@ for (const reference of references) {
   assert.ok(result.winCondition, `${reference.name} debe producir una condición de victoria`);
   assert.ok(result.strengths.length, `${reference.name} debe describir fortalezas`);
   assert.ok(result.weaknesses.length, `${reference.name} debe describir debilidades`);
+  assert.equal(result.report.identity, reference.expected, `${reference.name} debe alimentar la identidad visible`);
+  assert.ok(result.report.executiveSummary, `${reference.name} debe producir un resumen ejecutivo`);
+  assert.ok(result.report.gamePlan.length, `${reference.name} debe producir un plan de partida`);
+  assert.ok(result.report.risks.length, `${reference.name} debe exponer riesgos`);
+  assert.ok(result.report.internalSynergy, `${reference.name} debe explicar su sinergia interna`);
+  assert.equal(result.report.picks.length, 5, `${reference.name} debe conservar los cinco picks`);
+  assert.match(result.report.bans.explanation, /No hay datos de campeones rivales/i);
 }
 
 const frontToBack = results.get("Front to Back").result;
@@ -112,6 +119,9 @@ assert.ok(frontToBack.strengths.includes("Frontline"));
 assert.ok(frontToBack.strengths.includes("Peel"));
 assert.ok(frontToBack.strengths.includes("DPS sostenido"));
 assert.ok(frontToBack.weaknesses.some((weakness) => /lateral/i.test(weakness)));
+assert.equal(results.get("Front to Back").result.report.winCondition, frontToBack.winCondition);
+assert.deepEqual(results.get("Front to Back").result.report.strengths, frontToBack.strengths);
+assert.deepEqual(results.get("Front to Back").result.report.weaknesses, frontToBack.weaknesses);
 
 const dive = results.get("Dive").result;
 assert.match(dive.winCondition, /backline rival/i);

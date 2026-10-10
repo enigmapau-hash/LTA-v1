@@ -128,6 +128,17 @@
     { id: "side-lane", label: "presión lateral", fields: ["strengths"], terms: ["side lane"] },
   ];
 
+  const GAME_PLANS = {
+    "front-to-back": ["Protege al ADC y fuerza peleas coordinadas cuando el equipo pueda aprovechar su DPS sostenido."],
+    dive: ["Busca una ventana para entrar sobre la backline rival y coordina el seguimiento del equipo."],
+    pick: ["Busca cazadas y convierte cada ventaja numérica en visión u objetivos."],
+    poke: ["Desgasta al rival antes de disputar objetivos y evita los engages directos."],
+    "split-push": ["Aplica presión en una línea lateral y evita alargar las teamfights."],
+    teamfight: ["Agrupa para iniciar de forma coordinada y encadenar las definitivas."],
+    scaling: ["Reduce los riesgos en early y juega alrededor de los picos de poder."],
+    "early-game": ["Aprovecha la presión inicial para asegurar ventajas y acelerar la partida."],
+  };
+
   function normalize(value) {
     return String(value || "")
       .normalize("NFD")
@@ -179,6 +190,55 @@
     ).map((gap) => gap.label);
   }
 
+  function listField(value) {
+    if (Array.isArray(value)) return value.map((item) => String(item).trim()).filter(Boolean);
+    return String(value || "").split(/[,;·]/).map((item) => item.trim()).filter(Boolean);
+  }
+
+  function buildReport(picks, primary, secondary, cohesion, strengths, weaknesses) {
+    const identityLabel = primary?.label || "Sin identidad clara";
+    const selectedPicks = picks
+      .filter((pick) => pick.champion)
+      .map((pick) => ({ role: String(pick.role || ""), champion: String(pick.champion) }));
+    const sharedStrengths = new Map();
+    for (const pick of picks) {
+      for (const label of new Set(listField(pick.strengths))) {
+        sharedStrengths.set(label, (sharedStrengths.get(label) || 0) + 1);
+      }
+    }
+    const shared = [...sharedStrengths.entries()]
+      .filter(([, count]) => count > 1)
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "es"))
+      .slice(0, 3)
+      .map(([label]) => label);
+    const internalSynergy = cohesion.coherent
+      ? shared.length
+        ? `La identidad ${identityLabel}${secondary ? ` se combina con ${secondary.label}` : ""} y comparte señales de ${shared.join(", ")}.`
+        : `La composición converge en el plan ${identityLabel}${secondary ? `, con señales secundarias de ${secondary.label}` : ""}.`
+      : cohesion.explanation;
+    const gamePlan = primary ? [...GAME_PLANS[primary.id]] : [];
+    const risks = primary ? [...weaknesses] : [...cohesion.gaps];
+    const recommendations = primary
+      ? [primary.winCondition, ...weaknesses.map((weakness) => `Ten en cuenta: ${weakness.toLowerCase()}.`)]
+      : [cohesion.explanation];
+
+    return {
+      identity: identityLabel,
+      executiveSummary: cohesion.coherent
+        ? `Composición ${identityLabel}${secondary ? ` con un componente de ${secondary.label}` : ""}. ${primary.winCondition}`
+        : cohesion.explanation,
+      winCondition: primary?.winCondition || null,
+      strengths: [...strengths],
+      weaknesses: [...weaknesses],
+      gamePlan,
+      risks,
+      internalSynergy,
+      recommendations,
+      picks: selectedPicks,
+      bans: { recommendation: null, explanation: "No hay datos de campeones rivales para recomendar bans." },
+    };
+  }
+
   function analyzeComposition(input) {
     const picks = Array.isArray(input) ? input.filter(Boolean) : [];
     const scores = ARCHETYPES
@@ -203,15 +263,9 @@
       : null;
     const gaps = strategicGaps(picks);
 
-    return {
-      identity: {
-        primary: primary?.label || null,
-        secondary: secondary?.label || null,
-      },
-      winCondition: primary?.winCondition || null,
-      strengths: primary ? [...primary.strengths] : [],
-      weaknesses: primary ? [...primary.weaknesses] : [],
-      cohesion: {
+    const strengths = primary ? [...primary.strengths] : [];
+    const weaknesses = primary ? [...primary.weaknesses] : [];
+    const cohesion = {
         score: primaryScore?.score || 0,
         coherent: Boolean(primary),
         gaps: primary ? [] : gaps,
@@ -220,7 +274,17 @@
           : gaps.length
             ? `No hay un plan de partida claro: faltan ${gaps.join(", ")}. Sin estos puntos en común, cuesta coordinar cómo iniciar, proteger o convertir las peleas.`
             : "No hay un arquetipo dominante; los atributos de la composición no convergen en un plan común.",
+      };
+    return {
+      identity: {
+        primary: primary?.label || null,
+        secondary: secondary?.label || null,
       },
+      winCondition: primary?.winCondition || null,
+      strengths,
+      weaknesses,
+      cohesion,
+      report: buildReport(picks, primary, secondary, cohesion, strengths, weaknesses),
       archetypeScores: scores.map((item) => ({
         ...item,
         selectedAs: item.id === primary?.id ? "primary" : item.id === secondary?.id ? "secondary" : null,
