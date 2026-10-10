@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.22.0
+
+### Added
+- Aclarar el subtítulo de la lectura estratégica
+
+
 ## v1.21.0
 
 ### Added

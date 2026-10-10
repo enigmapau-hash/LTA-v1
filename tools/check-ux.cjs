@@ -35,6 +35,7 @@ async function main(){
   await page.waitForFunction(()=>document.querySelector("#statusPill")?.textContent==="Análisis actualizado");
   await page.waitForFunction(expected=>expected.every(champion=>Array.from(document.querySelectorAll(".composition-table .champion-name")).some(node=>node.textContent.trim()===champion)),Object.values(referencePicks));
   const strategy=page.locator(".result-summary__strategy");await strategy.waitFor({state:"visible"});
+  assert.equal((await strategy.locator(".result-summary__eyebrow").textContent()).trim(),"Lectura estratégica","el informe distingue su lectura estratégica del título del análisis");
   assert.match(await strategy.locator("h3").first().innerText(),/Front to Back/);
   for(const heading of ["Plan de partida","Fortalezas","Riesgos"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),1,"el informe muestra "+heading);}
   for(const heading of ["Win condition","Sinergia interna","Debilidades","Cómo jugarla","Recomendaciones","Picks","Bans"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),0,"el informe no repite el bloque "+heading);}
