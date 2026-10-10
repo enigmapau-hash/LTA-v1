@@ -36,6 +36,14 @@ async function main(){
   assert.match(await strategy.locator("h3").first().innerText(),/Front to Back/);
   for(const heading of ["Win condition","Sinergia interna","Fortalezas","Debilidades","Plan de partida","Riesgos","Recomendaciones","Picks","Bans"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),1,"el informe muestra "+heading);}
   assert.match(await strategy.innerText(),/Proteger al ADC/i);assert.match(await strategy.innerText(),/TOP: Ornn/);assert.match(await strategy.innerText(),/JUNGLA: Sejuani/);assert.match(await strategy.innerText(),/No hay datos de campeones rivales para recomendar bans/i);
+  const topInput=page.locator("#top"),selectedTop=await topInput.inputValue();await topInput.click();
+  assert.deepEqual(await topInput.evaluate(input=>[input.selectionStart,input.selectionEnd]),[0,selectedTop.length],"al enfocar un pick se selecciona todo el texto para reemplazarlo sin borrarlo");
+  const topOptions=page.locator("#topMenu .picker-item");await topOptions.first().waitFor({state:"visible"});
+  const replacementIndex=await topOptions.evaluateAll((items,current)=>items.findIndex(item=>item.dataset.champion!==current),selectedTop);
+  assert.notEqual(replacementIndex,-1,"la lista abierta debe ofrecer picks alternativos sin escribir una búsqueda");
+  const replacement=await topOptions.nth(replacementIndex).getAttribute("data-champion");await topOptions.nth(replacementIndex).click();
+  await page.waitForFunction(champion=>document.querySelector("#top")?.value===champion,replacement);
+  assert.equal(await page.evaluate(()=>document.activeElement.id),"top","el foco vuelve al selector tras cambiar un campeón con clic");
   assert.deepEqual(pageErrors,[],"sin errores JavaScript");assert.deepEqual(consoleErrors,[],"sin errores en consola");console.log("UX validada: 320, 375, 768, 1280 px; flujo completo con teclado; etiquetas, estado accesible, foco visible, tabla y consola.");
  }finally{if(browser)await browser.close();await new Promise((r,j)=>server.close(e=>e?j(e):r()));}
 }

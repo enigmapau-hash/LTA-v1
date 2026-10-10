@@ -294,12 +294,19 @@ function renderRoleMenu(roleKey, query = "") {
   });
 }
 
-function openRoleMenu(roleKey) {
+function openRoleMenu(roleKey, query) {
   const input = roleInput(roleKey);
   if (!input) return;
   if (activeRoleKey && activeRoleKey !== roleKey) closeRoleMenu(activeRoleKey);
   activeRoleKey = roleKey;
-  renderRoleMenu(roleKey, input.value);
+  renderRoleMenu(roleKey, query === undefined ? input.value : query);
+}
+
+function focusRolePicker(roleKey) {
+  const input = roleInput(roleKey);
+  if (!input) return;
+  input.select();
+  openRoleMenu(roleKey, "");
 }
 
 function selectChampion(roleKey, championName) {
@@ -417,8 +424,8 @@ function bindPickers() {
     const input = roleInput(role.key);
     if (!input) continue;
 
-    input.addEventListener("focus", () => openRoleMenu(role.key));
-    input.addEventListener("click", () => openRoleMenu(role.key));
+    input.addEventListener("focus", () => focusRolePicker(role.key));
+    input.addEventListener("click", () => focusRolePicker(role.key));
     input.addEventListener("input", () => {
       openRoleMenu(role.key);
       scheduleAnalyze();
@@ -471,6 +478,7 @@ function bindPickers() {
 
     const item = target.closest(".picker-item");
     if (item) {
+      event.preventDefault();
       const roleKey = item.getAttribute("data-role");
       const championName = item.getAttribute("data-champion");
       if (roleKey && championName) selectChampion(roleKey, championName);
