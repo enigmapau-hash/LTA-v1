@@ -80,6 +80,8 @@ async function main(){
    const [role,champion]=partialPicks[count-1];await page.locator("#"+role).fill(champion);
    const remaining=remainingRoles.slice(count-1).join(" · ");
    await page.waitForFunction(expected=>document.querySelector(".result-summary__subhead")?.textContent.includes(`Faltan: ${expected}.`),remaining);
+   assert.equal(await page.locator(".result-summary__subhead").innerText(),`Faltan: ${remaining}.`);
+   assert.equal(await page.locator("#statusPill").innerText(),"Composición actualizada","el estado parcial no presenta el análisis como completo");
    assert.equal(await page.locator(".result-summary__strategy").count(),0,"no se muestra el informe antes de completar cinco campeones");
    assert.equal(await page.locator(".result-summary__header").innerText().then(text=>text.includes(`${count}/5`)),true,"se indica el progreso con "+count+" picks");
    assert.equal(await page.locator(".pick-recommendations__role").count(),5-count,"se conservan recomendaciones solo para los roles vacíos con "+count+" picks");

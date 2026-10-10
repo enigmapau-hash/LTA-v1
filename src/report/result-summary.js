@@ -149,7 +149,7 @@
           <p class="result-summary__eyebrow">${ready ? "Equipo completo" : "Composición incompleta"}</p>
           <h3>${ready ? "Composición lista" : "Completa tu equipo"}</h3>
           ${ready ? "" : `<p class="result-summary__subhead">${missingRoles.length
-            ? `Faltan: ${missingRoles.map(escapeHtml).join(" · ")}. Al completar los cinco roles verás el análisis estratégico.`
+            ? `Faltan: ${missingRoles.map(escapeHtml).join(" · ")}.`
             : `Revisa: ${invalidChampions.map(escapeHtml).join(" · ")}.`}</p>`}
         </div>
         <div class="result-summary__stats">

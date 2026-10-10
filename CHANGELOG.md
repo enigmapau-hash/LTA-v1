@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.18.0
+
+### Added
+- Reducir ruido en estados intermedios
+
+
 ## v1.17.0
 
 ### Added

@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.17.0",
+    version: "v1.18.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-10",
-    summary: ["Aclarar mensajes de ayuda y estados vacíos"],
+    summary: ["Reducir ruido en estados intermedios"],
     pending: [],
   };
 
