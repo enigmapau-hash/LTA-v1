@@ -341,8 +341,8 @@ function renderComposition(comp) {
 }
 
 function renderNeedMoreData() {
-  renderEmpty("Preparando el análisis...");
-  setStatus("Preparando análisis");
+  renderEmpty("Estamos preparando el análisis...");
+  setStatus("Cargando campeones");
 }
 
 function analyze() {
@@ -352,7 +352,7 @@ function analyze() {
   if (!hasAnyChampion) {
     clearInputValidity();
     closeAllMenus();
-    renderEmpty("Selecciona un campeón en cada rol.");
+    renderEmpty("El análisis aparecerá aquí al completar los cinco roles.");
     setStatus("Completa tu equipo");
     return;
   }
@@ -365,8 +365,8 @@ function analyze() {
   const duplicate = window.LTACompositionLogic.findDuplicateChampion(comp);
   if (duplicate) {
     markDuplicateInputs(duplicate);
-    renderEmpty(`No repitas campeones. Corrige ${escapeHtml(duplicate)}.`);
-    setStatus("No repitas campeones");
+    renderEmpty(`${escapeHtml(duplicate)} está elegido en más de una posición. Cambia uno de los dos.`);
+    setStatus("Hay campeones repetidos");
     return;
   }
 
@@ -376,7 +376,8 @@ function analyze() {
     const input = roleInput(invalidRole.role);
     setInputValidity(input, true);
     renderComposition(comp);
-    setStatus(`${invalidRole.champion} no está en la lista de ${ROLE_FIELDS.find((role) => role.key === invalidRole.role)?.label || invalidRole.role}.`);
+    const roleLabel = ROLE_FIELDS.find((role) => role.key === invalidRole.role)?.label || invalidRole.role;
+    setStatus(`${invalidRole.champion} no está disponible para ${roleLabel}. Elige otro campeón.`);
     return;
   }
 
@@ -385,8 +386,8 @@ function analyze() {
     renderComposition(comp);
     setStatus("Análisis actualizado");
   } catch (error) {
-    renderEmpty("No se pudo generar el análisis. Inténtalo de nuevo.");
-    setStatus("No se pudo analizar");
+    renderEmpty("No pudimos preparar el análisis. Inténtalo de nuevo.");
+    setStatus("Análisis no disponible");
   } finally {
     setBusy(false);
   }
@@ -408,7 +409,7 @@ function clearSelection() {
     closeRoleMenu(role.key);
   }
   clearInputValidity();
-  renderEmpty("Selecciona un campeón en cada rol.");
+  renderEmpty("El análisis aparecerá aquí al completar los cinco roles.");
   setStatus("Composición reiniciada");
 }
 
@@ -421,8 +422,8 @@ async function loadWorkbook() {
   workbookReady = Boolean(draftData);
   if (!workbookReady) {
     closeAllMenus();
-    setStatus("Datos no disponibles");
-    renderEmpty("No se pudieron cargar los campeones. Recarga la página e inténtalo de nuevo.");
+    setStatus("Carga interrumpida");
+    renderEmpty("No pudimos cargar los campeones. Recarga la página para intentarlo de nuevo.");
     return;
   }
 
