@@ -320,6 +320,17 @@
   margin-top: 4px;
 }
 
+.result-summary__strategy-insight {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.result-summary__strategy-insight p,
+.result-summary__strategy-insight ul {
+  margin: 0;
+}
+
 .result-summary__strategy-card .result-summary__empty {
   color: var(--muted);
 }

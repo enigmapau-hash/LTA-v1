@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.6.0",
+    version: "v1.7.0",
     track: "Actualización funcional",
     label: "Preview",
     updated: "2026-10-10",
-    summary: ["Simplify strategic report for faster reading"],
+    summary: ["Add pick support and identity resilience insights"],
     pending: [],
   };
 

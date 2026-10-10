@@ -32,6 +32,25 @@
     return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
   }
 
+  function renderPlanSupport(planSupport) {
+    if (!planSupport) return "";
+    const strongestPicks = planSupport.strongestPicks.map((pick) => pick.champion).join(", ");
+    const support = strongestPicks
+      ? `<p class="result-summary__strategy-note"><strong>Mayor soporte de la identidad:</strong> ${escapeHtml(strongestPicks)}.</p>`
+      : "";
+    const changes = new Map();
+    for (const item of planSupport.identityChanges) {
+      const identity = item.identityWithout || "sin identidad clara";
+      changes.set(identity, [...(changes.get(identity) || []), item.champion]);
+    }
+    const fragility = changes.size
+      ? [...changes.entries()].map(([identity, champions]) =>
+        `<li>Si falta ${escapeHtml(champions.join(", "))}, el análisis cambia a ${escapeHtml(identity)}.</li>`
+      ).join("")
+      : "<li>La identidad se mantiene al retirar cualquiera de los cinco picks.</li>";
+    return `<div class="result-summary__strategy-insight">${support}<p><strong>Si falta una pieza:</strong></p><ul>${fragility}</ul></div>`;
+  }
+
   function renderStrategicReport(items) {
     if (typeof analyzeComposition !== "function") return "";
     const analysis = analyzeComposition(items.map((item) => ({
@@ -63,6 +82,7 @@
           <article class="result-summary__strategy-card">
             <h4>Cómo jugarla</h4>
             ${renderList(howToPlay, "No hay un plan común definido.")}
+            ${renderPlanSupport(report.planSupport)}
           </article>
           <article class="result-summary__strategy-card">
             <h4>Fortalezas</h4>
