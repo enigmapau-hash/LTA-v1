@@ -76,7 +76,7 @@
             `;
           })
           .join("")
-      : `<div class="picker-empty">${draftData ? "Sin resultados" : "Cargando base del Excel..."}</div>`;
+      : `<div class="picker-empty">${draftData ? "Sin resultados" : "Cargando campeones..."}</div>`;
 
     menu.hidden = false;
     menu.setAttribute("aria-hidden", "false");

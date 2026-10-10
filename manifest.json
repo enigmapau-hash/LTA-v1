@@ -1,12 +1,12 @@
 {
-  "name": "LoL Team Analyzer",
-  "short_name": "Team Analyzer",
+  "name": "League Team Analyzer",
+  "short_name": "League Analyzer",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
   "background_color": "#0d0f14",
   "theme_color": "#111318",
-  "description": "Analizador de composiciones de League of Legends basado en el Excel.",
+  "description": "Analiza composiciones de League of Legends y descubre cómo jugarlas.",
   "icons": [
     {
       "src": "icons/icon-192.png",

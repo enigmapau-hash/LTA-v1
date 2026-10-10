@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="LoL Team Analyzer">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="League Team Analyzer">
   <rect width="512" height="512" rx="112" fill="#111318"/>
   <path d="M256 86l108 63v124c0 77-49 138-108 153-59-15-108-76-108-153V149l108-63z" fill="#e2292f"/>
   <path d="M256 142l63 36v71c0 48-29 86-63 97-34-11-63-49-63-97v-71l63-36z" fill="#f3f5f7" opacity="0.92"/>

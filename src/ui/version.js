@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.11.0",
-    track: "Actualización funcional",
-    label: "Preview",
+    version: "v1.12.0",
+    track: "Identidad del producto",
+    label: "Versión",
     updated: "2026-10-10",
-    summary: ["Redesign application layout to prioritize strategic analysis"],
+    summary: ["Identidad propia para League Team Analyzer"],
     pending: [],
   };
 

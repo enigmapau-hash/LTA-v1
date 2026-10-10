@@ -1,10 +1,10 @@
-# LoL Team Analyzer
+# League Team Analyzer
 
-Mini PWA para reproducir en el navegador la pestaña **Composición** del Excel del repositorio.
+Analiza composiciones de League of Legends y ofrece una lectura estratégica clara para entender cómo jugarlas.
 
 ## Estado actual
 
-- Versión visible: `v1.11.0`
+- Versión visible: `v1.12.0`
 - Fuente de datos: `Draft Pool.xlsx` de este repositorio.
 - La app lee el Excel en el navegador y genera el resultado a partir de la hoja **Composición**.
 - Cada rol usa su lista de campeones de la hoja correspondiente.
