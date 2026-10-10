@@ -52,6 +52,12 @@
   }
 
   function render({ container, comp, roles, findRoleRow, getChampionMeta, escapeHtml, recommendations }) {
+    const complete = roles.every((role) => {
+      const valueKey = role.key === "botline" ? "adc" : role.key;
+      const champion = comp[valueKey];
+      return Boolean(champion) && Boolean(findRoleRow(role.key, champion));
+    });
+
     const rows = roles.map((role) => {
       const valueKey = role.key === "botline" ? "adc" : role.key;
       const champion = comp[valueKey];
@@ -66,7 +72,14 @@
           )}</div>`;
 
       return `
-        <tr class="${notFound ? "is-missing is-unknown" : ""}">
+        <tr
+          class="${notFound ? "is-missing is-unknown" : ""}"
+          data-identity="${escapeHtml(data?.identity || "")}"
+          data-function="${escapeHtml(data?.function || "")}"
+          data-tempo="${escapeHtml(data?.tempo || "")}"
+          data-strengths="${escapeHtml(data?.strengths || "")}"
+          data-weaknesses="${escapeHtml(data?.weaknesses || "")}"
+        >
           <td data-label="Rol" class="role-cell">${escapeHtml(role.label)}</td>
           <td data-label="Campeón">
             <div class="champion-cell">
@@ -77,11 +90,11 @@
               </div>
             </div>
           </td>
-          <td data-label="Identidad">${escapeHtml(data?.identity || (champion ? "No encontrado" : ""))}</td>
+          ${complete ? "" : `<td data-label="Identidad">${escapeHtml(data?.identity || (champion ? "No encontrado" : ""))}</td>`}
           <td data-label="Función">${escapeHtml(data?.function || "")}</td>
           <td data-label="Ritmo">${escapeHtml(data?.tempo || "")}</td>
-          <td data-label="Fortalezas">${escapeHtml(data?.strengths || "")}</td>
-          <td data-label="Debilidades">${escapeHtml(data?.weaknesses || "")}</td>
+          ${complete ? "" : `<td data-label="Fortalezas">${escapeHtml(data?.strengths || "")}</td>`}
+          ${complete ? "" : `<td data-label="Debilidades">${escapeHtml(data?.weaknesses || "")}</td>`}
         </tr>
       `;
     }).join("");
@@ -89,16 +102,17 @@
     container.className = "result-box";
     container.innerHTML = `
       <div class="table-wrap">
-        <table class="composition-table">
+        <table class="composition-table${complete ? " is-complete" : ""}">
+          ${complete ? "<caption>Composición</caption>" : ""}
           <thead>
             <tr>
               <th>Rol</th>
               <th>Campeón</th>
-              <th>Identidad</th>
+              ${complete ? "" : "<th>Identidad</th>"}
               <th>Función</th>
               <th>Ritmo</th>
-              <th>Fortalezas</th>
-              <th>Debilidades</th>
+              ${complete ? "" : "<th>Fortalezas</th>"}
+              ${complete ? "" : "<th>Debilidades</th>"}
             </tr>
           </thead>
           <tbody>${rows}</tbody>

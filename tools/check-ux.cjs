@@ -33,6 +33,7 @@ async function main(){
   const referencePicks={top:"Ornn",jungle:"Sejuani",mid:"Orianna",adc:"Jinx",support:"Lulu"};
   for(const [role,champion] of Object.entries(referencePicks))await page.locator("#"+role).fill(champion);
   await page.waitForFunction(()=>document.querySelector("#statusPill")?.textContent==="Análisis actualizado");
+  await page.waitForFunction(expected=>expected.every(champion=>Array.from(document.querySelectorAll(".composition-table .champion-name")).some(node=>node.textContent.trim()===champion)),Object.values(referencePicks));
   const strategy=page.locator(".result-summary__strategy");await strategy.waitFor({state:"visible"});
   assert.match(await strategy.locator("h3").first().innerText(),/Front to Back/);
   for(const heading of ["Plan de partida","Fortalezas","Riesgos"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),1,"el informe muestra "+heading);}
@@ -44,12 +45,18 @@ async function main(){
   assert.equal(await page.locator(".result-summary__global").count(),0,"no aparece el resumen global redundante");
   assert.equal(await page.locator(".result-summary__roles").count(),0,"no se genera una segunda lista de campeones redundante");
   assert.equal(await strategy.evaluate(n=>n.closest(".table-wrap")===null),true,"el informe estratégico debe quedar fuera del contenedor desplazable de la tabla");
+  const completeTable=page.locator(".composition-table.is-complete");
+  assert.equal(await completeTable.locator("thead th").allInnerTexts().then(values=>values.map(value=>value.trim()).join("|")),"Rol|Campeón|Función|Ritmo","la alineación conserva solo columnas que complementan el informe");
+  assert.equal(await completeTable.locator("tbody tr").count(),5,"la alineación completa mantiene los cinco roles");
+  assert.equal(await completeTable.locator("tbody tr").first().locator("td").count(),4,"cada rol mantiene campeón, función y ritmo");
+  assert.match(await completeTable.innerText(),/Ornn/);assert.match(await completeTable.innerText(),/Lulu/);
+  assert.equal(await strategy.evaluate(n=>n.getBoundingClientRect().top)>await completeTable.evaluate(n=>n.getBoundingClientRect().top),true,"la composición aparece antes que el análisis");
   assert.match(await page.locator(".composition-table").innerText(),/Ornn/);assert.match(await page.locator(".composition-table").innerText(),/Sejuani/);
-  for(const width of widths){await page.setViewportSize({width,height:900});const layout=await page.evaluate(()=>({strategy:document.querySelector(".result-summary__strategy").getBoundingClientRect(),table:document.querySelector(".composition-table").getBoundingClientRect()}));assert.equal(layout.strategy.width<=width,true,"el informe estratégico cabe en "+width+" px");assert.equal(layout.strategy.top<layout.table.top,true,"el informe estratégico precede a la tabla en "+width+" px");}
+  for(const width of widths){await page.setViewportSize({width,height:900});const layout=await page.evaluate(()=>({strategy:document.querySelector(".result-summary__strategy").getBoundingClientRect(),table:document.querySelector(".composition-table").getBoundingClientRect(),scrollWidth:document.documentElement.scrollWidth}));assert.equal(layout.strategy.width<=width,true,"el informe estratégico cabe en "+width+" px");assert.equal(layout.strategy.top>layout.table.top,true,"la composición precede al informe en "+width+" px");assert.equal(layout.scrollWidth<=width,true,"la composición completa no desborda en "+width+" px");}
   await page.setViewportSize({width:1280,height:900});
   const splitPushPicks={top:"Fiora",jungle:"Viego",mid:"Twisted Fate",adc:"Ezreal",support:"Braum"};
   for(const [role,champion] of Object.entries(splitPushPicks))await page.locator("#"+role).fill(champion);
-  await page.waitForFunction(()=>document.querySelector(".result-summary__strategy h3")?.textContent.includes("Split Push"));
+  await page.waitForFunction(expected=>expected.every(champion=>Array.from(document.querySelectorAll(".composition-table .champion-name")).some(node=>node.textContent.trim()===champion))&&document.querySelector(".result-summary__strategy h3")?.textContent.includes("Split Push"),Object.values(splitPushPicks));
   const splitStrategy=await strategy.innerText();assert.match(splitStrategy,/Fiora.*el equipo pierde una identidad principal clara/i);assert.match(splitStrategy,/Twisted Fate.*plan cambia a Escalado.*picos de poder/i);
   const topInput=page.locator("#top"),selectedTop=await topInput.inputValue();await topInput.click();
   assert.deepEqual(await topInput.evaluate(input=>[input.selectionStart,input.selectionEnd]),[0,selectedTop.length],"al enfocar un pick se selecciona todo el texto para reemplazarlo sin borrarlo");

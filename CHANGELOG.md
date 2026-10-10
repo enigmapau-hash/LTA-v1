@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.15.0
+
+### Added
+- Priorizar la composición en el estado completo
+
+
 ## v1.14.0
 
 ### Added
