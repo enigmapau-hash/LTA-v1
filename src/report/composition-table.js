@@ -5,8 +5,7 @@
       const champion = comp[valueKey];
       const data = findRoleRow(role.key, champion);
       const meta = champion ? getChampionMeta(champion) : null;
-      const missing = Boolean(champion) && !data;
-      const unknown = Boolean(champion) && !findRoleRow(role.key, champion);
+      const notFound = Boolean(champion) && !data;
 
       const iconMarkup = meta
         ? `<img class="champion-icon" src="${escapeHtml(meta.iconUrl)}" alt="" loading="lazy" />`
@@ -15,7 +14,7 @@
           )}</div>`;
 
       return `
-        <tr class="${missing ? "is-missing" : ""} ${unknown ? "is-unknown" : ""}">
+        <tr class="${notFound ? "is-missing is-unknown" : ""}">
           <td data-label="Rol" class="role-cell">${escapeHtml(role.label)}</td>
           <td data-label="Campeón">
             <div class="champion-cell">

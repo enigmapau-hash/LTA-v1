@@ -19,7 +19,7 @@ Mini PWA para reproducir en el navegador la pestaña **Composición** del Excel 
 - `src/ui/`: controlador de la aplicación y comportamiento de los selectores, la navegación, la vista previa y la versión.
 - `src/data/`: lectura y normalización del workbook y metadatos opcionales de campeones.
 - `src/domain/composition-logic.js`: validación y búsquedas puras usadas por la interfaz actual.
-- `src/domain/composition-engine.js`: evaluación determinista, pura e independiente de una composición con los atributos del workbook. Informa identidad principal/secundaria, condición de victoria, fortalezas, debilidades y cohesión; todavía no altera la salida visible.
+- `src/domain/composition-engine.js`: evaluación determinista y pura de la composición con los atributos del workbook. Informa identidad principal/secundaria, condición de victoria, fortalezas, debilidades y cohesión; alimenta el análisis estratégico del informe visible.
 - `src/report/`: renderizado de la tabla de resultado y resumen visible.
 - `src/utils/`: utilidades compartidas de texto.
 - `sw.js`: caché offline de los recursos de la app, incluida la librería SheetJS.

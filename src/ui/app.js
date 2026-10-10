@@ -310,10 +310,6 @@ function selectChampion(roleKey, championName) {
   scheduleAnalyze();
 }
 
-function renderChampionOptions() {
-  closeAllMenus();
-}
-
 function renderComposition(comp) {
   window.LTACompositionReport.render({
     container: els.result,
@@ -405,13 +401,13 @@ async function loadWorkbook() {
   draftData = await window.LTAWorkbookReader.loadWorkbook();
   workbookReady = Boolean(draftData);
   if (!workbookReady) {
-    renderChampionOptions();
+    closeAllMenus();
     setStatus("Sin base");
     renderEmpty("No se pudo cargar la base de campeones (Draft Pool.xlsx).");
     return;
   }
 
-  renderChampionOptions();
+  closeAllMenus();
   setStatus("Base cargada");
   scheduleAnalyze();
 }
