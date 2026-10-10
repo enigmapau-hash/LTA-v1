@@ -44,8 +44,14 @@ async function main(){
   assert.equal(await page.locator(".result-summary__global").count(),0,"no aparece el resumen global redundante");
   assert.equal(await page.locator(".result-summary__roles").count(),0,"no se genera una segunda lista de campeones redundante");
   assert.equal(await strategy.evaluate(n=>n.closest(".table-wrap")===null),true,"el informe estratégico debe quedar fuera del contenedor desplazable de la tabla");
+  const completeTable=page.locator(".composition-table.is-complete");
+  assert.equal(await completeTable.locator("thead th").allInnerTexts().then(values=>values.map(value=>value.trim()).join("|")),"Rol|Campeón|Función|Ritmo","la alineación conserva solo columnas que complementan el informe");
+  assert.equal(await completeTable.locator("tbody tr").count(),5,"la alineación completa mantiene los cinco roles");
+  assert.equal(await completeTable.locator("tbody tr").first().locator("td").count(),4,"cada rol mantiene campeón, función y ritmo");
+  assert.match(await completeTable.innerText(),/Ornn/);assert.match(await completeTable.innerText(),/Lulu/);
+  assert.equal(await strategy.evaluate(n=>n.getBoundingClientRect().top)>await completeTable.evaluate(n=>n.getBoundingClientRect().top),true,"la composición aparece antes que el análisis");
   assert.match(await page.locator(".composition-table").innerText(),/Ornn/);assert.match(await page.locator(".composition-table").innerText(),/Sejuani/);
-  for(const width of widths){await page.setViewportSize({width,height:900});const layout=await page.evaluate(()=>({strategy:document.querySelector(".result-summary__strategy").getBoundingClientRect(),table:document.querySelector(".composition-table").getBoundingClientRect()}));assert.equal(layout.strategy.width<=width,true,"el informe estratégico cabe en "+width+" px");assert.equal(layout.strategy.top<layout.table.top,true,"el informe estratégico precede a la tabla en "+width+" px");}
+  for(const width of widths){await page.setViewportSize({width,height:900});const layout=await page.evaluate(()=>({strategy:document.querySelector(".result-summary__strategy").getBoundingClientRect(),table:document.querySelector(".composition-table").getBoundingClientRect(),scrollWidth:document.documentElement.scrollWidth}));assert.equal(layout.strategy.width<=width,true,"el informe estratégico cabe en "+width+" px");assert.equal(layout.strategy.top>layout.table.top,true,"la composición precede al informe en "+width+" px");assert.equal(layout.scrollWidth<=width,true,"la composición completa no desborda en "+width+" px");}
   await page.setViewportSize({width:1280,height:900});
   const splitPushPicks={top:"Fiora",jungle:"Viego",mid:"Twisted Fate",adc:"Ezreal",support:"Braum"};
   for(const [role,champion] of Object.entries(splitPushPicks))await page.locator("#"+role).fill(champion);

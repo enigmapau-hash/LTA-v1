@@ -111,11 +111,11 @@
     const items = rows.map((row) => {
       const role = text(row.querySelector('[data-label="Rol"]'));
       const champion = text(row.querySelector('[data-label="Campeón"] .champion-name'));
-      const identity = text(row.querySelector('[data-label="Identidad"]'));
-      const functionLabel = text(row.querySelector('[data-label="Función"]'));
-      const tempo = text(row.querySelector('[data-label="Ritmo"]'));
-      const strengths = text(row.querySelector('[data-label="Fortalezas"]'));
-      const weaknesses = text(row.querySelector('[data-label="Debilidades"]'));
+      const identity = row.dataset.identity || text(row.querySelector('[data-label="Identidad"]'));
+      const functionLabel = row.dataset.function || text(row.querySelector('[data-label="Función"]'));
+      const tempo = row.dataset.tempo || text(row.querySelector('[data-label="Ritmo"]'));
+      const strengths = row.dataset.strengths || text(row.querySelector('[data-label="Fortalezas"]'));
+      const weaknesses = row.dataset.weaknesses || text(row.querySelector('[data-label="Debilidades"]'));
       const missing = row.classList.contains("is-missing");
       const unknown = row.classList.contains("is-unknown");
       return { role, champion, identity, functionLabel, tempo, strengths, weaknesses, missing, unknown };
@@ -164,7 +164,11 @@
     `;
 
     const tableSection = table.closest(".table-wrap") || table.parentElement;
-    tableSection?.before(summary);
+    if (ready) {
+      tableSection?.after(summary);
+    } else {
+      tableSection?.before(summary);
+    }
   }
 
   function scheduleBuild() {
