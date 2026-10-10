@@ -6,7 +6,7 @@ const http = require("node:http");
 const path = require("node:path");
 const { chromium } = require("playwright");
 const root = path.resolve(__dirname, "..");
-const widths = [320, 375, 768, 1280];
+const widths = [320, 375, 390, 768, 1280];
 const champions = ["Aatrox", "Briar", "Anivia", "Draven", "Janna"];
 function serverForApp() {
  const mime={".css":"text/css",".html":"text/html",".js":"text/javascript",".json":"application/json",".png":"image/png",".svg":"image/svg+xml",".xlsx":"application/octet-stream"};
@@ -22,7 +22,7 @@ async function main(){
   for(const width of widths){
    await page.setViewportSize({width,height:900});await page.goto("http://127.0.0.1:"+server.address().port+"/",{waitUntil:"domcontentloaded"});await page.waitForFunction(()=>document.querySelector("#statusPill")?.textContent==="Faltan campeones");
    assert.equal(await page.locator("#statusPill").getAttribute("role"),"status");assert.equal(await page.locator("#statusPill").getAttribute("aria-live"),"polite");
-   const cols=width<=720?1:width<=860?2:width<=1180?3:5;assert.equal(await page.locator(".roles-grid").evaluate(n=>getComputedStyle(n).gridTemplateColumns.split(" ").length),cols,"columnas @"+width);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,"overflow @"+width);
+   const cols=width<390?1:width<=720?2:width<=860?2:width<=1180?3:5;assert.equal(await page.locator(".roles-grid").evaluate(n=>getComputedStyle(n).gridTemplateColumns.split(" ").length),cols,"columnas @"+width);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,"overflow @"+width);
    for(const id of ["top","jungle","mid","adc","support"]){const el=page.locator("#"+id);assert.equal(await el.evaluate(n=>n.labels?.length===1),true,"label #"+id);assert.equal(await el.getAttribute("role"),"combobox");}
    await page.keyboard.press("Tab");assert.equal(await page.evaluate(()=>document.activeElement.id),"top");assert.notEqual(await page.locator("#top").evaluate(n=>getComputedStyle(n).outlineStyle),"none","focus visible");
    for(let i=0;i<champions.length;i++){const id=["top","jungle","mid","adc","support"][i];await page.keyboard.type(champions[i]);await page.keyboard.press("Enter");assert.equal(await page.locator("#"+id).inputValue(),champions[i]);if(i<4){await page.keyboard.press("Tab");assert.equal(await page.evaluate(()=>document.activeElement.id),["jungle","mid","adc","support"][i]);}}
@@ -40,7 +40,11 @@ async function main(){
   assert.match(await strategy.innerText(),/Protege al ADC/i);assert.match(await strategy.innerText(),/Frontline/i);assert.match(await strategy.innerText(),/Poca presión lateral/i);
   assert.match(await strategy.innerText(),/Mayor soporte: Lulu\. Quitar Lulu reduce 18 puntos de ajuste/i);assert.match(await strategy.innerText(),/La identidad se mantiene al retirar cualquiera de los cinco picks/i);
   assert.equal(await page.locator(".result-summary__global").count(),0,"el resumen global redundante se oculta en una composición completa");
-  assert.match(await page.locator(".result-summary__roles").innerText(),/TOP\s+Ornn/);assert.match(await page.locator(".composition-table").innerText(),/Sejuani/);
+  assert.equal(await page.locator(".result-summary__roles").evaluate(n=>getComputedStyle(n).display),"none","la fila de campeones duplicada se oculta para priorizar el informe y la tabla");
+  assert.equal(await strategy.evaluate(n=>n.closest(".table-wrap")===null),true,"el informe estratégico debe quedar fuera del contenedor desplazable de la tabla");
+  assert.match(await page.locator(".composition-table").innerText(),/Ornn/);assert.match(await page.locator(".composition-table").innerText(),/Sejuani/);
+  for(const width of widths){await page.setViewportSize({width,height:900});const layout=await page.evaluate(()=>({strategy:document.querySelector(".result-summary__strategy").getBoundingClientRect(),table:document.querySelector(".composition-table").getBoundingClientRect()}));assert.equal(layout.strategy.width<=width,true,"el informe estratégico cabe en "+width+" px");assert.equal(layout.strategy.top<layout.table.top,true,"el informe estratégico precede a la tabla en "+width+" px");}
+  await page.setViewportSize({width:1280,height:900});
   const splitPushPicks={top:"Fiora",jungle:"Viego",mid:"Twisted Fate",adc:"Ezreal",support:"Braum"};
   for(const [role,champion] of Object.entries(splitPushPicks))await page.locator("#"+role).fill(champion);
   await page.waitForFunction(()=>document.querySelector(".result-summary__strategy h3")?.textContent.includes("Split Push"));
@@ -64,7 +68,7 @@ async function main(){
   const planItems=await supportSuggestions.locator(".pick-recommendations__plans li").allInnerTexts();assert.equal(planItems.length,2,"el plan se muestra una vez por orientación distinta, no una vez por campeón");assert.equal(new Set(planItems).size,planItems.length,"no se repiten explicaciones de plan");
   await page.locator("#support").fill("Lulu");await page.waitForFunction(()=>document.querySelector(".result-summary__strategy h3")?.textContent.includes("Front to Back"));
   assert.equal(await page.locator(".pick-recommendations").count(),0,"las recomendaciones se ocultan al completar la composición");
-  assert.deepEqual(pageErrors,[],"sin errores JavaScript");assert.deepEqual(consoleErrors,[],"sin errores en consola");console.log("UX validada: 320, 375, 768, 1280 px; flujo completo con teclado; etiquetas, estado accesible, foco visible, tabla y consola.");
+  assert.deepEqual(pageErrors,[],"sin errores JavaScript");assert.deepEqual(consoleErrors,[],"sin errores en consola");console.log("UX validada: 320, 375, 390, 768, 1280 px; informe estratégico adaptativo; teclado, accesibilidad, tabla y consola.");
  }finally{if(browser)await browser.close();await new Promise((r,j)=>server.close(e=>e?j(e):r()));}
 }
 main().catch(e=>{console.error(e);process.exitCode=1;});

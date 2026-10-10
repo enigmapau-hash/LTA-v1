@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.11.0
+
+### Added
+- Redesign application layout to prioritize strategic analysis
+
+
 ## v1.10.0
 
 ### Added

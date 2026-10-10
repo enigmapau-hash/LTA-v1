@@ -1,10 +1,10 @@
 {
-  "version": "v1.10.0",
+  "version": "v1.11.0",
   "track": "Actualización funcional",
   "label": "Preview",
   "updated": "2026-10-10",
   "summary": [
-    "Clarify pick recommendation affinity and rationale"
+    "Redesign application layout to prioritize strategic analysis"
   ],
   "pending": []
 }

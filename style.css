@@ -271,7 +271,8 @@ button.secondary {
 }
 
 .result-box {
-  display: block;
+  display: grid;
+  gap: 12px;
 }
 
 .table-wrap {

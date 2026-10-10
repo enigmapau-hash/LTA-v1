@@ -248,7 +248,7 @@ button.secondary {
 
 /* Visual polish overrides consolidated from visual-polish.css */
 .app-shell {
-  gap: 18px;
+  gap: var(--stage3-shell-gap, 16px);
 }
 
 .hero {
