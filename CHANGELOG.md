@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.13.0
+
+### Added
+- Compactar la lectura del informe estratégico
+
+
 ## v1.12.0
 
 ### Added
