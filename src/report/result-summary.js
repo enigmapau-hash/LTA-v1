@@ -72,7 +72,7 @@
     return `
       <section class="result-summary__strategy" aria-labelledby="composition-analysis-title">
         <div class="result-summary__strategy-heading">
-          <p class="result-summary__eyebrow">Análisis estratégico</p>
+          <p class="result-summary__eyebrow">Lectura estratégica</p>
           <h3 id="composition-analysis-title">${identity}</h3>
           ${hasIdentity ? "" : `<p>${escapeHtml(report.executiveSummary)}</p>`}
         </div>
