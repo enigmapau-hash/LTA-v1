@@ -2,10 +2,8 @@
   const result = document.getElementById("result");
   if (!result) return;
 
-  const splitList = window.LTAUtils?.splitList;
   const escapeHtml = window.LTAUtils?.escapeHtml || ((value) => String(value));
   const analyzeComposition = window.LTACompositionEngine?.analyzeComposition;
-  if (typeof splitList !== "function") return;
 
   let refreshQueued = false;
 
@@ -14,17 +12,6 @@
   function clearSummary() {
     delete result.dataset.summarySignature;
     result.querySelector(".result-summary")?.remove();
-  }
-
-  function normalizeLabel(value) {
-    return String(value || "").trim().replace(/\s+/g, " ");
-  }
-
-  function topCounts(map, limit = 3) {
-    return [...map.entries()]
-      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "es"))
-      .slice(0, limit)
-      .map(([label, count]) => ({ label, count }));
   }
 
   function renderList(items, emptyText = "Sin datos disponibles.") {
@@ -131,8 +118,7 @@
       const weaknesses = text(row.querySelector('[data-label="Debilidades"]'));
       const missing = row.classList.contains("is-missing");
       const unknown = row.classList.contains("is-unknown");
-      const icon = row.querySelector(".champion-icon")?.outerHTML || "";
-      return { role, champion, identity, functionLabel, tempo, strengths, weaknesses, missing, unknown, icon };
+      return { role, champion, identity, functionLabel, tempo, strengths, weaknesses, missing, unknown };
     });
 
     const signature = items
@@ -148,99 +134,33 @@
     const problems = items.filter((item) => item.missing || item.unknown || !item.champion || item.champion === "—").length;
     const ready = problems === 0;
 
-    const identityCounts = new Map();
-    const functionCounts = new Map();
-    const tempoCounts = new Map();
-    for (const item of items) {
-      for (const label of splitList(item.identity)) {
-        const key = normalizeLabel(label);
-        if (!key) continue;
-        identityCounts.set(key, (identityCounts.get(key) || 0) + 1);
-      }
-      for (const label of splitList(item.functionLabel)) {
-        const key = normalizeLabel(label);
-        if (!key) continue;
-        functionCounts.set(key, (functionCounts.get(key) || 0) + 1);
-      }
-      for (const label of splitList(item.tempo)) {
-        const key = normalizeLabel(label);
-        if (!key) continue;
-        tempoCounts.set(key, (tempoCounts.get(key) || 0) + 1);
-      }
-    }
-
-    const identityTop = topCounts(identityCounts, 2);
-    const functionTop = topCounts(functionCounts, 2);
-    const tempoTop = topCounts(tempoCounts, 2);
-    const globalPreview = [identityTop[0]?.label, functionTop[0]?.label, tempoTop[0]?.label].filter(Boolean).join(" · ");
+    const missingRoles = items
+      .filter((item) => !item.champion || item.champion === "—")
+      .map((item) => item.role);
+    const invalidChampions = items
+      .filter((item) => item.champion && item.champion !== "—" && (item.missing || item.unknown))
+      .map((item) => item.champion);
 
     const summary = document.createElement("section");
     summary.className = `result-summary${ready ? " is-ready" : " is-pending"}`;
     summary.innerHTML = `
       <div class="result-summary__header">
         <div>
-          <p class="result-summary__eyebrow">Vista rápida</p>
-          <h3>${ready ? "Composición lista" : "Composición en revisión"}</h3>
-          <p class="result-summary__subhead">${completed}/5 campeones detectados · ${problems} incidencias</p>
+          <p class="result-summary__eyebrow">${ready ? "Equipo completo" : "Composición incompleta"}</p>
+          <h3>${ready ? "Composición lista" : "Completa tu equipo"}</h3>
+          ${ready ? "" : `<p class="result-summary__subhead">${missingRoles.length
+            ? `Faltan: ${missingRoles.map(escapeHtml).join(" · ")}. Al completar los cinco roles verás el análisis estratégico.`
+            : `Revisa: ${invalidChampions.map(escapeHtml).join(" · ")}.`}</p>`}
         </div>
         <div class="result-summary__stats">
-          <span class="result-summary__stat">
-            <strong>${completed}/5</strong>
-            <small>Campeones</small>
-          </span>
           <span class="result-summary__stat${ready ? " is-good" : " is-warning"}">
-            <strong>${ready ? "OK" : problems}</strong>
-            <small>${ready ? "Sin errores" : "Revisar"}</small>
+            <strong>${completed}/5</strong>
+            <small>Roles elegidos</small>
           </span>
         </div>
       </div>
-
-      ${ready ? "" : `<details class="result-summary__global is-pending" open>
-        <summary class="result-summary__global-summary">
-          <div>
-            <p class="result-summary__eyebrow">Sinergia global</p>
-            <h4>${ready ? "Resumen compacto" : "Ayuda para completar"}</h4>
-            <p class="result-summary__global-note">${globalPreview || "Lectura compacta de identidades, funciones y ritmo."}</p>
-          </div>
-          <span class="result-summary__global-toggle">${ready ? "Ver detalle" : "Ocultar ayuda"}</span>
-        </summary>
-
-        <div class="result-summary__global-body">
-          <div class="result-summary__chip-row">
-            ${identityTop.length ? identityTop.map((item) => `<span class="result-summary__chip"><strong>${item.label}</strong><small>${item.count}</small></span>`).join("") : `<span class="result-summary__chip is-empty">Sin identidad</span>`}
-            ${functionTop.length ? functionTop.map((item) => `<span class="result-summary__chip"><strong>${item.label}</strong><small>${item.count}</small></span>`).join("") : `<span class="result-summary__chip is-empty">Sin función</span>`}
-            ${tempoTop.length ? tempoTop.map((item) => `<span class="result-summary__chip"><strong>${item.label}</strong><small>${item.count}</small></span>`).join("") : `<span class="result-summary__chip is-empty">Sin ritmo</span>`}
-          </div>
-
-        </div>
-      </details>`}
 
       ${ready ? renderStrategicReport(items) : ""}
-
-      <div class="result-summary__roles">
-        ${items
-          .map((item) => {
-            const status = item.missing || item.unknown || !item.champion || item.champion === "—" ? "is-issue" : "is-ok";
-            const champion = item.champion || "—";
-            const identity = item.identity || (ready ? "Listo" : "Pendiente");
-            const functionLabel = item.functionLabel || (ready ? "Listo" : "Pendiente");
-            const icon = item.icon || `<span class="result-summary__icon placeholder" aria-hidden="true">${champion.slice(0, 2).toUpperCase()}</span>`;
-            return `
-              <article class="result-summary__role ${status}">
-                <div class="result-summary__role-icon">${icon}</div>
-                <div class="result-summary__role-copy">
-                  <span class="result-summary__role-label">${item.role || "Rol"}</span>
-                  <strong>${champion}</strong>
-                  <div class="result-summary__role-meta">
-                    <small><span class="result-summary__role-k">Identidad</span>${identity}</small>
-                    <small><span class="result-summary__role-k">Función</span>${functionLabel}</small>
-                  </div>
-                </div>
-              </article>
-            `;
-          })
-          .join("")}
-      </div>
     `;
 
     const tableSection = table.closest(".table-wrap") || table.parentElement;

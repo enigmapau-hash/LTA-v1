@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.13.0",
+    version: "v1.14.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-10",
-    summary: ["Compactar la lectura del informe estratégico"],
+    summary: ["Simplificar la vista de composición incompleta"],
     pending: [],
   };
 
