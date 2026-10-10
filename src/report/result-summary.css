@@ -1,7 +1,7 @@
 .result-summary {
   display: grid;
   gap: 14px;
-  margin-bottom: 14px;
+  margin-bottom: 0;
   padding: 14px;
   border: 1px solid var(--line);
   border-radius: 16px;
@@ -78,6 +78,11 @@
   display: grid;
   gap: 10px;
   grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.result-summary__subhead,
+.result-summary__roles {
+  display: none;
 }
 
 .result-summary__role {
@@ -270,14 +275,14 @@
   display: grid;
   gap: 12px;
   padding: 14px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(226, 41, 47, 0.24);
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.02);
+  background: linear-gradient(145deg, rgba(226, 41, 47, 0.055), rgba(255, 255, 255, 0.015) 42%);
 }
 
 .result-summary__strategy-heading h3 {
   margin: 0;
-  font-size: 1.08rem;
+  font-size: 1.2rem;
 }
 
 .result-summary__strategy-heading > p:last-child {
@@ -287,7 +292,8 @@
 
 .result-summary__strategy-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1.25fr) repeat(2, minmax(0, 1fr));
+  align-items: start;
   gap: 10px;
 }
 

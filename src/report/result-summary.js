@@ -240,7 +240,8 @@
       </div>
     `;
 
-    table.parentElement?.insertBefore(summary, table);
+    const tableSection = table.closest(".table-wrap") || table.parentElement;
+    tableSection?.before(summary);
   }
 
   function scheduleBuild() {

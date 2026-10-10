@@ -1,5 +1,5 @@
 :root {
-  --stage3-shell-gap: 20px;
+  --stage3-shell-gap: 16px;
 }
 
 .app-shell {
@@ -217,6 +217,16 @@ button {
     right: 12px;
     left: 12px;
     bottom: 64px;
+  }
+}
+
+@media (max-width: 720px) and (min-width: 390px) {
+  .roles-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .roles-grid .picker:last-child {
+    grid-column: 1 / -1;
   }
 }
 
