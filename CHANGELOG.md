@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.20.0
+
+### Added
+- Eliminar categoría genérica del panel de versión
+
+
 ## v1.19.0
 
 ### Added

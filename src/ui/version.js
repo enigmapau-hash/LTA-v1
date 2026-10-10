@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.19.0",
+    version: "v1.20.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-10",
-    summary: ["Eliminar etiqueta redundante en recomendaciones"],
+    summary: ["Eliminar categoría genérica del panel de versión"],
     pending: [],
   };
 
@@ -26,7 +26,6 @@
     panel.innerHTML = `
       <div class="version-panel__title">
         <h2>${current.version}</h2>
-        <p class="version-panel__meta">${current.track}</p>
       </div>
       ${current.updated ? `<p class="version-panel__meta">Actualizado: ${current.updated}</p>` : ""}
       ${
