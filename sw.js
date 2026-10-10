@@ -1,4 +1,4 @@
-const CACHE_NAME = "lol-team-analyzer-v32";
+const CACHE_NAME = "lol-team-analyzer-v33";
 const ASSETS = [
   "./",
   "./index.html",
