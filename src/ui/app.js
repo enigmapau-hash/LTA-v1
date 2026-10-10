@@ -268,7 +268,7 @@ function renderRoleMenu(roleKey, query = "") {
           `;
         })
         .join("")
-    : `<div class="picker-empty">${draftData ? "Sin resultados" : "Cargando campeones..."}</div>`;
+    : `<div class="picker-empty">${draftData ? "Sin resultados" : "Cargando…"}</div>`;
 
   menu.hidden = false;
   menu.setAttribute("aria-hidden", "false");

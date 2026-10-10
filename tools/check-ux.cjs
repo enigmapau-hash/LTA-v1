@@ -19,6 +19,20 @@ async function main(){
   browser=await chromium.launch(launchOptions);const page=await browser.newPage({serviceWorkers:"block"});const pageErrors=[],consoleErrors=[];
   page.on("pageerror",e=>pageErrors.push(e.message));page.on("console",m=>{if(m.type()==="error")consoleErrors.push(m.text());});
   await page.route("https://ddragon.leagueoflegends.com/**",r=>r.fulfill({status:200,contentType:"application/json",body:r.request().url().endsWith("/versions.json")?'["14.1.1"]':'{"data":{}}'}));
+  const loadingPage=await browser.newPage({serviceWorkers:"block"});
+  await loadingPage.route("https://ddragon.leagueoflegends.com/**",r=>r.fulfill({status:200,contentType:"application/json",body:r.request().url().endsWith("/versions.json")?'["14.1.1"]':'{"data":{}}'}));
+  let releaseWorkbookRequest,notifyWorkbookRequest;
+  const workbookRequestGate=new Promise(resolve=>{releaseWorkbookRequest=resolve;});
+  const workbookRequestStarted=new Promise(resolve=>{notifyWorkbookRequest=resolve;});
+  await loadingPage.route("**/*.xlsx",async route=>{notifyWorkbookRequest();await workbookRequestGate;await route.continue();});
+  await loadingPage.goto("http://127.0.0.1:"+server.address().port+"/",{waitUntil:"domcontentloaded"});
+  await workbookRequestStarted;
+  assert.equal(await loadingPage.locator("#statusPill").innerText(),"Cargando campeones");
+  await loadingPage.locator("#top").click();
+  assert.equal((await loadingPage.locator("#topMenu .picker-empty").innerText()).trim(),"Cargando…","el menú de rol evita repetir el mensaje del estado superior");
+  releaseWorkbookRequest();
+  await loadingPage.waitForFunction(()=>document.querySelector("#statusPill")?.textContent==="Completa tu equipo");
+  await loadingPage.close();
   for(const width of widths){
    await page.setViewportSize({width,height:900});await page.goto("http://127.0.0.1:"+server.address().port+"/",{waitUntil:"domcontentloaded"});await page.waitForFunction(()=>document.querySelector("#statusPill")?.textContent==="Completa tu equipo");assert.match(await page.locator("#result").innerText(),/El análisis aparecerá aquí al completar los cinco roles\./);
    assert.equal(await page.title(),"League Team Analyzer");assert.equal(await page.locator("h1").innerText(),"League Team Analyzer");assert.doesNotMatch(await page.locator('meta[name="description"]').getAttribute("content"),/Excel|mini app/i,"la descripción presenta el producto, no su implementación");

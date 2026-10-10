@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.23.0
+
+### Added
+- Reducir repetición durante la carga de campeones
+
+
 ## v1.22.0
 
 ### Added
