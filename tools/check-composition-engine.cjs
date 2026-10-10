@@ -109,6 +109,9 @@ for (const reference of references) {
   assert.ok(result.report.gamePlan.length, `${reference.name} debe producir un plan de partida`);
   assert.ok(result.report.risks.length, `${reference.name} debe exponer riesgos`);
   assert.ok(result.report.internalSynergy, `${reference.name} debe explicar su sinergia interna`);
+  assert.ok(result.report.planSupport, `${reference.name} debe explicar qué picks sostienen su plan`);
+  assert.ok(Array.isArray(result.report.planSupport.strongestPicks), `${reference.name} debe devolver los picks de mayor soporte`);
+  assert.ok(Array.isArray(result.report.planSupport.identityChanges), `${reference.name} debe medir los cambios al retirar un pick`);
   assert.equal(result.report.picks.length, 5, `${reference.name} debe conservar los cinco picks`);
   assert.match(result.report.bans.explanation, /No hay datos de campeones rivales/i);
 }
@@ -122,6 +125,7 @@ assert.ok(frontToBack.weaknesses.some((weakness) => /lateral/i.test(weakness)));
 assert.equal(results.get("Front to Back").result.report.winCondition, frontToBack.winCondition);
 assert.deepEqual(results.get("Front to Back").result.report.strengths, frontToBack.strengths);
 assert.deepEqual(results.get("Front to Back").result.report.weaknesses, frontToBack.weaknesses);
+assert.equal(frontToBack.report.planSupport.identityChanges.length, 0, "Front to Back debe conservar su identidad al retirar cualquier pick individual");
 
 const dive = results.get("Dive").result;
 assert.match(dive.winCondition, /backline rival/i);
@@ -138,6 +142,10 @@ assert.ok(poke.weaknesses.some((weakness) => /engages directos/i.test(weakness))
 const splitPush = results.get("Split Push").result;
 assert.match(splitPush.winCondition, /presión lateral/i);
 assert.ok(splitPush.weaknesses.some((weakness) => /teamfights prolongadas/i.test(weakness)));
+assert.ok(
+  splitPush.report.planSupport.identityChanges.some((item) => item.champion === "Fiora" && item.identityWithout === null),
+  "Split Push debe señalar a Fiora como una pieza cuya ausencia elimina una identidad principal clara"
+);
 
 const teamfight = results.get("Teamfight").result;
 assert.ok(teamfight.strengths.some((strength) => /definitivas/i.test(strength)));
@@ -170,6 +178,8 @@ assert.match(unbalanced.cohesion.explanation, /No hay un plan de partida claro/i
 assert.ok(unbalanced.cohesion.gaps.includes("iniciación compartida"));
 assert.ok(unbalanced.cohesion.gaps.includes("frontline"));
 assert.match(unbalanced.cohesion.explanation, /cuesta coordinar/i);
+assert.equal(unbalanced.report.planSupport, null, "una composición sin identidad clara no debe afirmar dependencias del plan");
+assert.equal(analyzeComposition(results.get("Front to Back").picks.slice(0, 4)).report.planSupport, null, "un draft parcial no debe presentar una evaluación de resiliencia de equipo completo");
 
 for (const { picks, result } of results.values()) {
   assert.deepEqual(analyzeComposition(picks), result, "El análisis debe ser determinista para la misma composición");

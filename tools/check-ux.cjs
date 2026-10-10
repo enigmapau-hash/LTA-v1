@@ -38,6 +38,7 @@ async function main(){
   for(const heading of ["Win condition","Sinergia interna","Debilidades","Plan de partida","Recomendaciones","Picks","Bans"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),0,"el informe no repite el bloque "+heading);}
   assert.equal(await strategy.locator(".result-summary__strategy-card").count(),3,"el resumen estratégico conserva solo tres bloques útiles");
   assert.match(await strategy.innerText(),/Protege al ADC/i);assert.match(await strategy.innerText(),/Frontline/i);assert.match(await strategy.innerText(),/Poca presión lateral/i);
+  assert.match(await strategy.innerText(),/Mayor soporte de la identidad: Lulu/i);assert.match(await strategy.innerText(),/La identidad se mantiene al retirar cualquiera de los cinco picks/i);
   assert.equal(await page.locator(".result-summary__global").count(),0,"el resumen global redundante se oculta en una composición completa");
   assert.match(await page.locator(".result-summary__roles").innerText(),/TOP\s+Ornn/);assert.match(await page.locator(".composition-table").innerText(),/Sejuani/);
   const topInput=page.locator("#top"),selectedTop=await topInput.inputValue();await topInput.click();

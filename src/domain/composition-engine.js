@@ -160,7 +160,7 @@
     });
   }
 
-  function scoreArchetype(picks, archetype) {
+  function scoreArchetype(picks, archetype, expectedTeamSize = picks.length) {
     if (!picks.length) return 0;
     const weightedCoverage = archetype.signals.reduce((sum, signal) => {
       const contributors = picks.filter((pick) => matchesSignal(pick, signal)).length;
@@ -170,7 +170,7 @@
     const signalCoverage = weightedCoverage / archetype.signals.reduce((sum, signal) => sum + signal.weight, 0);
     const championCoverage = picks.filter((pick) =>
       archetype.signals.some((signal) => matchesSignal(pick, signal))
-    ).length / picks.length;
+    ).length / expectedTeamSize;
     let score = Math.round((signalCoverage * 0.55 + championCoverage * 0.45) * 100);
     for (const synergy of archetype.synergies || []) {
       const contributors = new Set();
@@ -184,6 +184,61 @@
     return Math.min(score, 100);
   }
 
+  function rankArchetypes(picks, expectedTeamSize = picks.length) {
+    return ARCHETYPES
+      .map((archetype) => ({
+        id: archetype.id,
+        label: archetype.label,
+        score: scoreArchetype(picks, archetype, expectedTeamSize),
+      }))
+      .sort((a, b) => b.score - a.score || a.label.localeCompare(b.label, "es"));
+  }
+
+  function selectIdentities(scores) {
+    const best = scores[0];
+    const timingProfile = best?.id === "front-to-back" && scores.find((item) =>
+      ["scaling", "early-game"].includes(item.id) && item.score >= 80 && best.score - item.score <= 12
+    );
+    const primaryScore = timingProfile || best;
+    const runnerUp = scores.find((item) => item.id !== primaryScore?.id);
+    const primary = primaryScore && primaryScore.score >= 60
+      ? ARCHETYPES.find((item) => item.id === primaryScore.id)
+      : null;
+    const secondary = primary && runnerUp.score >= 45 && runnerUp.score >= primaryScore.score * 0.62
+      ? ARCHETYPES.find((item) => item.id === runnerUp.id)
+      : null;
+    return { primaryScore, primary, secondary };
+  }
+
+  function assessPlanSupport(picks, primary, primaryScore) {
+    const isComplete = picks.length === 5 && picks.every((pick) => pick.champion && pick.champion !== "—");
+    if (!primary || !isComplete) return null;
+
+    const archetype = ARCHETYPES.find((item) => item.id === primary.id);
+    const counterfactuals = picks.map((pick, index) => {
+      const remaining = picks.filter((_, pickIndex) => pickIndex !== index);
+      const remainingScores = rankArchetypes(remaining, picks.length);
+      const identityWithout = selectIdentities(remainingScores).primary;
+      const scoreWithout = scoreArchetype(remaining, archetype, picks.length);
+      return {
+        role: String(pick.role || ""),
+        champion: String(pick.champion),
+        identityWithout: identityWithout?.label || null,
+        scoreLoss: primaryScore.score - scoreWithout,
+      };
+    });
+    const greatestScoreLoss = Math.max(0, ...counterfactuals.map((item) => item.scoreLoss));
+
+    return {
+      strongestPicks: greatestScoreLoss > 0
+        ? counterfactuals.filter((item) => item.scoreLoss === greatestScoreLoss)
+        : [],
+      identityChanges: counterfactuals
+        .filter((item) => item.identityWithout !== primary.label)
+        .map(({ role, champion, identityWithout }) => ({ role, champion, identityWithout })),
+    };
+  }
+
   function strategicGaps(picks) {
     return STRATEGIC_GAPS.filter((gap) =>
       picks.every((pick) => !matchesSignal(pick, gap))
@@ -195,7 +250,7 @@
     return String(value || "").split(/[,;·]/).map((item) => item.trim()).filter(Boolean);
   }
 
-  function buildReport(picks, primary, secondary, cohesion, strengths, weaknesses) {
+  function buildReport(picks, primary, secondary, cohesion, strengths, weaknesses, planSupport) {
     const identityLabel = primary?.label || "Sin identidad clara";
     const selectedPicks = picks
       .filter((pick) => pick.champion)
@@ -233,6 +288,7 @@
       gamePlan,
       risks,
       internalSynergy,
+      planSupport,
       recommendations,
       picks: selectedPicks,
       bans: { recommendation: null, explanation: "No hay datos de campeones rivales para recomendar bans." },
@@ -241,26 +297,8 @@
 
   function analyzeComposition(input) {
     const picks = Array.isArray(input) ? input.filter(Boolean) : [];
-    const scores = ARCHETYPES
-      .map((archetype) => ({
-        id: archetype.id,
-        label: archetype.label,
-        score: scoreArchetype(picks, archetype),
-      }))
-      .sort((a, b) => b.score - a.score || a.label.localeCompare(b.label, "es"));
-
-    const best = scores[0];
-    const timingProfile = best?.id === "front-to-back" && scores.find((item) =>
-      ["scaling", "early-game"].includes(item.id) && item.score >= 80 && best.score - item.score <= 12
-    );
-    const primaryScore = timingProfile || best;
-    const runnerUp = scores.find((item) => item.id !== primaryScore?.id);
-    const primary = primaryScore && primaryScore.score >= 60
-      ? ARCHETYPES.find((item) => item.id === primaryScore.id)
-      : null;
-    const secondary = primary && runnerUp.score >= 45 && runnerUp.score >= primaryScore.score * 0.62
-      ? ARCHETYPES.find((item) => item.id === runnerUp.id)
-      : null;
+    const scores = rankArchetypes(picks);
+    const { primaryScore, primary, secondary } = selectIdentities(scores);
     const gaps = strategicGaps(picks);
 
     const strengths = primary ? [...primary.strengths] : [];
@@ -275,6 +313,7 @@
             ? `No hay un plan de partida claro: faltan ${gaps.join(", ")}. Sin estos puntos en común, cuesta coordinar cómo iniciar, proteger o convertir las peleas.`
             : "No hay un arquetipo dominante; los atributos de la composición no convergen en un plan común.",
       };
+    const planSupport = assessPlanSupport(picks, primary, primaryScore);
     return {
       identity: {
         primary: primary?.label || null,
@@ -284,7 +323,7 @@
       strengths,
       weaknesses,
       cohesion,
-      report: buildReport(picks, primary, secondary, cohesion, strengths, weaknesses),
+      report: buildReport(picks, primary, secondary, cohesion, strengths, weaknesses, planSupport),
       archetypeScores: scores.map((item) => ({
         ...item,
         selectedAs: item.id === primary?.id ? "primary" : item.id === secondary?.id ? "secondary" : null,

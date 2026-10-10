@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.7.0
+
+### Added
+- Add pick support and identity resilience insights
+
+
 ## v1.6.0
 
 ### Changed
