@@ -42,6 +42,8 @@ async function main(){
   assert.match(await strategy.innerText(),/Protege al ADC/i);assert.match(await strategy.innerText(),/Frontline/i);assert.match(await strategy.innerText(),/Poca presión lateral/i);
   assert.match(await strategy.innerText(),/Pieza clave: Lulu \(−18 puntos de ajuste si falta\)/i);assert.match(await strategy.innerText(),/Estabilidad: la identidad se mantiene aunque falte cualquier pick/i);
   assert.equal(await page.locator(".result-summary__header").evaluate(n=>getComputedStyle(n).display),"none","el estado de validación se omite en composiciones completas");
+  assert.equal(await page.locator(".result-summary.is-ready").evaluate(n=>getComputedStyle(n).paddingTop),"0px","el informe completo evita un marco exterior redundante");
+  assert.equal(await strategy.evaluate(n=>getComputedStyle(n).borderTopWidth),"1px","la tarjeta estratégica mantiene su contorno visible");
   assert.equal(await page.locator(".result-summary__global").count(),0,"no aparece el resumen global redundante");
   assert.equal(await page.locator(".result-summary__roles").count(),0,"no se genera una segunda lista de campeones redundante");
   assert.equal(await strategy.evaluate(n=>n.closest(".table-wrap")===null),true,"el informe estratégico debe quedar fuera del contenedor desplazable de la tabla");

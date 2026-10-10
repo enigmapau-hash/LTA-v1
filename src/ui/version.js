@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.15.0",
+    version: "v1.16.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-10",
-    summary: ["Priorizar la composición en el estado completo"],
+    summary: ["Eliminar el marco visual redundante del informe completo"],
     pending: [],
   };
 
