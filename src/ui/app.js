@@ -268,7 +268,7 @@ function renderRoleMenu(roleKey, query = "") {
           `;
         })
         .join("")
-    : `<div class="picker-empty">${draftData ? "Sin resultados" : "Cargando base del Excel..."}</div>`;
+    : `<div class="picker-empty">${draftData ? "Sin resultados" : "Cargando campeones..."}</div>`;
 
   menu.hidden = false;
   menu.setAttribute("aria-hidden", "false");
@@ -341,8 +341,8 @@ function renderComposition(comp) {
 }
 
 function renderNeedMoreData() {
-  renderEmpty("Cargando base del Excel...");
-  setStatus("Cargando base...");
+  renderEmpty("Preparando el análisis...");
+  setStatus("Preparando análisis");
 }
 
 function analyze() {
@@ -353,7 +353,7 @@ function analyze() {
     clearInputValidity();
     closeAllMenus();
     renderEmpty("Selecciona un campeón en cada rol.");
-    setStatus("Faltan campeones");
+    setStatus("Completa tu equipo");
     return;
   }
 
@@ -366,7 +366,7 @@ function analyze() {
   if (duplicate) {
     markDuplicateInputs(duplicate);
     renderEmpty(`No repitas campeones. Corrige ${escapeHtml(duplicate)}.`);
-    setStatus("Campeón repetido");
+    setStatus("No repitas campeones");
     return;
   }
 
@@ -383,10 +383,10 @@ function analyze() {
   setBusy(true);
   try {
     renderComposition(comp);
-    setStatus("Listo");
+    setStatus("Análisis actualizado");
   } catch (error) {
-    renderEmpty(`No se pudo cargar la composición: ${escapeHtml(error.message || "error desconocido")}`);
-    setStatus("Error");
+    renderEmpty("No se pudo generar el análisis. Inténtalo de nuevo.");
+    setStatus("No se pudo analizar");
   } finally {
     setBusy(false);
   }
@@ -409,7 +409,7 @@ function clearSelection() {
   }
   clearInputValidity();
   renderEmpty("Selecciona un campeón en cada rol.");
-  setStatus("Selección limpia");
+  setStatus("Composición reiniciada");
 }
 
 async function loadChampionMeta() {
@@ -421,13 +421,13 @@ async function loadWorkbook() {
   workbookReady = Boolean(draftData);
   if (!workbookReady) {
     closeAllMenus();
-    setStatus("Sin base");
-    renderEmpty("No se pudo cargar la base de campeones (Draft Pool.xlsx).");
+    setStatus("Datos no disponibles");
+    renderEmpty("No se pudieron cargar los campeones. Recarga la página e inténtalo de nuevo.");
     return;
   }
 
   closeAllMenus();
-  setStatus("Base cargada");
+  setStatus("Datos listos");
   scheduleAnalyze();
 }
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.12.0
+
+### Added
+- Identidad propia para League Team Analyzer
+
+
 ## v1.11.0
 
 ### Added

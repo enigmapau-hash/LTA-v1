@@ -87,7 +87,7 @@ async function main() {
 
     await page.goto(origin + "/", { waitUntil: "domcontentloaded" });
     await page.waitForFunction(
-      () => document.querySelector("#statusPill")?.textContent === "Faltan campeones",
+      () => document.querySelector("#statusPill")?.textContent === "Completa tu equipo",
       null,
       { timeout: 20_000 }
     );
@@ -170,7 +170,7 @@ async function main() {
     await page.locator("#top").fill(duplicateChampion);
     await page.locator("#jungle").fill(duplicateChampion);
     await page.waitForFunction(
-      () => document.querySelector("#statusPill")?.textContent.includes("Campeón repetido"),
+      () => document.querySelector("#statusPill")?.textContent.includes("No repitas campeones"),
       null,
       { timeout: 5_000 }
     );

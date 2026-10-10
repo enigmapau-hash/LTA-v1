@@ -1,13 +1,10 @@
-# LoL Team Analyzer
+# League Team Analyzer
 
-Mini PWA para reproducir en el navegador la pestaña **Composición** del Excel del repositorio.
+Analiza composiciones de League of Legends y ofrece una lectura estratégica clara para entender cómo jugarlas.
 
-## Estado actual
+## Características
 
-- Versión visible: `v1.11.0`
-- Fuente de datos: `Draft Pool.xlsx` de este repositorio.
-- La app lee el Excel en el navegador y genera el resultado a partir de la hoja **Composición**.
-- Cada rol usa su lista de campeones de la hoja correspondiente.
+- Versión visible: `v1.12.0`
 - No permite campeones repetidos.
 - Muestra iconos oficiales de campeones cuando están disponibles.
 - El selector, la vista rápida y el resultado se actualizan sin recargar.
@@ -17,7 +14,7 @@ Mini PWA para reproducir en el navegador la pestaña **Composición** del Excel 
 
 - `index.html` y los CSS de la raíz: documento y estilos de la interfaz.
 - `src/ui/`: controlador de la aplicación y comportamiento de los selectores, la navegación, la vista previa y la versión.
-- `src/data/`: lectura y normalización del workbook y metadatos opcionales de campeones.
+- `src/data/`: lectura de las listas de campeones de `Draft Pool.xlsx` y normalización de sus atributos.
 - `src/domain/composition-logic.js`: validación y búsquedas puras usadas por la interfaz actual.
 - `src/domain/composition-engine.js`: evaluación determinista y pura de la composición con los atributos del workbook. Informa identidad principal/secundaria, condición de victoria, fortalezas, debilidades y cohesión; alimenta el análisis estratégico del informe visible.
 - `src/report/`: renderizado de la tabla de resultado y resumen visible.
@@ -28,7 +25,6 @@ Mini PWA para reproducir en el navegador la pestaña **Composición** del Excel 
 - `tools/check-composition-engine.cjs`: compara el análisis con ocho arquetipos de referencia, una composición híbrida y otra descompensada. Se ejecuta con `npm run test:composition-engine`.
 - `tools/check-composition.cjs`: compara cada selector con su hoja del Excel y comprueba duplicados, entradas inválidas y actualización en tiempo real.
 - `tools/check-ux.cjs`: verifica el flujo por teclado, las etiquetas, el foco visible y el desbordamiento en 320, 375, 768 y 1280 px.
-- `Draft Pool.xlsx`: workbook usado por la app.
 - `tools/bump-version.cjs`: sincroniza la versión y el changelog.
 - `vendor/README.md` y `vendor/LICENSE.txt`: procedencia y licencia de SheetJS.
 

@@ -16,8 +16,9 @@ const previousCacheName = "lol-team-analyzer-v12";
 const xlsxUrl = "/vendor/xlsx.full.min.js";
 
 function validateInstallMetadata() {
-  assert.equal(manifest.name, "LoL Team Analyzer");
-  assert.equal(manifest.short_name, "Team Analyzer");
+  assert.equal(manifest.name, "League Team Analyzer");
+  assert.equal(manifest.short_name, "League Analyzer");
+  assert.doesNotMatch(manifest.description, /Excel/i);
   assert.equal(manifest.display, "standalone");
   assert.equal(manifest.start_url, ".");
   assert.equal(manifest.scope, ".");
@@ -111,7 +112,7 @@ async function waitForBaseLoaded(page) {
     timeout: 30_000,
   });
   const status = await page.locator("#statusPill").innerText();
-  assert.notEqual(status, "Sin base", "La app no debe mostrar error de carga del Excel.");
+  assert.notEqual(status, "Datos no disponibles", "La app debe cargar los datos de campeones.");
 }
 
 async function waitForCacheMigration(page, currentCacheName) {

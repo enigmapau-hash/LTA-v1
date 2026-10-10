@@ -20,18 +20,19 @@ async function main(){
   page.on("pageerror",e=>pageErrors.push(e.message));page.on("console",m=>{if(m.type()==="error")consoleErrors.push(m.text());});
   await page.route("https://ddragon.leagueoflegends.com/**",r=>r.fulfill({status:200,contentType:"application/json",body:r.request().url().endsWith("/versions.json")?'["14.1.1"]':'{"data":{}}'}));
   for(const width of widths){
-   await page.setViewportSize({width,height:900});await page.goto("http://127.0.0.1:"+server.address().port+"/",{waitUntil:"domcontentloaded"});await page.waitForFunction(()=>document.querySelector("#statusPill")?.textContent==="Faltan campeones");
+   await page.setViewportSize({width,height:900});await page.goto("http://127.0.0.1:"+server.address().port+"/",{waitUntil:"domcontentloaded"});await page.waitForFunction(()=>document.querySelector("#statusPill")?.textContent==="Completa tu equipo");
+   assert.equal(await page.title(),"League Team Analyzer");assert.equal(await page.locator("h1").innerText(),"League Team Analyzer");assert.doesNotMatch(await page.locator('meta[name="description"]').getAttribute("content"),/Excel|mini app/i,"la descripción presenta el producto, no su implementación");
    assert.equal(await page.locator("#statusPill").getAttribute("role"),"status");assert.equal(await page.locator("#statusPill").getAttribute("aria-live"),"polite");
    const cols=width<390?1:width<=720?2:width<=860?2:width<=1180?3:5;assert.equal(await page.locator(".roles-grid").evaluate(n=>getComputedStyle(n).gridTemplateColumns.split(" ").length),cols,"columnas @"+width);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,"overflow @"+width);
    for(const id of ["top","jungle","mid","adc","support"]){const el=page.locator("#"+id);assert.equal(await el.evaluate(n=>n.labels?.length===1),true,"label #"+id);assert.equal(await el.getAttribute("role"),"combobox");}
    await page.keyboard.press("Tab");assert.equal(await page.evaluate(()=>document.activeElement.id),"top");assert.notEqual(await page.locator("#top").evaluate(n=>getComputedStyle(n).outlineStyle),"none","focus visible");
    for(let i=0;i<champions.length;i++){const id=["top","jungle","mid","adc","support"][i];await page.keyboard.type(champions[i]);await page.keyboard.press("Enter");assert.equal(await page.locator("#"+id).inputValue(),champions[i]);if(i<4){await page.keyboard.press("Tab");assert.equal(await page.evaluate(()=>document.activeElement.id),["jungle","mid","adc","support"][i]);}}
-   await page.waitForFunction(()=>document.querySelector("#statusPill")?.textContent==="Listo");assert.equal(await page.locator(".composition-table tbody tr").count(),5);if(width<=760)assert.equal(await page.locator(".composition-table").evaluate(n=>n.getBoundingClientRect().width<=innerWidth),true);
+   await page.waitForFunction(()=>document.querySelector("#statusPill")?.textContent==="Análisis actualizado");assert.equal(await page.locator(".composition-table tbody tr").count(),5);if(width<=760)assert.equal(await page.locator(".composition-table").evaluate(n=>n.getBoundingClientRect().width<=innerWidth),true);
    await page.keyboard.press("Tab");assert.equal(await page.evaluate(()=>document.activeElement.id),"demoBtn");let badgeReached=false;for(let tab=0;tab<5;tab++){await page.keyboard.press("Tab");if(await page.evaluate(()=>document.activeElement.id)==="versionBadge"){badgeReached=true;break;}}assert.equal(badgeReached,true,"el panel de versión debe ser alcanzable por Tab");await page.keyboard.press("Enter");assert.equal(await page.locator("#versionBadge").getAttribute("aria-expanded"),"true");await page.keyboard.press("Escape");assert.equal(await page.locator("#versionBadge").getAttribute("aria-expanded"),"false");
   }
   const referencePicks={top:"Ornn",jungle:"Sejuani",mid:"Orianna",adc:"Jinx",support:"Lulu"};
   for(const [role,champion] of Object.entries(referencePicks))await page.locator("#"+role).fill(champion);
-  await page.waitForFunction(()=>document.querySelector("#statusPill")?.textContent==="Listo");
+  await page.waitForFunction(()=>document.querySelector("#statusPill")?.textContent==="Análisis actualizado");
   const strategy=page.locator(".result-summary__strategy");await strategy.waitFor({state:"visible"});
   assert.match(await strategy.locator("h3").first().innerText(),/Front to Back/);
   for(const heading of ["Cómo jugarla","Fortalezas","Riesgos"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),1,"el informe muestra "+heading);}
