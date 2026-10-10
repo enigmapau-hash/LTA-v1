@@ -384,7 +384,8 @@ function analyze() {
   setBusy(true);
   try {
     renderComposition(comp);
-    setStatus("Análisis actualizado");
+    const isComplete = ROLE_FIELDS.every((role) => comp[role.key === "botline" ? "adc" : role.key]);
+    setStatus(isComplete ? "Análisis actualizado" : "Composición actualizada");
   } catch (error) {
     renderEmpty("No pudimos preparar el análisis. Inténtalo de nuevo.");
     setStatus("Análisis no disponible");
@@ -428,7 +429,6 @@ async function loadWorkbook() {
   }
 
   closeAllMenus();
-  setStatus("Datos listos");
   scheduleAnalyze();
 }
 
