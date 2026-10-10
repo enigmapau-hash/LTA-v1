@@ -1,10 +1,10 @@
 {
-  "version": "v1.20.0",
+  "version": "v1.21.0",
   "track": "Actualización funcional",
   "label": "Versión",
   "updated": "2026-10-10",
   "summary": [
-    "Eliminar categoría genérica del panel de versión"
+    "Simplificar el distintivo de versión"
   ],
   "pending": []
 }
