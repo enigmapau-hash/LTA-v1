@@ -38,7 +38,7 @@
     const strongestPicks = strongest.map((pick) => pick.champion).join(", ");
     const scoreLoss = strongest[0]?.scoreLoss || 0;
     const support = strongestPicks
-      ? `<p><strong>Mayor soporte:</strong> ${escapeHtml(strongestPicks)}. ${strongest.length > 1 ? `Quitar cualquiera reduce ${scoreLoss} puntos de ajuste.` : `Quitar ${escapeHtml(strongestPicks)} reduce ${scoreLoss} puntos de ajuste.`}</p>`
+      ? `<p><strong>${strongest.length > 1 ? "Piezas clave" : "Pieza clave"}:</strong> ${escapeHtml(strongestPicks)} (−${scoreLoss} puntos de ajuste ${strongest.length > 1 ? "si falta cualquiera" : "si falta"}).</p>`
       : "";
     const changes = new Map();
     for (const item of planSupport.identityChanges) {
@@ -52,11 +52,14 @@
     const fragility = changes.size
       ? [...changes.values()].map(({ identity, gamePlan, champions }) =>
         identity === "sin identidad clara"
-          ? `<li>Si falta ${escapeHtml(champions.join(", "))}, el análisis no conserva una identidad principal clara.</li>`
+          ? `<li>Si falta ${escapeHtml(champions.join(", "))}, el equipo pierde una identidad principal clara.</li>`
           : `<li>Si falta ${escapeHtml(champions.join(", "))}, el plan cambia a ${escapeHtml(identity)}: ${escapeHtml(gamePlan)}</li>`
       ).join("")
-      : "<li>La identidad se mantiene al retirar cualquiera de los cinco picks.</li>";
-    return `<div class="result-summary__strategy-insight">${support}<p><strong>Si falta una pieza:</strong></p><ul>${fragility}</ul></div>`;
+      : "";
+    const stability = changes.size
+      ? `<p><strong>Si falta una pieza:</strong></p><ul>${fragility}</ul>`
+      : "<p><strong>Estabilidad:</strong> la identidad se mantiene aunque falte cualquier pick.</p>";
+    return `<div class="result-summary__strategy-insight">${support}${stability}</div>`;
   }
 
   function renderStrategicReport(items) {
@@ -88,7 +91,7 @@
         </div>
         <div class="result-summary__strategy-grid">
           <article class="result-summary__strategy-card">
-            <h4>Cómo jugarla</h4>
+            <h4>Plan de partida</h4>
             ${renderList(howToPlay, "No hay un plan común definido.")}
             ${renderPlanSupport(report.planSupport)}
           </article>
