@@ -90,7 +90,7 @@
               </div>
             </div>
           </td>
-          ${complete ? "" : `<td data-label="Identidad">${escapeHtml(data?.identity || (champion ? "No encontrado" : ""))}</td>`}
+          ${complete ? "" : `<td data-label="Identidad">${escapeHtml(data?.identity || (champion ? "No disponible" : ""))}</td>`}
           <td data-label="Función">${escapeHtml(data?.function || "")}</td>
           <td data-label="Ritmo">${escapeHtml(data?.tempo || "")}</td>
           ${complete ? "" : `<td data-label="Fortalezas">${escapeHtml(data?.strengths || "")}</td>`}

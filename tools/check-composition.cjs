@@ -170,10 +170,11 @@ async function main() {
     await page.locator("#top").fill(duplicateChampion);
     await page.locator("#jungle").fill(duplicateChampion);
     await page.waitForFunction(
-      () => document.querySelector("#statusPill")?.textContent.includes("No repitas campeones"),
+      () => document.querySelector("#statusPill")?.textContent.includes("Hay campeones repetidos"),
       null,
       { timeout: 5_000 }
     );
+    assert.match(await page.locator("#result").innerText(), /está elegido en más de una posición\. Cambia uno de los dos\./);
     assert.equal(await page.locator("#top").getAttribute("aria-invalid"), "true");
     assert.equal(await page.locator("#jungle").getAttribute("aria-invalid"), "true");
 
@@ -203,7 +204,7 @@ async function main() {
     const invalidChampion = "NoEsUnCampeon";
     await page.locator("#top").fill(invalidChampion);
     await page.waitForFunction(
-      (name) => document.querySelector("#statusPill")?.textContent.includes(name + " no está en la lista de TOP"),
+      (name) => document.querySelector("#statusPill")?.textContent.includes(name + " no está disponible para TOP. Elige otro campeón."),
       invalidChampion,
       { timeout: 5_000 }
     );

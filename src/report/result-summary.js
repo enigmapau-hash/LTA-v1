@@ -14,7 +14,7 @@
     result.querySelector(".result-summary")?.remove();
   }
 
-  function renderList(items, emptyText = "Sin datos disponibles.") {
+  function renderList(items, emptyText = "No hay información para mostrar.") {
     if (!items?.length) return `<p class="result-summary__empty">${escapeHtml(emptyText)}</p>`;
     return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
   }
@@ -79,16 +79,16 @@
         <div class="result-summary__strategy-grid">
           <article class="result-summary__strategy-card">
             <h4>Plan de partida</h4>
-            ${renderList(howToPlay, "No hay un plan común definido.")}
+            ${renderList(howToPlay, "Aún no hay un plan claro.")}
             ${renderPlanSupport(report.planSupport)}
           </article>
           <article class="result-summary__strategy-card">
             <h4>Fortalezas</h4>
-            ${renderList(report.strengths, "No se identifican fortalezas compartidas suficientes.")}
+            ${renderList(report.strengths, "No destacan fortalezas comunes.")}
           </article>
           <article class="result-summary__strategy-card">
             <h4>Riesgos</h4>
-            ${renderList(risks, "No se han detectado riesgos principales.")}
+            ${renderList(risks, "No se aprecian riesgos principales.")}
           </article>
         </div>
       </section>

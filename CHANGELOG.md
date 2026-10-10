@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.17.0
+
+### Added
+- Aclarar mensajes de ayuda y estados vacíos
+
+
 ## v1.16.0
 
 ### Added

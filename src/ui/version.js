@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.16.0",
+    version: "v1.17.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-10",
-    summary: ["Eliminar el marco visual redundante del informe completo"],
+    summary: ["Aclarar mensajes de ayuda y estados vacíos"],
     pending: [],
   };
 
