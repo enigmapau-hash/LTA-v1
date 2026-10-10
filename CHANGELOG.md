@@ -1,5 +1,23 @@
 # Changelog
 
+## v1.4.0
+
+### Added
+- Integrate Composition Engine analysis into the visible report
+
+
+## v1.3.0
+
+### Added
+- Motor determinista interno de análisis de composiciones y reconocimiento de arquetipos
+
+
+## v1.2.6
+
+### Fixed
+- Reorganización interna de UI, datos, lógica de composición e informes
+
+
 ## v1.2.5
 
 ### Fixed

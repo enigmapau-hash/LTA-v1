@@ -15,7 +15,8 @@ function serverForApp() {
 async function main(){
  const server=serverForApp();await new Promise(r=>server.listen(0,"127.0.0.1",r));let browser;
  try{
-  browser=await chromium.launch({headless:true});const page=await browser.newPage({serviceWorkers:"block"});const pageErrors=[],consoleErrors=[];
+  const launchOptions={headless:true};if(process.env.LTA_CHROMIUM_PATH)launchOptions.executablePath=process.env.LTA_CHROMIUM_PATH;
+  browser=await chromium.launch(launchOptions);const page=await browser.newPage({serviceWorkers:"block"});const pageErrors=[],consoleErrors=[];
   page.on("pageerror",e=>pageErrors.push(e.message));page.on("console",m=>{if(m.type()==="error")consoleErrors.push(m.text());});
   await page.route("https://ddragon.leagueoflegends.com/**",r=>r.fulfill({status:200,contentType:"application/json",body:r.request().url().endsWith("/versions.json")?'["14.1.1"]':'{"data":{}}'}));
   for(const width of widths){
@@ -28,6 +29,13 @@ async function main(){
    await page.waitForFunction(()=>document.querySelector("#statusPill")?.textContent==="Listo");assert.equal(await page.locator(".composition-table tbody tr").count(),5);if(width<=760)assert.equal(await page.locator(".composition-table").evaluate(n=>n.getBoundingClientRect().width<=innerWidth),true);
    await page.keyboard.press("Tab");assert.equal(await page.evaluate(()=>document.activeElement.id),"demoBtn");let badgeReached=false;for(let tab=0;tab<5;tab++){await page.keyboard.press("Tab");if(await page.evaluate(()=>document.activeElement.id)==="versionBadge"){badgeReached=true;break;}}assert.equal(badgeReached,true,"el panel de versión debe ser alcanzable por Tab");await page.keyboard.press("Enter");assert.equal(await page.locator("#versionBadge").getAttribute("aria-expanded"),"true");await page.keyboard.press("Escape");assert.equal(await page.locator("#versionBadge").getAttribute("aria-expanded"),"false");
   }
+  const referencePicks={top:"Ornn",jungle:"Sejuani",mid:"Orianna",adc:"Jinx",support:"Lulu"};
+  for(const [role,champion] of Object.entries(referencePicks))await page.locator("#"+role).fill(champion);
+  await page.waitForFunction(()=>document.querySelector("#statusPill")?.textContent==="Listo");
+  const strategy=page.locator(".result-summary__strategy");await strategy.waitFor({state:"visible"});
+  assert.match(await strategy.locator("h3").first().innerText(),/Front to Back/);
+  for(const heading of ["Win condition","Sinergia interna","Fortalezas","Debilidades","Plan de partida","Riesgos","Recomendaciones","Picks","Bans"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),1,"el informe muestra "+heading);}
+  assert.match(await strategy.innerText(),/Proteger al ADC/i);assert.match(await strategy.innerText(),/TOP: Ornn/);assert.match(await strategy.innerText(),/JUNGLA: Sejuani/);assert.match(await strategy.innerText(),/No hay datos de campeones rivales para recomendar bans/i);
   assert.deepEqual(pageErrors,[],"sin errores JavaScript");assert.deepEqual(consoleErrors,[],"sin errores en consola");console.log("UX validada: 320, 375, 768, 1280 px; flujo completo con teclado; etiquetas, estado accesible, foco visible, tabla y consola.");
  }finally{if(browser)await browser.close();await new Promise((r,j)=>server.close(e=>e?j(e):r()));}
 }

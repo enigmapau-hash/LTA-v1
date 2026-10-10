@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.2.5",
+    version: "v1.4.0",
     track: "Actualización funcional",
     label: "Preview",
-    updated: "2026-10-06",
-    summary: ["Mejoras de accesibilidad, navegación por teclado y experiencia responsive"],
+    updated: "2026-10-10",
+    summary: ["Integrate Composition Engine analysis into the visible report"],
     pending: [],
   };
 

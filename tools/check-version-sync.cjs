@@ -24,7 +24,7 @@ const metadata = JSON.parse(read("version.json"));
 const packageJson = JSON.parse(read("package.json"));
 const html = read("index.html");
 const readme = read("README.md");
-const versionJs = read("version.js");
+const versionJs = read("src/ui/version.js");
 const changelog = read("CHANGELOG.md");
 const serviceWorker = read("sw.js");
 

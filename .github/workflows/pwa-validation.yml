@@ -27,6 +27,9 @@ jobs:
       - name: Exercise the PWA lifecycle
         run: node tools/check-pwa.cjs
 
+      - name: Validate the Composition Engine against reference archetypes
+        run: node tools/check-composition-engine.cjs
+
       - name: Validate composition logic against the workbook
         run: node tools/check-composition.cjs
 
