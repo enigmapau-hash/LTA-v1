@@ -61,38 +61,53 @@ const clearPicks = composition({ top: "Olaf", jungle: "Zyra", mid: "Heimerdinger
 const clear = evaluate(clearPicks);
 assert.deepEqual(clear.state, {
   status: "solid",
-  closing: "La composición puede ejecutar su plan principal con confianza.",
+  reason: "aligned-and-stable",
 });
 
 const hybridPicks = composition({ top: "Ornn", jungle: "Sejuani", mid: "Orianna", botline: "Jinx", support: "Lulu" });
 const hybrid = evaluate(hybridPicks);
 assert.equal(hybrid.state.status, "risk");
+assert.equal(hybrid.state.reason, "complementary-secondary-path");
 assert.ok(hybrid.secondaryObservation, "El híbrido tiene una observación complementaria reconocida");
-assert.equal(hybrid.state.closing, "Usa la vía complementaria como apoyo, no como un plan paralelo.");
 
 const incoherentPicks = [pick("top", "Fiora"), pick("jungle", "Elise"), pick("mid", "Xerath"), pick("botline", "Draven"), pick("support", "Lulu")];
 const incoherent = evaluate(incoherentPicks);
 assert.deepEqual(incoherent.state, {
   status: "fragile",
-  closing: "Aclara un plan común antes de confiar en la composición.",
+  reason: "no-common-plan",
 });
 assert.equal(incoherent.secondaryObservation, null);
+
+const contradictory = evaluate(composition({ top: "Ambessa", jungle: "Evelynn", mid: "Ziggs", botline: "Tristana", support: "Heimerdinger" }));
+assert.deepEqual(contradictory.state, {
+  status: "fragile",
+  reason: "incompatible-plans",
+});
+
+const fragileDependency = summarizeStrategicState({
+  diagnosis: {
+    status: "assessed",
+    plan: { clear: true, primaryIdentity: "Front to Back" },
+    coherence: { status: "coherent" },
+  },
+  diagnosticSummary: { status: "fragile" },
+  winCondition: { status: "assessed" },
+  coherence: { status: "fully-coherent", relation: "aligned" },
+  stability: { status: "fragile" },
+  contradiction: { status: "coherent" },
+  confidence: { level: "baja" },
+});
+assert.deepEqual(fragileDependency, { status: "fragile", reason: "key-pick-dependency" });
 
 const unavailable = summarizeStrategicState({ diagnosis: { status: "not-assessable" } });
 assert.equal(unavailable.status, "not-assessed");
 
-for (const { state } of [clear, hybrid, incoherent]) {
-  assert.ok(state.closing.split(/\s+/).length <= 12, "El cierre debe ser breve");
-  assert.doesNotMatch(state.closing, /%|puntuaci[oó]n|probabilidad|candidatos/i);
-}
 assert.deepEqual(evaluate(clearPicks).state, clear.state, "La síntesis debe ser determinista");
-assert.ok(!clear.state.closing.includes(clear.diagnosticSummary.summary), "El cierre no repite el resumen diagnóstico");
-assert.ok(!hybrid.state.closing.includes(hybrid.secondaryObservation.replace(/^Matiz:\s*/, "")), "El cierre no repite el matiz secundario");
+assert.equal(Object.hasOwn(clear.state, "closing"), false, "La capa de estado no conserva texto duplicado del cierre");
 
 const visibleReport = buildStrategicReport({ diagnosis: hybrid.diagnosis });
 assert.deepEqual(visibleReport.sections.map((section) => section.id), ["diagnosis", "correction", "protection"]);
 assert.equal(visibleReport.strategicState.status, "risk");
-assert.ok(!visibleReport.sections.some((section) => section.answer === visibleReport.strategicState.closing || section.explanation === visibleReport.strategicState.closing), "El cierre queda como metadato interno y no duplica bloques visibles");
 assert.deepEqual(buildStrategicReport({ diagnosis: hybrid.diagnosis }).strategicState, visibleReport.strategicState);
 
-console.log("Strategic State Engine validado: estados sólido, riesgo y frágil; cierre breve, integrado como metadato y determinista.");
+console.log("Strategic State Engine validado: clasificación global, motivos internos y determinismo.");

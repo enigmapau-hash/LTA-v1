@@ -126,8 +126,8 @@
     });
   }
 
-  function buildRobustness(identity, planSupport) {
-    if (!identity?.primary || !planSupport) {
+  function buildRobustness(primaryIdentity, stability, planSupport) {
+    if (!primaryIdentity || stability.status === "not-assessed") {
       return {
         status: "not-assessed",
         identityChanges: [],
@@ -135,18 +135,21 @@
       };
     }
 
-    const identityChanges = (planSupport.identityChanges || []).map((item) => ({
-      role: String(item.role || ""),
-      champion: String(item.champion || ""),
-      identityWithout: item.identityWithout || null,
-      gamePlanWithout: [...(item.gamePlanWithout || [])],
-    }));
-    const losesIdentity = identityChanges.some((item) => !item.identityWithout);
-    const status = losesIdentity
-      ? "fragile"
-      : identityChanges.length
-        ? "dependent"
-        : "stable";
+    const identityChanges = (stability.removals || [])
+      .filter((item) => item.identityAfter !== primaryIdentity)
+      .map((item) => {
+        const source = (planSupport?.identityChanges || []).find((change) =>
+          normalize(change.role) === normalize(item.role)
+          && normalize(change.champion) === normalize(item.champion)
+        );
+        return {
+          role: String(item.role || ""),
+          champion: String(item.champion || ""),
+          identityWithout: item.identityAfter || null,
+          gamePlanWithout: [...(source?.gamePlanWithout || [])],
+        };
+      });
+    const status = stability.status;
 
     const explanation = status === "fragile"
       ? "La identidad principal desaparece si falta al menos una pieza clave."
@@ -172,7 +175,11 @@
     const coherent = Boolean(primaryIdentity);
     const planSupport = analysis.report?.planSupport || null;
     const dependencies = buildDependencies(planSupport);
-    const robustness = buildRobustness(analysis.identity, planSupport);
+    const stability = stabilityEngine.assessCompositionStability({
+      diagnosis: { status: "assessed", plan: { primaryIdentity } },
+      removalOutcomes: planSupport?.removalOutcomes,
+    });
+    const robustness = buildRobustness(primaryIdentity, stability, planSupport);
     const gaps = [...(analysis.cohesion?.gaps || [])];
     const weaknesses = [...(analysis.weaknesses || [])];
     const primaryProblem = coherent
@@ -236,10 +243,7 @@
       diagnosis,
       winCondition: diagnosis.winCondition,
     });
-    diagnosis.stability = stabilityEngine.assessCompositionStability({
-      diagnosis,
-      removalOutcomes: planSupport?.removalOutcomes,
-    });
+    diagnosis.stability = stability;
 
     return diagnosis;
   }

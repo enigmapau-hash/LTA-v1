@@ -156,7 +156,7 @@
       confidence: confidence.conclusions.diagnosis,
       secondaryObservation,
     });
-    const closing = strategicClosingEngine.buildStrategicClosing({ strategicState, diagnosis });
+    const closing = strategicClosingEngine.buildStrategicClosing({ strategicState });
     const sections = [
       diagnosisSection(diagnosis, { ...diagnosticSummary, summary: diagnosisExplanation }),
       correctionSection(input.correction),

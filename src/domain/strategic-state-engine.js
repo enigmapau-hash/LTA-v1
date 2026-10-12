@@ -19,27 +19,28 @@
     const hasSecondaryObservation = Boolean(String(input.secondaryObservation || "").trim());
 
     if (diagnosis.status !== "assessed" || diagnosticSummary.status === "not-assessed") {
-      return {
-        status: "not-assessed",
-        closing: "Completa la composición antes de valorar su estado.",
-      };
+      return { status: "not-assessed", reason: "composition-incomplete" };
     }
 
-    const fragile = diagnosticSummary.status === "fragile"
-      || !diagnosis.plan?.clear
+    if (!diagnosis.plan?.clear
       || !diagnosis.plan?.primaryIdentity
-      || diagnosis.coherence?.status === "incoherent"
-      || diagnosis.coherence?.status === "contradictory"
-      || contradiction.status === "contradictory"
-      || coherence.status === "contradictory"
-      || coherence.relation === "conflicting"
-      || stability.status === "fragile";
+      || diagnosis.coherence?.status === "incoherent") {
+      return { status: "fragile", reason: "no-common-plan" };
+    }
 
-    if (fragile) {
-      return {
-        status: "fragile",
-        closing: "Aclara un plan común antes de confiar en la composición.",
-      };
+    if (contradiction.status === "contradictory"
+      || diagnosis.coherence?.status === "contradictory"
+      || coherence.status === "contradictory"
+      || coherence.relation === "conflicting") {
+      return { status: "fragile", reason: "incompatible-plans" };
+    }
+
+    if (stability.status === "fragile") {
+      return { status: "fragile", reason: "key-pick-dependency" };
+    }
+
+    if (diagnosticSummary.status === "fragile") {
+      return { status: "fragile", reason: "unclassified-fragility" };
     }
 
     const solid = diagnosticSummary.status === "solid"
@@ -50,17 +51,12 @@
       && contradiction.status !== "contradictory";
 
     if (solid) {
-      return {
-        status: "solid",
-        closing: "La composición puede ejecutar su plan principal con confianza.",
-      };
+      return { status: "solid", reason: "aligned-and-stable" };
     }
 
     return {
       status: "risk",
-      closing: hasSecondaryObservation
-        ? "Usa la vía complementaria como apoyo, no como un plan paralelo."
-        : "Mantén flexibilidad mientras consolidas el plan.",
+      reason: hasSecondaryObservation ? "complementary-secondary-path" : "limited-confidence",
     };
   }
 
