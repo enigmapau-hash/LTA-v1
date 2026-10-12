@@ -9,6 +9,7 @@
 - Especificación funcional completa de LTA v2 preparada para revisión.
 - Núcleo interno inicial del Diagnostic Engine.
 - Primera capa interna de corrección estratégica basada en el diagnóstico.
+- Primera capa interna de protección estratégica frente a estilos rivales.
 
 ## v1.23.0
 
