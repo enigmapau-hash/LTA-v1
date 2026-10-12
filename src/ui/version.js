@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v2.6.0",
+    version: "v2.7.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-12",
-    summary: ["Explicitar la condición de victoria principal y secundaria"],
+    summary: ["Evaluar la coherencia entre condición de victoria e identidad"],
     pending: [],
   };
 

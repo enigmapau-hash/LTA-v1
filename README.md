@@ -8,7 +8,7 @@ La v2 avanza por capacidades pequeñas y revisables sobre la base estable de la 
 
 ## Características
 
-- Versión visible: `v2.6.0`
+- Versión visible: `v2.7.0`
 - No permite campeones repetidos.
 - Muestra iconos oficiales de campeones cuando están disponibles.
 - El selector, la vista rápida y el resultado se actualizan sin recargar.

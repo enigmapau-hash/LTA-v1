@@ -159,8 +159,13 @@ assert.equal(hybridPlan.winCondition.primary.identity, "Front to Back");
 assert.equal(hybridPlan.winCondition.secondary.identity, "Teamfight");
 assert.notEqual(hybridPlan.winCondition.primary.condition, hybridPlan.winCondition.secondary.condition);
 assert.equal(hybridPlan.winCondition.secondary.relationship, "complementary");
+assert.equal(hybridPlan.winConditionCoherence.status, "partially-coherent");
+assert.equal(hybridPlan.winConditionCoherence.secondaryMitigation, "complements-plan");
 assert.equal(contradictoryDiagnosis.winCondition.secondary.relationship, "conflicting");
+assert.equal(contradictoryDiagnosis.winConditionCoherence.status, "contradictory");
+assert.equal(contradictoryDiagnosis.winConditionCoherence.secondaryMitigation, "does-not-mitigate");
 assert.equal(diagnoseComposition(dive.slice(0, 4)).winCondition.status, "not-assessed");
+assert.equal(diagnoseComposition(dive.slice(0, 4)).winConditionCoherence.status, "not-assessed");
 
 const pureHybrid = assessContradictions({
   diagnosis: {

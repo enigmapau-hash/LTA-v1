@@ -8,13 +8,16 @@
   const winConditionEngine = typeof module === "object" && module.exports
     ? require("./win-condition-engine.js")
     : root.LTAWinConditionEngine;
-  const engine = factory(compositionEngine, contradictionEngine, winConditionEngine);
+  const winConditionCoherenceEngine = typeof module === "object" && module.exports
+    ? require("./win-condition-coherence-engine.js")
+    : root.LTAWinConditionCoherenceEngine;
+  const engine = factory(compositionEngine, contradictionEngine, winConditionEngine, winConditionCoherenceEngine);
   if (typeof module === "object" && module.exports) {
     module.exports = engine;
   } else {
     root.LTADiagnosticEngine = Object.freeze(engine);
   }
-})(typeof window !== "undefined" ? window : globalThis, function (compositionEngine, contradictionEngine, winConditionEngine) {
+})(typeof window !== "undefined" ? window : globalThis, function (compositionEngine, contradictionEngine, winConditionEngine, winConditionCoherenceEngine) {
   "use strict";
 
   const TEAM_SIZE = 5;
@@ -68,6 +71,10 @@
     };
     diagnosis.contradictions = contradictionEngine.assessContradictions({ diagnosis });
     diagnosis.winCondition = winConditionEngine.assessWinConditions({ diagnosis });
+    diagnosis.winConditionCoherence = winConditionCoherenceEngine.assessWinConditionCoherence({
+      diagnosis,
+      winCondition: diagnosis.winCondition,
+    });
     return diagnosis;
   }
 
@@ -221,6 +228,10 @@
       ];
     }
     diagnosis.winCondition = winConditionEngine.assessWinConditions({ diagnosis, analysis });
+    diagnosis.winConditionCoherence = winConditionCoherenceEngine.assessWinConditionCoherence({
+      diagnosis,
+      winCondition: diagnosis.winCondition,
+    });
 
     return diagnosis;
   }
