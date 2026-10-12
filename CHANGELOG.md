@@ -8,6 +8,7 @@
 - Primera descripción de la arquitectura funcional de LTA v2.
 - Especificación funcional completa de LTA v2 preparada para revisión.
 - Núcleo interno inicial del Diagnostic Engine.
+- Primera capa interna de corrección estratégica basada en el diagnóstico.
 
 ## v1.23.0
 
