@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.9.0
+
+### Added
+- Sintetizar plan, win condition, contradicciones, estabilidad y confianza en un diagnóstico compacto
+
+
 ## v2.8.0
 
 ### Added

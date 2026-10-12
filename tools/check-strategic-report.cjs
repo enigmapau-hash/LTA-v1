@@ -10,6 +10,7 @@ const { proposeCorrections } = require("../src/domain/correction-engine.js");
 const { protectComposition } = require("../src/domain/protection-engine.js");
 const { explainDiagnosis, explainCorrection, explainProtection } = require("../src/report/strategic-explanations.js");
 const { buildStrategicReport } = require("../src/report/strategic-report.js");
+const { buildDiagnosticSummary } = require("../src/domain/diagnostic-summary-engine.js");
 
 const root = path.resolve(__dirname, "..");
 const workbook = XLSX.read(fs.readFileSync(path.join(root, "Draft Pool.xlsx")), { type: "buffer" });
@@ -91,7 +92,7 @@ assertReport(clearReport, [
   "Reforzar presión lateral",
   "Proteger el plan frente a Split Push",
 ]);
-assert.match(clearReport.sections[0].explanation, /Concreta cómo ganar con Front to Back/i);
+assert.match(clearReport.sections[0].explanation, /dirección común/i);
 assert.match(clearReport.sections[1].explanation, /prioridad responde a poca presión lateral/i);
 assert.match(clearReport.sections[2].action, /línea lateral/i);
 assert.match(clearReport.sections[2].explanation, /amenaza prioritaria porque/i);
@@ -104,7 +105,7 @@ assertReport(hybridReport, [
   "Orientación: reforzar presión lateral",
   "Conviene proteger el plan frente a Split Push",
 ]);
-assert.match(hybridReport.sections[0].explanation, /Concreta cómo ganar con Front to Back/i);
+assert.match(hybridReport.sections[0].explanation, /depende de señales secundarias o piezas clave/i);
 assert.match(hybridReport.sections[1].explanation, /poca presión lateral/i);
 assert.match(hybridReport.sections[2].explanation, /presión lateral/i);
 assert.match(hybridReport.sections[2].action, /^Como orientación,/i);
@@ -139,7 +140,7 @@ assertReport(incoherentReport, [
   "Posible mejora: reforzar iniciación y seguimiento",
   "Protección provisional frente a Poke",
 ]);
-assert.match(incoherentReport.sections[0].explanation, /no convergen lo suficiente/i);
+assert.match(incoherentReport.sections[0].explanation, /no apuntan a un plan común/i);
 assert.match(incoherentReport.sections[2].action, /^De forma provisional,/i);
 
 const contradictoryReport = reportFor(contradictoryPlan);
@@ -149,10 +150,22 @@ assertReport(contradictoryReport, [
   contradictoryReport.sections[1].answer,
   contradictoryReport.sections[2].answer,
 ]);
-assert.match(contradictoryReport.sections[0].explanation, /Poke necesita desgastar.*Dive busca entrar.*Ambessa/);
+assert.match(contradictoryReport.sections[0].explanation, /parece frágil porque sus planes compiten/i);
 assert.match(contradictoryReport.sections[0].answer, /Lectura provisional/);
 
-assert.equal(explainDiagnosis(diagnoseComposition(clearPlan)), clearReport.sections[0].explanation);
+assert.match(explainDiagnosis(diagnoseComposition(clearPlan)), /Concreta cómo ganar con Front to Back/i);
+assert.equal(
+  clearReport.sections[0].explanation,
+  buildDiagnosticSummary({
+    diagnosis: diagnoseComposition(clearPlan),
+    winCondition: diagnoseComposition(clearPlan).winCondition,
+    coherence: diagnoseComposition(clearPlan).winConditionCoherence,
+    stability: diagnoseComposition(clearPlan).stability,
+    contradiction: diagnoseComposition(clearPlan).contradictions,
+    confidence: clearReport.confidence.conclusions.diagnosis,
+  }).summary,
+  "El informe reutiliza el resumen compacto en el bloque de diagnóstico existente"
+);
 assert.equal(explainCorrection(proposeCorrections({ picks: clearPlan, diagnosis: diagnoseComposition(clearPlan), candidatesByRole })), clearReport.sections[1].explanation);
 assert.equal(explainProtection(protectComposition({ diagnosis: diagnoseComposition(clearPlan) })), clearReport.sections[2].explanation);
 for (const report of [clearReport, hybridReport, incoherentReport, contradictoryReport]) {

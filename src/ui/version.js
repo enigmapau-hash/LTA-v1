@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v2.8.0",
+    version: "v2.9.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-12",
-    summary: ["Evaluar la estabilidad de la composición ante la pérdida de una pieza"],
+    summary: ["Sintetizar plan, win condition, contradicciones, estabilidad y confianza en un diagnóstico compacto"],
     pending: [],
   };
 

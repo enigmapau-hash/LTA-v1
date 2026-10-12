@@ -5,23 +5,26 @@
   const confidenceEngine = typeof module === "object" && module.exports
     ? require("../domain/confidence-engine.js")
     : root.LTAConfidenceEngine;
-  const builder = factory(explanations, confidenceEngine);
+  const diagnosticSummaryEngine = typeof module === "object" && module.exports
+    ? require("../domain/diagnostic-summary-engine.js")
+    : root.LTADiagnosticSummaryEngine;
+  const builder = factory(explanations, confidenceEngine, diagnosticSummaryEngine);
   if (typeof module === "object" && module.exports) {
     module.exports = builder;
   } else {
     root.LTAStrategicReportBuilder = Object.freeze(builder);
   }
-})(typeof window !== "undefined" ? window : globalThis, function (explanations, confidenceEngine) {
+})(typeof window !== "undefined" ? window : globalThis, function (explanations, confidenceEngine, diagnosticSummaryEngine) {
   "use strict";
 
-  function diagnosisSection(diagnosis) {
+  function diagnosisSection(diagnosis, summary) {
     const primary = diagnosis?.plan?.primaryIdentity;
     if (!diagnosis || diagnosis.status !== "assessed") {
       return {
         id: "diagnosis",
         title: "Diagnóstico",
         answer: "Diagnóstico pendiente",
-        explanation: explanations.explainDiagnosis(diagnosis),
+        explanation: summary.summary,
       };
     }
     if (!diagnosis.plan?.clear || !primary) {
@@ -29,7 +32,7 @@
         id: "diagnosis",
         title: "Diagnóstico",
         answer: "Sin un plan de partida claro",
-        explanation: explanations.explainDiagnosis(diagnosis),
+        explanation: summary.summary,
       };
     }
     const winCondition = String(diagnosis.winCondition?.primary?.condition || "").trim();
@@ -37,7 +40,7 @@
       id: "diagnosis",
       title: "Diagnóstico",
       answer: `Plan principal: ${primary}${winCondition ? ` · Cómo ganar: ${winCondition}` : ""}`,
-      explanation: explanations.explainDiagnosis(diagnosis),
+      explanation: summary.summary,
     };
   }
 
@@ -117,8 +120,16 @@
       correction: input.correction,
       protection: input.protection,
     });
+    const diagnosticSummary = diagnosticSummaryEngine.buildDiagnosticSummary({
+      diagnosis,
+      winCondition: diagnosis?.winCondition,
+      coherence: diagnosis?.winConditionCoherence,
+      stability: diagnosis?.stability,
+      contradiction: diagnosis?.contradictions,
+      confidence: confidence.conclusions.diagnosis,
+    });
     const sections = [
-      diagnosisSection(diagnosis),
+      diagnosisSection(diagnosis, diagnosticSummary),
       correctionSection(input.correction),
       protectionSection(input.protection),
     ].map((section) => adaptSectionTone(section, confidence.conclusions[section.id]?.level));
