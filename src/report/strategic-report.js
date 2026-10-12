@@ -11,13 +11,16 @@
   const secondaryObservationEngine = typeof module === "object" && module.exports
     ? require("../domain/secondary-observation-engine.js")
     : root.LTASecondaryObservationEngine;
-  const builder = factory(explanations, confidenceEngine, diagnosticSummaryEngine, secondaryObservationEngine);
+  const strategicStateEngine = typeof module === "object" && module.exports
+    ? require("../domain/strategic-state-engine.js")
+    : root.LTAStrategicStateEngine;
+  const builder = factory(explanations, confidenceEngine, diagnosticSummaryEngine, secondaryObservationEngine, strategicStateEngine);
   if (typeof module === "object" && module.exports) {
     module.exports = builder;
   } else {
     root.LTAStrategicReportBuilder = Object.freeze(builder);
   }
-})(typeof window !== "undefined" ? window : globalThis, function (explanations, confidenceEngine, diagnosticSummaryEngine, secondaryObservationEngine) {
+})(typeof window !== "undefined" ? window : globalThis, function (explanations, confidenceEngine, diagnosticSummaryEngine, secondaryObservationEngine, strategicStateEngine) {
   "use strict";
 
   function diagnosisSection(diagnosis, summary) {
@@ -140,6 +143,16 @@
     const diagnosisExplanation = [diagnosticSummary.summary, secondaryObservation]
       .filter(Boolean)
       .join(" ");
+    const strategicState = strategicStateEngine.summarizeStrategicState({
+      diagnosis,
+      diagnosticSummary,
+      winCondition: diagnosis?.winCondition,
+      coherence: diagnosis?.winConditionCoherence,
+      stability: diagnosis?.stability,
+      contradiction: diagnosis?.contradictions,
+      confidence: confidence.conclusions.diagnosis,
+      secondaryObservation,
+    });
     const sections = [
       diagnosisSection(diagnosis, { ...diagnosticSummary, summary: diagnosisExplanation }),
       correctionSection(input.correction),
@@ -149,6 +162,7 @@
       status: diagnosis?.status === "assessed" ? "assessed" : "not-assessable",
       title: "Cómo jugarla",
       confidence,
+      strategicState,
       sections,
     };
   }

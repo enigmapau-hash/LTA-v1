@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.11.0
+
+### Added
+- Sintetizar el estado estratégico final como metadato interno del informe
+
+
 ## v2.10.0
 
 ### Added
