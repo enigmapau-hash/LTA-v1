@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.6.0
+
+### Added
+- Explicitar la condición de victoria principal y secundaria
+
+
 ## v2.5.0
 
 ### Added

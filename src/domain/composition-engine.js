@@ -330,6 +330,7 @@
       report: buildReport(picks, primary, secondary, cohesion, strengths, weaknesses, planSupport),
       archetypeScores: scores.map((item) => ({
         ...item,
+        winCondition: ARCHETYPES.find((archetype) => archetype.id === item.id)?.winCondition || null,
         selectedAs: item.id === primary?.id ? "primary" : item.id === secondary?.id ? "secondary" : null,
       })),
     };

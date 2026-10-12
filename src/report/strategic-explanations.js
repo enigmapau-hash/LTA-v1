@@ -15,6 +15,9 @@
     if (diagnosis?.contradictions?.status === "contradictory") {
       return diagnosis.contradictions.explanation;
     }
+    if (diagnosis?.winCondition?.primary?.explanation) {
+      return diagnosis.winCondition.primary.explanation;
+    }
     if (!diagnosis.plan?.clear || !diagnosis.plan?.primaryIdentity) {
       return "Sus atributos no convergen lo suficiente para sostener un plan compartido.";
     }
