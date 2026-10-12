@@ -70,11 +70,19 @@ const incoherentPlan = [
   pick("botline", "Draven"),
   pick("support", "Lulu"),
 ];
+const contradictoryPlan = composition({
+  top: "Ambessa",
+  jungle: "Evelynn",
+  mid: "Ziggs",
+  botline: "Tristana",
+  support: "Heimerdinger",
+});
 
 const cases = [
   { name: "plan claro", picks: clearPlan, expected: ["alta", "alta", "alta"] },
   { name: "plan híbrido", picks: hybridPlan, expected: ["media", "media", "media"] },
   { name: "plan incoherente", picks: incoherentPlan, expected: ["baja", "baja", "baja"] },
+  { name: "planes contradictorios", picks: contradictoryPlan, expected: ["baja", "baja", "baja"] },
 ];
 
 for (const testCase of cases) {

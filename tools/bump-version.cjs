@@ -49,6 +49,8 @@ let readme = readText("README.md");
 
 const badgePattern = /(<span class="version-badge__version">)[^<]*(<\/span>)/;
 if (!badgePattern.test(html)) fail("No se encontró el badge de versión en index.html");
+const accessibleBadgePattern = /(aria-label="Versión )v\d+\.\d+\.\d+(" aria-expanded=)/;
+if (!accessibleBadgePattern.test(html)) fail("No se encontró la etiqueta accesible de versión en index.html");
 const readmePattern = /(- Versión visible: `)[^\`]+(`)/;
 if (!readmePattern.test(readme)) fail("No se encontró la versión visible en README.md");
 
@@ -87,6 +89,7 @@ metadata.pending = [];
 
 packageJson.version = numericVersion;
 html = html.replace(badgePattern, `$1${version}$2`);
+html = html.replace(accessibleBadgePattern, `$1${version}$2`);
 readme = readme.replace(readmePattern, `$1${version}$2`);
 
 const files = new Map([

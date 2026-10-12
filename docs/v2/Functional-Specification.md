@@ -36,6 +36,7 @@ LTA analiza únicamente la composición propia. Sus conclusiones describen lo qu
 - Analizar una composición propia de cinco puestos: Top, Jungla, Mid, Botline y Support.
 - Relacionar los atributos disponibles de los campeones con patrones de identidad conocidos.
 - Comunicar identidad principal y secundaria cuando estén suficientemente respaldadas, o explicar que no hay un plan claro.
+- Distinguir una combinación híbrida compatible de dos identidades con objetivos incompatibles, e identificar el problema principal con evidencia disponible.
 - Presentar una lectura estratégica compacta con plan, fortalezas, riesgos y estabilidad de piezas clave.
 - Ayudar a completar puestos vacíos con hasta tres candidatos ordenados por afinidad y acompañados de una explicación.
 - Expresar el grado de respaldo mediante evidencia y límites claros, sin prometer certeza sobre la partida.
@@ -96,7 +97,7 @@ Las recomendaciones de composición parcial muestran hasta tres candidatos por p
 
 ### Diagnosticar
 
-Diagnosticar significa explicar qué plan sugieren los atributos y qué tan bien se apoyan entre sí. El diagnóstico señala fortalezas compartidas, riesgos, carencias de cohesión y dependencias relevantes. Si la composición no sostiene una identidad clara, lo dice y explica qué señales comunes faltan. No atribuye la causa a un rival que no se ha analizado.
+Diagnosticar significa explicar qué plan sugieren los atributos y qué tan bien se apoyan entre sí. El diagnóstico señala fortalezas compartidas, riesgos, carencias de cohesión y dependencias relevantes. También distingue las identidades secundarias compatibles de las que exigen planes opuestos; cuando hay una contradicción respaldada, explica el conflicto principal y señala una pieza que empuja hacia el plan secundario si los atributos disponibles permiten identificarla. Si la composición no sostiene una identidad clara, lo dice y explica qué señales comunes faltan. No atribuye la causa a un rival que no se ha analizado.
 
 ### Corregir
 
@@ -110,7 +111,7 @@ Esta lectura es informativa: no bloquea elecciones, no reserva campeones ni gara
 
 ## 7. Confianza en las conclusiones
 
-La confianza de LTA procede de la calidad y convergencia de la evidencia disponible, no de datos externos ni de una predicción de victoria. Se expresa de forma calibrada:
+La confianza de LTA procede de la calidad y convergencia de la evidencia disponible, no de datos externos ni de una predicción de victoria. Una contradicción detectada entre planes reduce la solidez del diagnóstico y de las conclusiones que dependen de él. Se expresa de forma calibrada:
 
 - cuando varios atributos respaldan un mismo patrón, LTA comunica la identidad principal y explica el plan;
 - solo añade una identidad secundaria si también tiene señales suficientes;
