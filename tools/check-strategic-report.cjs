@@ -85,6 +85,7 @@ function assertReport(report, answers) {
 const clearPlan = composition({ top: "Olaf", jungle: "Zyra", mid: "Heimerdinger", botline: "Lucian", support: "Tahm Kench" });
 const clearReport = reportFor(clearPlan);
 assert.equal(diagnoseComposition(clearPlan).coherence.status, "coherent");
+assert.deepEqual(Object.values(clearReport.confidence.conclusions).map((item) => item.level), ["alta", "alta", "alta"]);
 assertReport(clearReport, [
   "Plan principal: Front to Back",
   "Reforzar presión lateral",
@@ -97,21 +98,24 @@ assert.match(clearReport.sections[2].explanation, /amenaza prioritaria porque/i)
 
 const hybridPlan = composition({ top: "Ornn", jungle: "Sejuani", mid: "Orianna", botline: "Jinx", support: "Lulu" });
 const hybridReport = reportFor(hybridPlan);
+assert.deepEqual(Object.values(hybridReport.confidence.conclusions).map((item) => item.level), ["media", "media", "media"]);
 assertReport(hybridReport, [
-  "Plan principal: Front to Back",
-  "Reforzar presión lateral",
-  "Proteger el plan frente a Split Push",
+  "Plan probable: Front to Back",
+  "Orientación: reforzar presión lateral",
+  "Conviene proteger el plan frente a Split Push",
 ]);
 assert.match(hybridReport.sections[0].explanation, /señales de Teamfight/i);
 assert.match(hybridReport.sections[1].explanation, /poca presión lateral/i);
 assert.match(hybridReport.sections[2].explanation, /presión lateral/i);
+assert.match(hybridReport.sections[2].action, /^Como orientación,/i);
 
 const splitPushPlan = composition({ top: "Fiora", jungle: "Viego", mid: "Twisted Fate", botline: "Ezreal", support: "Braum" });
 const splitPushReport = reportFor(splitPushPlan);
+assert.deepEqual(Object.values(splitPushReport.confidence.conclusions).map((item) => item.level), ["media", "media", "media"]);
 assertReport(splitPushReport, [
-  "Plan principal: Split Push",
-  "Reforzar pick y control del mapa",
-  "Proteger el plan frente a Teamfight",
+  "Plan probable: Split Push",
+  "Orientación: reforzar pick y control del mapa",
+  "Conviene proteger el plan frente a Teamfight",
 ]);
 
 const incoherentPlan = [
@@ -122,12 +126,14 @@ const incoherentPlan = [
   pick("support", "Lulu"),
 ];
 const incoherentReport = reportFor(incoherentPlan);
+assert.deepEqual(Object.values(incoherentReport.confidence.conclusions).map((item) => item.level), ["baja", "baja", "baja"]);
 assertReport(incoherentReport, [
-  "Sin un plan de partida claro",
-  "Reforzar iniciación y seguimiento",
-  "Proteger el plan frente a Poke",
+  "Lectura provisional: Sin un plan de partida claro",
+  "Posible mejora: reforzar iniciación y seguimiento",
+  "Protección provisional frente a Poke",
 ]);
 assert.match(incoherentReport.sections[0].explanation, /no convergen lo suficiente/i);
+assert.match(incoherentReport.sections[2].action, /^De forma provisional,/i);
 
 assert.equal(explainDiagnosis(diagnoseComposition(clearPlan)), clearReport.sections[0].explanation);
 assert.equal(explainCorrection(proposeCorrections({ picks: clearPlan, diagnosis: diagnoseComposition(clearPlan), candidatesByRole })), clearReport.sections[1].explanation);
@@ -143,4 +149,4 @@ const unavailable = buildStrategicReport({ diagnosis: { status: "not-assessable"
 assert.equal(unavailable.status, "not-assessable");
 assert.deepEqual(unavailable.sections.map((section) => section.id), ["diagnosis", "correction", "protection"]);
 
-console.log("Informe estratégico v2 validado: explicaciones breves para planes claros, híbridos e incoherentes; orden y determinismo conservados.");
+console.log("Informe estratégico v2 validado: tono adaptado a la confianza, estructura y orden conservados.");

@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.4.0
+
+### Added
+- Adaptar el tono del informe según la confianza estratégica
+
+
 ## v2.3.0
 
 ### Added

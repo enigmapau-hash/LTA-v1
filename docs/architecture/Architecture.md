@@ -55,7 +55,7 @@ Convierte las conclusiones en una lectura que ayude a responder «¿Cómo deber�
 
 ### 2.8 Calibración de confianza
 
-Estima por separado la solidez del diagnóstico, la corrección y la protección con niveles cualitativos —alta, media o baja— y una razón breve. Se apoya en la claridad del plan, la convergencia de señales, la estabilidad de la composición y el respaldo disponible para cada conclusión. Recibe resultados ya calculados, no vuelve a analizar la composición y permanece interna en el informe actual.
+Estima por separado la solidez del diagnóstico, la corrección y la protección con niveles cualitativos —alta, media o baja— y una razón breve. Se apoya en la claridad del plan, la convergencia de señales, la estabilidad de la composición y el respaldo disponible para cada conclusión. Recibe resultados ya calculados y no vuelve a analizar la composición. La presentación usa los niveles para ajustar el tono sin mostrarlos como etiquetas ni añadir secciones.
 
 ## 3. Flujo de información
 
@@ -76,7 +76,7 @@ Estima por separado la solidez del diagnóstico, la corrección y la protección
 5. La corrección prioriza un perfil que atiende la carencia principal, sin sustituir elecciones.
 6. La protección prioriza estilos que pueden castigar el plan y propone una pauta defensiva general, sin asumir una composición rival concreta.
 7. La calibración de confianza estima la solidez de cada conclusión con la evidencia ya disponible.
-8. La presentación ordena diagnóstico, corrección y protección en un informe breve, sin volver a evaluar la composición ni mostrar los niveles internos de confianza.
+8. La presentación ordena diagnóstico, corrección y protección en un informe breve y adapta la firmeza del texto a los niveles internos de confianza, sin volver a evaluar la composición ni mostrarlos.
 
 ## 4. Separación entre análisis, diagnóstico y presentación
 

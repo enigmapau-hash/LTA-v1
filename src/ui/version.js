@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v2.3.0",
+    version: "v2.4.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-12",
-    summary: ["Añadir capa interna de confianza estratégica"],
+    summary: ["Adaptar el tono del informe según la confianza estratégica"],
     pending: [],
   };
 
