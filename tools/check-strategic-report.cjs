@@ -83,6 +83,10 @@ function assertReport(report, answers) {
   assert.equal(JSON.stringify(report).includes("impact"), false, "No expone puntuaciones internas de impacto");
 }
 
+function visibleSections(report) {
+  return report.sections.map(({ title, answer, explanation, action }) => [title, answer, explanation, action || null]);
+}
+
 const clearPlan = composition({ top: "Olaf", jungle: "Zyra", mid: "Heimerdinger", botline: "Lucian", support: "Tahm Kench" });
 const clearReport = reportFor(clearPlan);
 assert.equal(diagnoseComposition(clearPlan).coherence.status, "coherent");
@@ -96,6 +100,11 @@ assert.match(clearReport.sections[0].explanation, /dirección común/i);
 assert.match(clearReport.sections[1].explanation, /prioridad responde a poca presión lateral/i);
 assert.match(clearReport.sections[2].action, /línea lateral/i);
 assert.match(clearReport.sections[2].explanation, /amenaza prioritaria porque/i);
+assert.deepEqual(visibleSections(clearReport), [
+  ["Diagnóstico", "Plan principal: Front to Back · Cómo ganar: Proteger al ADC y forzar teamfights.", "El plan mantiene una dirección común incluso si falta una pieza.", null],
+  ["Mejora prioritaria", "Reforzar presión lateral", "La prioridad responde a poca presión lateral y preserva la identidad del equipo.", null],
+  ["Protección estratégica", "Proteger el plan frente a Split Push", "Es la amenaza prioritaria porque la presión lateral obliga a separarse.", "Asigna una respuesta segura a la línea lateral y conserva al resto del equipo en posición para disputar objetivos."],
+], "La cadena de capas conserva exactamente el texto visible para un plan claro");
 
 const hybridPlan = composition({ top: "Ornn", jungle: "Sejuani", mid: "Orianna", botline: "Jinx", support: "Lulu" });
 const hybridReport = reportFor(hybridPlan);
@@ -110,6 +119,11 @@ assert.match(hybridReport.sections[0].explanation, /Matiz: Teamfight amplía las
 assert.match(hybridReport.sections[1].explanation, /poca presión lateral/i);
 assert.match(hybridReport.sections[2].explanation, /presión lateral/i);
 assert.match(hybridReport.sections[2].action, /^Como orientación,/i);
+assert.deepEqual(visibleSections(hybridReport), [
+  ["Diagnóstico", "Plan probable: Front to Back · Cómo ganar: Proteger al ADC y forzar teamfights.", "El plan es claro, aunque no está del todo alineado. Matiz: Teamfight amplía las opciones sin desplazar el plan.", null],
+  ["Mejora prioritaria", "Orientación: reforzar presión lateral", "La prioridad responde a poca presión lateral y preserva la identidad del equipo.", null],
+  ["Protección estratégica", "Conviene proteger el plan frente a Split Push", "Es la amenaza prioritaria porque la presión lateral obliga a separarse.", "Como orientación, asigna una respuesta segura a la línea lateral y conserva al resto del equipo en posición para disputar objetivos."],
+], "La cadena de capas conserva exactamente el texto visible para un plan híbrido");
 
 const splitPushPlan = composition({ top: "Fiora", jungle: "Viego", mid: "Twisted Fate", botline: "Ezreal", support: "Braum" });
 const splitPushReport = reportFor(splitPushPlan);
@@ -143,6 +157,11 @@ assertReport(incoherentReport, [
 ]);
 assert.match(incoherentReport.sections[0].explanation, /no apuntan a un plan común/i);
 assert.match(incoherentReport.sections[2].action, /^De forma provisional,/i);
+assert.deepEqual(visibleSections(incoherentReport), [
+  ["Diagnóstico", "Lectura provisional: Sin un plan de partida claro", "Por ahora, los atributos no apuntan a un plan común.", null],
+  ["Mejora prioritaria", "Posible mejora: reforzar iniciación y seguimiento", "La prioridad responde a iniciación compartida y preserva la identidad del equipo.", null],
+  ["Protección estratégica", "Protección provisional frente a Poke", "Es la amenaza prioritaria porque el desgaste a distancia puede reducir la vida.", "De forma provisional, evita el desgaste prolongado: avanza con visión y busca una entrada coordinada antes de disputar el objetivo."],
+], "La cadena de capas conserva exactamente el texto visible para una composición incoherente");
 
 const contradictoryReport = reportFor(contradictoryPlan);
 assert.deepEqual(Object.values(contradictoryReport.confidence.conclusions).map((item) => item.level), ["baja", "baja", "baja"]);
@@ -159,10 +178,6 @@ assert.equal(
   clearReport.sections[0].explanation,
   buildDiagnosticSummary({
     diagnosis: diagnoseComposition(clearPlan),
-    winCondition: diagnoseComposition(clearPlan).winCondition,
-    coherence: diagnoseComposition(clearPlan).winConditionCoherence,
-    stability: diagnoseComposition(clearPlan).stability,
-    contradiction: diagnoseComposition(clearPlan).contradictions,
     confidence: clearReport.confidence.conclusions.diagnosis,
   }).summary,
   "El informe reutiliza el resumen compacto en el bloque de diagnóstico existente"

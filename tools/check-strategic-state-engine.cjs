@@ -32,25 +32,12 @@ function evaluate(picks) {
   const confidence = assessConfidence({ diagnosis }).conclusions.diagnosis;
   const diagnosticSummary = buildDiagnosticSummary({
     diagnosis,
-    winCondition: diagnosis.winCondition,
-    coherence: diagnosis.winConditionCoherence,
-    stability: diagnosis.stability,
-    contradiction: diagnosis.contradictions,
     confidence,
   });
-  const secondaryObservation = findSecondaryObservation({
-    diagnosis,
-    winCondition: diagnosis.winCondition,
-    coherence: diagnosis.winConditionCoherence,
-    contradiction: diagnosis.contradictions,
-  });
+  const secondaryObservation = findSecondaryObservation({ diagnosis });
   const state = summarizeStrategicState({
     diagnosis,
     diagnosticSummary,
-    winCondition: diagnosis.winCondition,
-    coherence: diagnosis.winConditionCoherence,
-    stability: diagnosis.stability,
-    contradiction: diagnosis.contradictions,
     confidence,
     secondaryObservation,
   });
@@ -89,12 +76,12 @@ const fragileDependency = summarizeStrategicState({
     status: "assessed",
     plan: { clear: true, primaryIdentity: "Front to Back" },
     coherence: { status: "coherent" },
+    winCondition: { status: "assessed" },
+    winConditionCoherence: { status: "fully-coherent", relation: "aligned" },
+    stability: { status: "fragile" },
+    contradictions: { status: "coherent" },
   },
   diagnosticSummary: { status: "fragile" },
-  winCondition: { status: "assessed" },
-  coherence: { status: "fully-coherent", relation: "aligned" },
-  stability: { status: "fragile" },
-  contradiction: { status: "coherent" },
   confidence: { level: "baja" },
 });
 assert.deepEqual(fragileDependency, { status: "fragile", reason: "key-pick-dependency" });

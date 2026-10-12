@@ -10,9 +10,9 @@
 
   function findSecondaryObservation(input = {}) {
     const diagnosis = input.diagnosis || {};
-    const winCondition = input.winCondition || diagnosis.winCondition || {};
-    const coherence = input.coherence || diagnosis.winConditionCoherence || {};
-    const contradiction = input.contradiction || diagnosis.contradictions || {};
+    const winCondition = diagnosis.winCondition || {};
+    const coherence = diagnosis.winConditionCoherence || {};
+    const contradiction = diagnosis.contradictions || {};
     const secondaryIdentity = String(diagnosis.plan?.secondaryIdentity || "").trim();
     const secondaryCondition = winCondition.secondary;
 
