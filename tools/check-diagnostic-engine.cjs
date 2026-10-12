@@ -158,6 +158,14 @@ for (const reference of winConditionReferences) {
   assert.equal(diagnosis.winCondition.primary.identity, diagnosis.plan.primaryIdentity);
   assert.equal(diagnosis.winCondition.primary.condition, existingAnalysis.winCondition, `${reference.identity}: reutiliza la condición ya calculada por el análisis`);
   assert.notEqual(diagnosis.winCondition.primary.condition, diagnosis.winCondition.primary.identity, `${reference.identity}: identidad y condición son conceptos distintos`);
+  assert.equal(diagnosis.robustness.status, diagnosis.stability.status, `${reference.identity}: la robustez debe derivarse de la estabilidad canónica`);
+  assert.deepEqual(
+    diagnosis.robustness.identityChanges.map((item) => [item.role, item.champion, item.identityWithout]),
+    diagnosis.stability.removals
+      .filter((item) => item.identityAfter !== diagnosis.plan.primaryIdentity)
+      .map((item) => [item.role, item.champion, item.identityAfter]),
+    `${reference.identity}: los cambios de identidad deben reutilizar la misma evaluación contrafactual`
+  );
   assert.ok(diagnosis.winCondition.primary.explanation.split(/\s+/).length <= 14, `${reference.identity}: explicación breve`);
   assert.deepEqual(diagnoseComposition(reference.picks).winCondition, diagnosis.winCondition, `${reference.identity}: resultado determinista`);
 }

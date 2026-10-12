@@ -44,16 +44,11 @@ const contradictory = reportFor(composition({ top: "Ambessa", jungle: "Evelynn",
 assert.equal(contradictory.report.strategicState.status, "fragile");
 assert.equal(contradictory.report.closing, "Elegid qué identidad debe guiar las peleas.");
 
-const stabilityCase = {
-  plan: { clear: true, primaryIdentity: "Front to Back" },
-  coherence: { status: "coherent" },
-  contradictions: { status: "coherent" },
-  stability: { status: "fragile" },
-};
-const stabilityClosing = buildStrategicClosing({ strategicState: { status: "fragile" }, diagnosis: stabilityCase });
+const stabilityClosing = buildStrategicClosing({ strategicState: { status: "fragile", reason: "key-pick-dependency" } });
 assert.equal(stabilityClosing, "Preparad una alternativa si falta la pieza que sostiene el plan.");
-assert.equal(buildStrategicClosing({ strategicState: { status: "risk" }, diagnosis: stabilityCase }), null);
-assert.equal(buildStrategicClosing({ strategicState: { status: "not-assessed" }, diagnosis: stabilityCase }), null);
+assert.equal(buildStrategicClosing({ strategicState: { status: "risk", reason: "key-pick-dependency" } }), null);
+assert.equal(buildStrategicClosing({ strategicState: { status: "not-assessed", reason: "key-pick-dependency" } }), null);
+assert.equal(buildStrategicClosing({ strategicState: { status: "fragile" } }), null, "Sin motivo clasificado no inventa un cierre");
 
 for (const closing of [incoherent.report.closing, contradictory.report.closing, stabilityClosing]) {
   assert.ok(closing.split(/\s+/).length <= 11, "El cierre debe ser breve");

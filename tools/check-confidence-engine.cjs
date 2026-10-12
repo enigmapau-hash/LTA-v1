@@ -100,6 +100,27 @@ for (const testCase of cases) {
 }
 
 const coherenceAdjusted = evaluate(clearPlan);
+const legacyRobustnessConflict = assessConfidence({
+  diagnosis: { ...coherenceAdjusted.diagnosis, robustness: { status: "fragile" } },
+  correction: coherenceAdjusted.correction,
+  protection: coherenceAdjusted.protection,
+});
+assert.deepEqual(
+  legacyRobustnessConflict,
+  coherenceAdjusted.confidence,
+  "La confianza usa Stability como fuente única y no vuelve a clasificar el campo de robustez derivado"
+);
+const { stability: _stability, ...legacyDiagnosis } = coherenceAdjusted.diagnosis;
+assert.deepEqual(
+  assessConfidence({
+    diagnosis: legacyDiagnosis,
+    correction: coherenceAdjusted.correction,
+    protection: coherenceAdjusted.protection,
+  }),
+  coherenceAdjusted.confidence,
+  "Los diagnósticos previos que solo incluyen robustez mantienen compatibilidad"
+);
+
 const partialCoherenceDiagnosis = {
   ...coherenceAdjusted.diagnosis,
   winConditionCoherence: {

@@ -36,7 +36,8 @@
       };
     }
 
-    if (diagnosis?.stability?.status === "fragile") {
+    const stability = diagnosis?.stability?.status || diagnosis?.robustness?.status;
+    if (stability === "fragile") {
       return {
         level: LEVEL.low,
         rationale: "La identidad principal depende de una pieza cuya ausencia rompe el plan.",
@@ -47,8 +48,7 @@
       && diagnosis.plan?.clear === true
       && Boolean(diagnosis.plan?.primaryIdentity);
     const coherent = ["coherent", "hybrid"].includes(diagnosis?.coherence?.status);
-    const robustness = diagnosis?.robustness?.status;
-    const knownRobustness = ["stable", "dependent", "fragile"].includes(robustness);
+    const knownStability = ["stable", "dependent", "fragile"].includes(stability);
     const converges = hasConvergingEvidence(diagnosis);
 
     if (!clearPlan || !coherent) {
@@ -69,14 +69,14 @@
       };
     }
 
-    if (diagnosis?.stability?.status === "dependent") {
+    if (stability === "dependent") {
       return {
         level: LEVEL.medium,
         rationale: "La composición conserva un plan, aunque puede cambiar si falta una pieza clave.",
       };
     }
 
-    if (diagnosis.coherence.status === "coherent" && robustness === "stable" && converges) {
+    if (diagnosis.coherence.status === "coherent" && stability === "stable" && converges) {
       return {
         level: LEVEL.high,
         rationale: "El plan es claro, las señales convergen y la identidad se mantiene estable.",
@@ -87,7 +87,7 @@
       level: LEVEL.medium,
       rationale: diagnosis.coherence.status === "hybrid"
         ? "El plan principal se reconoce, aunque convive con otra identidad."
-        : knownRobustness && robustness !== "stable"
+        : knownStability && stability !== "stable"
           ? "El plan es claro, pero puede cambiar si falta una pieza clave."
           : converges
             ? "Las señales apuntan a un plan, aunque falta confirmar su estabilidad."
