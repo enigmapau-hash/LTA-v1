@@ -138,6 +138,28 @@ assert.deepEqual(
   "Una condición contradictoria reduce la confianza y vuelve provisional el informe"
 );
 
+const fragileDiagnosis = {
+  ...coherenceAdjusted.diagnosis,
+  stability: { status: "fragile" },
+};
+const fragileConfidence = assessConfidence({
+  diagnosis: fragileDiagnosis,
+  correction: coherenceAdjusted.correction,
+  protection: coherenceAdjusted.protection,
+});
+assert.equal(fragileConfidence.conclusions.diagnosis.level, "baja");
+
+const dependentDiagnosis = {
+  ...coherenceAdjusted.diagnosis,
+  stability: { status: "dependent" },
+};
+const dependentConfidence = assessConfidence({
+  diagnosis: dependentDiagnosis,
+  correction: coherenceAdjusted.correction,
+  protection: coherenceAdjusted.protection,
+});
+assert.equal(dependentConfidence.conclusions.diagnosis.level, "media");
+
 const unavailable = assessConfidence({ diagnosis: { status: "not-assessable" } });
 assert.equal(unavailable.status, "not-assessable");
 assert.deepEqual(

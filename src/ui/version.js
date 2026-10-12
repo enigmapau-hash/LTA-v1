@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v2.7.0",
+    version: "v2.8.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-12",
-    summary: ["Evaluar la coherencia entre condición de victoria e identidad"],
+    summary: ["Evaluar la estabilidad de la composición ante la pérdida de una pieza"],
     pending: [],
   };
 

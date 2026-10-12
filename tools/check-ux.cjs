@@ -77,7 +77,7 @@ async function main(){
   const splitPushPicks={top:"Fiora",jungle:"Viego",mid:"Twisted Fate",adc:"Ezreal",support:"Braum"};
   for(const [role,champion] of Object.entries(splitPushPicks))await page.locator("#"+role).fill(champion);
   await page.waitForFunction(expected=>expected.every(champion=>Array.from(document.querySelectorAll(".composition-table .champion-name")).some(node=>node.textContent.trim()===champion))&&document.querySelector('[data-report-section="diagnosis"] .result-summary__answer')?.textContent.includes("Split Push"),Object.values(splitPushPicks));
-  const splitStrategy=await strategy.innerText();assert.match(splitStrategy,/Plan probable: Split Push/i);assert.match(splitStrategy,/Orientación: reforzar pick y control del mapa/i);assert.match(splitStrategy,/Conviene proteger el plan frente a Teamfight/i);
+  const splitStrategy=await strategy.innerText();assert.match(splitStrategy,/Lectura provisional: Plan principal: Split Push/i);assert.match(splitStrategy,/Posible mejora: reforzar pick y control del mapa/i);assert.match(splitStrategy,/Protección provisional frente a Teamfight/i);
   const topInput=page.locator("#top"),selectedTop=await topInput.inputValue();await topInput.click();
   assert.deepEqual(await topInput.evaluate(input=>[input.selectionStart,input.selectionEnd]),[0,selectedTop.length],"al enfocar un pick se selecciona todo el texto para reemplazarlo sin borrarlo");
   const topOptions=page.locator("#topMenu .picker-item");await topOptions.first().waitFor({state:"visible"});
