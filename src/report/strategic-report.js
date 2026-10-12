@@ -80,6 +80,35 @@
     };
   }
 
+  function adaptSectionTone(section, level) {
+    if (level === "alta") return section;
+    const action = section.action
+      ? level === "media"
+        ? `Como orientación, ${section.action.charAt(0).toLocaleLowerCase("es")}${section.action.slice(1)}`
+        : `De forma provisional, ${section.action.charAt(0).toLocaleLowerCase("es")}${section.action.slice(1)}`
+      : section.action;
+
+    if (level === "media") {
+      const answer = section.id === "diagnosis"
+        ? section.answer.replace(/^Plan principal:/, "Plan probable:")
+        : section.id === "correction"
+          ? section.answer.replace(/^Reforzar\s+/, "Orientación: reforzar ")
+          : section.answer.replace(/^Proteger el plan frente a\s+/, "Conviene proteger el plan frente a ");
+      return { ...section, answer, ...(action ? { action } : {}) };
+    }
+
+    const answer = section.id === "diagnosis"
+      ? `Lectura provisional: ${section.answer}`
+      : section.id === "correction"
+        ? section.answer.startsWith("Reforzar ")
+          ? section.answer.replace(/^Reforzar\s+/, "Posible mejora: reforzar ")
+          : "Sin mejora prioritaria respaldada por ahora"
+        : section.answer.startsWith("Proteger el plan frente a ")
+          ? section.answer.replace(/^Proteger el plan frente a\s+/, "Protección provisional frente a ")
+          : "Sin amenaza prioritaria por ahora";
+    return { ...section, answer, ...(action ? { action } : {}) };
+  }
+
   function buildStrategicReport(input = {}) {
     const diagnosis = input.diagnosis;
     const confidence = confidenceEngine.assessConfidence({
@@ -87,15 +116,16 @@
       correction: input.correction,
       protection: input.protection,
     });
+    const sections = [
+      diagnosisSection(diagnosis),
+      correctionSection(input.correction),
+      protectionSection(input.protection),
+    ].map((section) => adaptSectionTone(section, confidence.conclusions[section.id]?.level));
     return {
       status: diagnosis?.status === "assessed" ? "assessed" : "not-assessable",
       title: "Cómo jugarla",
       confidence,
-      sections: [
-        diagnosisSection(diagnosis),
-        correctionSection(input.correction),
-        protectionSection(input.protection),
-      ],
+      sections,
     };
   }
 
