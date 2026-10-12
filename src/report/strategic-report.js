@@ -14,13 +14,16 @@
   const strategicStateEngine = typeof module === "object" && module.exports
     ? require("../domain/strategic-state-engine.js")
     : root.LTAStrategicStateEngine;
-  const builder = factory(explanations, confidenceEngine, diagnosticSummaryEngine, secondaryObservationEngine, strategicStateEngine);
+  const strategicClosingEngine = typeof module === "object" && module.exports
+    ? require("../domain/strategic-closing-engine.js")
+    : root.LTAStrategicClosingEngine;
+  const builder = factory(explanations, confidenceEngine, diagnosticSummaryEngine, secondaryObservationEngine, strategicStateEngine, strategicClosingEngine);
   if (typeof module === "object" && module.exports) {
     module.exports = builder;
   } else {
     root.LTAStrategicReportBuilder = Object.freeze(builder);
   }
-})(typeof window !== "undefined" ? window : globalThis, function (explanations, confidenceEngine, diagnosticSummaryEngine, secondaryObservationEngine, strategicStateEngine) {
+})(typeof window !== "undefined" ? window : globalThis, function (explanations, confidenceEngine, diagnosticSummaryEngine, secondaryObservationEngine, strategicStateEngine, strategicClosingEngine) {
   "use strict";
 
   function diagnosisSection(diagnosis, summary) {
@@ -153,6 +156,7 @@
       confidence: confidence.conclusions.diagnosis,
       secondaryObservation,
     });
+    const closing = strategicClosingEngine.buildStrategicClosing({ strategicState, diagnosis });
     const sections = [
       diagnosisSection(diagnosis, { ...diagnosticSummary, summary: diagnosisExplanation }),
       correctionSection(input.correction),
@@ -163,6 +167,7 @@
       title: "Cómo jugarla",
       confidence,
       strategicState,
+      ...(closing ? { closing } : {}),
       sections,
     };
   }

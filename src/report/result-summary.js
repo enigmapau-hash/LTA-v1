@@ -53,6 +53,7 @@
             </article>
           `).join("")}
         </div>
+        ${report.closing ? `<p class="result-summary__strategic-closing">${escapeHtml(report.closing)}</p>` : ""}
       </section>
     `;
   }

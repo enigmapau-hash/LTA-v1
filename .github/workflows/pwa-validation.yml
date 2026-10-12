@@ -57,6 +57,9 @@ jobs:
       - name: Validate final strategic state
         run: node tools/check-strategic-state-engine.cjs
 
+      - name: Validate optional strategic closing
+        run: node tools/check-strategic-closing-engine.cjs
+
       - name: Validate the v2 strategic report
         run: node tools/check-strategic-report.cjs
 

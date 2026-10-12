@@ -163,6 +163,16 @@
   margin-top: 6px;
 }
 
+.result-summary__strategic-closing {
+  margin: 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
 .result-summary__strategy-card ul {
   padding-left: 18px;
 }
