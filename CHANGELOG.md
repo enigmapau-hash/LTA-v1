@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.12.0
+
+### Added
+- Mostrar un cierre estratégico breve solo cuando aporta una acción distinta
+
+
 ## v2.11.0
 
 ### Added

@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v2.11.0",
+    version: "v2.12.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-12",
-    summary: ["Sintetizar el estado estratégico final como metadato interno del informe"],
+    summary: ["Mostrar un cierre estratégico breve solo cuando aporta una acción distinta"],
     pending: [],
   };
 
