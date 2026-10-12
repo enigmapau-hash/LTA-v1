@@ -32,10 +32,11 @@
         explanation: explanations.explainDiagnosis(diagnosis),
       };
     }
+    const winCondition = String(diagnosis.winCondition?.primary?.condition || "").trim();
     return {
       id: "diagnosis",
       title: "Diagnóstico",
-      answer: `Plan principal: ${primary}`,
+      answer: `Plan principal: ${primary}${winCondition ? ` · Cómo ganar: ${winCondition}` : ""}`,
       explanation: explanations.explainDiagnosis(diagnosis),
     };
   }

@@ -76,7 +76,7 @@ function assertReport(report, answers) {
   assert.ok(report.sections.every((section) => section.title && section.explanation));
   assert.ok(report.sections.every((section) => section.explanation.split(/\s+/).length <= 22), "Cada explicación debe ser breve");
   const visibleText = report.sections.flatMap((section) => [section.title, section.answer, section.explanation, section.action || ""]).join(" ");
-  assert.ok(visibleText.split(/\s+/).length <= 90, "El resumen debe ser breve y escaneable");
+  assert.ok(visibleText.split(/\s+/).length <= 100, "El resumen debe seguir siendo breve y escaneable con la condición de victoria explícita");
   assert.doesNotMatch(visibleText, /Afinidad|candidatos|\bTop:|\bJungla:/i, "No expone puntuaciones ni listas internas");
   assert.equal(JSON.stringify(report).includes("candidates"), false, "No filtra las listas internas de candidatos");
   assert.equal(JSON.stringify(report).includes("impact"), false, "No expone puntuaciones internas de impacto");
@@ -87,11 +87,11 @@ const clearReport = reportFor(clearPlan);
 assert.equal(diagnoseComposition(clearPlan).coherence.status, "coherent");
 assert.deepEqual(Object.values(clearReport.confidence.conclusions).map((item) => item.level), ["alta", "alta", "alta"]);
 assertReport(clearReport, [
-  "Plan principal: Front to Back",
+  "Plan principal: Front to Back · Cómo ganar: Proteger al ADC y forzar teamfights.",
   "Reforzar presión lateral",
   "Proteger el plan frente a Split Push",
 ]);
-assert.match(clearReport.sections[0].explanation, /convergen en una identidad común/i);
+assert.match(clearReport.sections[0].explanation, /Concreta cómo ganar con Front to Back/i);
 assert.match(clearReport.sections[1].explanation, /prioridad responde a poca presión lateral/i);
 assert.match(clearReport.sections[2].action, /línea lateral/i);
 assert.match(clearReport.sections[2].explanation, /amenaza prioritaria porque/i);
@@ -100,11 +100,11 @@ const hybridPlan = composition({ top: "Ornn", jungle: "Sejuani", mid: "Orianna",
 const hybridReport = reportFor(hybridPlan);
 assert.deepEqual(Object.values(hybridReport.confidence.conclusions).map((item) => item.level), ["media", "media", "media"]);
 assertReport(hybridReport, [
-  "Plan probable: Front to Back",
+  "Plan probable: Front to Back · Cómo ganar: Proteger al ADC y forzar teamfights.",
   "Orientación: reforzar presión lateral",
   "Conviene proteger el plan frente a Split Push",
 ]);
-assert.match(hybridReport.sections[0].explanation, /señales de Teamfight/i);
+assert.match(hybridReport.sections[0].explanation, /Concreta cómo ganar con Front to Back/i);
 assert.match(hybridReport.sections[1].explanation, /poca presión lateral/i);
 assert.match(hybridReport.sections[2].explanation, /presión lateral/i);
 assert.match(hybridReport.sections[2].action, /^Como orientación,/i);
@@ -113,7 +113,7 @@ const splitPushPlan = composition({ top: "Fiora", jungle: "Viego", mid: "Twisted
 const splitPushReport = reportFor(splitPushPlan);
 assert.deepEqual(Object.values(splitPushReport.confidence.conclusions).map((item) => item.level), ["media", "media", "media"]);
 assertReport(splitPushReport, [
-  "Plan probable: Split Push",
+  "Plan probable: Split Push · Cómo ganar: Crear presión lateral y obligar al rival a responder separado.",
   "Orientación: reforzar pick y control del mapa",
   "Conviene proteger el plan frente a Teamfight",
 ]);
@@ -145,7 +145,7 @@ assert.match(incoherentReport.sections[2].action, /^De forma provisional,/i);
 const contradictoryReport = reportFor(contradictoryPlan);
 assert.deepEqual(Object.values(contradictoryReport.confidence.conclusions).map((item) => item.level), ["baja", "baja", "baja"]);
 assertReport(contradictoryReport, [
-  "Lectura provisional: Plan principal: Poke",
+  "Lectura provisional: Plan principal: Poke · Cómo ganar: Desgastar antes de pelear y evitar engages directos.",
   contradictoryReport.sections[1].answer,
   contradictoryReport.sections[2].answer,
 ]);

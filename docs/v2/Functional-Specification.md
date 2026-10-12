@@ -36,6 +36,7 @@ LTA analiza únicamente la composición propia. Sus conclusiones describen lo qu
 - Analizar una composición propia de cinco puestos: Top, Jungla, Mid, Botline y Support.
 - Relacionar los atributos disponibles de los campeones con patrones de identidad conocidos.
 - Comunicar identidad principal y secundaria cuando estén suficientemente respaldadas, o explicar que no hay un plan claro.
+- Expresar la condición de victoria principal separada de la identidad y conservar una secundaria cuando los resultados ya calculados la respalden.
 - Distinguir una combinación híbrida compatible de dos identidades con objetivos incompatibles, e identificar el problema principal con evidencia disponible.
 - Presentar una lectura estratégica compacta con plan, fortalezas, riesgos y estabilidad de piezas clave.
 - Ayudar a completar puestos vacíos con hasta tres candidatos ordenados por afinidad y acompañados de una explicación.
@@ -85,6 +86,7 @@ En composiciones parciales, compara la afinidad de candidatos con las elecciones
 Según la evidencia disponible, LTA puede generar:
 
 - una identidad principal y, si corresponde, una identidad secundaria;
+- una condición de victoria principal —y una secundaria cuando exista una identidad secundaria respaldada— que describe cómo convertir el plan en una victoria;
 - un plan de partida asociado a esa identidad;
 - fortalezas y debilidades comunes;
 - riesgos o atributos estratégicos ausentes cuando no hay cohesión suficiente;
@@ -97,7 +99,7 @@ Las recomendaciones de composición parcial muestran hasta tres candidatos por p
 
 ### Diagnosticar
 
-Diagnosticar significa explicar qué plan sugieren los atributos y qué tan bien se apoyan entre sí. El diagnóstico señala fortalezas compartidas, riesgos, carencias de cohesión y dependencias relevantes. También distingue las identidades secundarias compatibles de las que exigen planes opuestos; cuando hay una contradicción respaldada, explica el conflicto principal y señala una pieza que empuja hacia el plan secundario si los atributos disponibles permiten identificarla. Si la composición no sostiene una identidad clara, lo dice y explica qué señales comunes faltan. No atribuye la causa a un rival que no se ha analizado.
+Diagnosticar significa explicar qué plan sugieren los atributos y qué tan bien se apoyan entre sí. Separa la identidad —el tipo de composición— de la condición de victoria —la forma concreta de convertir ese plan en una victoria—. El diagnóstico señala fortalezas compartidas, riesgos, carencias de cohesión y dependencias relevantes. También distingue las identidades secundarias compatibles de las que exigen planes opuestos; cuando hay una contradicción respaldada, explica el conflicto principal y señala una pieza que empuja hacia el plan secundario si los atributos disponibles permiten identificarla. Si la composición no sostiene una identidad clara, lo dice y explica qué señales comunes faltan. No atribuye la causa a un rival que no se ha analizado.
 
 ### Corregir
 
@@ -138,7 +140,7 @@ El informe estratégico de composición completa no aparece mientras falten elec
 **Con la composición completa:**
 
 - la alineación de puestos, campeones, función y ritmo;
-- el diagnóstico principal: identidad y señales secundarias si existen, o falta de un plan claro;
+- el diagnóstico principal: identidad y condición de victoria, o falta de un plan claro;
 - la mejora de mayor prioridad, expresada como perfil y vinculada a la carencia detectada;
 - el estilo rival que más amenaza el plan y una pauta general para protegerlo;
 - una explicación breve para cada conclusión.
@@ -148,6 +150,8 @@ La lectura aparece en este orden: diagnóstico, corrección y protección. Conse
 ### Lo que permanece interno
 
 Las señales y puntuaciones detalladas que se utilizan para comparar identidades, perfiles de mejora y estilos amenazantes no se presentan como un desglose técnico. El informe muestra solo la corrección y la amenaza prioritarias; conserva candidatos alternativos, amenazas secundarias y pesos comparativos como información interna.
+
+La condición de victoria secundaria se conserva en el diagnóstico cuando hay una identidad secundaria respaldada. La lectura visible prioriza la condición principal para no añadir un bloque redundante.
 
 La condición de victoria, la sinergia interna y las recomendaciones generales no se convierten en bloques independientes cuando repetirían el plan o el diagnóstico. LTA no muestra bans porque no analiza campeones rivales.
 

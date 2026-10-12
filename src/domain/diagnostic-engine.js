@@ -5,13 +5,16 @@
   const contradictionEngine = typeof module === "object" && module.exports
     ? require("./contradiction-engine.js")
     : root.LTAContradictionEngine;
-  const engine = factory(compositionEngine, contradictionEngine);
+  const winConditionEngine = typeof module === "object" && module.exports
+    ? require("./win-condition-engine.js")
+    : root.LTAWinConditionEngine;
+  const engine = factory(compositionEngine, contradictionEngine, winConditionEngine);
   if (typeof module === "object" && module.exports) {
     module.exports = engine;
   } else {
     root.LTADiagnosticEngine = Object.freeze(engine);
   }
-})(typeof window !== "undefined" ? window : globalThis, function (compositionEngine, contradictionEngine) {
+})(typeof window !== "undefined" ? window : globalThis, function (compositionEngine, contradictionEngine, winConditionEngine) {
   "use strict";
 
   const TEAM_SIZE = 5;
@@ -64,6 +67,7 @@
       explanation: ["El diagnóstico completo está pendiente porque la composición no es válida o está incompleta."],
     };
     diagnosis.contradictions = contradictionEngine.assessContradictions({ diagnosis });
+    diagnosis.winCondition = winConditionEngine.assessWinConditions({ diagnosis });
     return diagnosis;
   }
 
@@ -216,6 +220,7 @@
         ...diagnosis.dependencies.map((item) => item.explanation),
       ];
     }
+    diagnosis.winCondition = winConditionEngine.assessWinConditions({ diagnosis, analysis });
 
     return diagnosis;
   }

@@ -7,6 +7,7 @@ const path = require("node:path");
 const XLSX = require("../vendor/xlsx.full.min.js");
 const { diagnoseComposition } = require("../src/domain/diagnostic-engine.js");
 const { assessContradictions } = require("../src/domain/contradiction-engine.js");
+const { analyzeComposition } = require("../src/domain/composition-engine.js");
 
 const root = path.resolve(__dirname, "..");
 const workbook = XLSX.read(fs.readFileSync(path.join(root, "Draft Pool.xlsx")), { type: "buffer" });
@@ -81,6 +82,16 @@ const contradictory = composition({
   botline: "Tristana",
   support: "Heimerdinger",
 });
+const winConditionReferences = [
+  { identity: "Front to Back", picks: frontToBack },
+  { identity: "Dive", picks: dive },
+  { identity: "Pick", picks: composition({ top: "Gragas", jungle: "Elise", mid: "Ahri", botline: "Jhin", support: "Bard" }) },
+  { identity: "Poke", picks: composition({ top: "Jayce", jungle: "Nidalee", mid: "Xerath", botline: "Varus (Letalidad)", support: "Karma" }) },
+  { identity: "Split Push", picks: splitPush },
+  { identity: "Teamfight", picks: composition({ top: "Malphite", jungle: "Wukong", mid: "Yasuo", botline: "Miss Fortune", support: "Rell" }) },
+  { identity: "Escalado", picks: composition({ top: "Sion", jungle: "Maokai", mid: "Azir", botline: "Smolder", support: "Milio" }) },
+  { identity: "Early Game", picks: composition({ top: "Renekton", jungle: "Lee Sin", mid: "Pantheon", botline: "Draven", support: "Pyke" }) },
+];
 
 const clearPlan = diagnoseComposition(dive);
 assert.equal(clearPlan.status, "assessed");
@@ -132,6 +143,25 @@ assert.match(contradictoryDiagnosis.primaryProblem.explanation, /Poke necesita d
 assert.ok(contradictoryDiagnosis.contradictions.explanation.split(/\s+/).length <= 24);
 assert.deepEqual(diagnoseComposition(contradictory), contradictoryDiagnosis, "La contradicción debe ser determinista");
 
+for (const reference of winConditionReferences) {
+  const diagnosis = diagnoseComposition(reference.picks);
+  const existingAnalysis = analyzeComposition(reference.picks);
+  assert.equal(diagnosis.plan.primaryIdentity, reference.identity, `${reference.identity}: debe conservarse la identidad reconocida`);
+  assert.equal(diagnosis.winCondition.status, "assessed", `${reference.identity}: debe derivar su condición de victoria`);
+  assert.equal(diagnosis.winCondition.primary.identity, diagnosis.plan.primaryIdentity);
+  assert.equal(diagnosis.winCondition.primary.condition, existingAnalysis.winCondition, `${reference.identity}: reutiliza la condición ya calculada por el análisis`);
+  assert.notEqual(diagnosis.winCondition.primary.condition, diagnosis.winCondition.primary.identity, `${reference.identity}: identidad y condición son conceptos distintos`);
+  assert.ok(diagnosis.winCondition.primary.explanation.split(/\s+/).length <= 14, `${reference.identity}: explicación breve`);
+  assert.deepEqual(diagnoseComposition(reference.picks).winCondition, diagnosis.winCondition, `${reference.identity}: resultado determinista`);
+}
+
+assert.equal(hybridPlan.winCondition.primary.identity, "Front to Back");
+assert.equal(hybridPlan.winCondition.secondary.identity, "Teamfight");
+assert.notEqual(hybridPlan.winCondition.primary.condition, hybridPlan.winCondition.secondary.condition);
+assert.equal(hybridPlan.winCondition.secondary.relationship, "complementary");
+assert.equal(contradictoryDiagnosis.winCondition.secondary.relationship, "conflicting");
+assert.equal(diagnoseComposition(dive.slice(0, 4)).winCondition.status, "not-assessed");
+
 const pureHybrid = assessContradictions({
   diagnosis: {
     status: "assessed",
@@ -150,7 +180,7 @@ const pureConflict = assessContradictions({
   picks: [{ role: "top", champion: "Test Pick", identity: "⚔️ Engage" }],
 });
 assert.equal(pureConflict.status, "contradictory");
-assert.ok(pureConflict.explanation.includes("Test Pick"));
+assert.ok(pureConflict.deviatingPicks.some((item) => item.champion === "Test Pick"));
 assert.deepEqual(assessContradictions({
   diagnosis: {
     status: "assessed",
@@ -168,4 +198,4 @@ assert.deepEqual(
 assert.equal(diagnoseComposition(dive.slice(0, 4)).status, "not-assessable");
 assert.ok(diagnoseComposition(dive.slice(0, 4)).issues.includes("five-picks-required"));
 
-console.log("Diagnostic Engine validado: plan claro, híbridos coherentes, contradicciones, cohesión, dependencias y determinismo.");
+console.log("Diagnostic Engine validado: condiciones de victoria, híbridos coherentes, contradicciones, cohesión y determinismo.");
