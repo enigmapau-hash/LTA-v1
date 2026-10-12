@@ -1,119 +1,173 @@
 # Functional Specification — League Team Analyzer v2
 
-**Estado:** borrador funcional inicial. Este documento recoge el comportamiento conocido y las decisiones acordadas; no aprueba por sí mismo nuevas funcionalidades.
+**Estado:** primera versión completa para revisión. Describe el alcance funcional acordado; no autoriza por sí misma capacidades fuera de ese alcance.
+
+## Resumen ejecutivo
+
+League Team Analyzer (LTA) ayuda a comprender cómo jugar una composición propia de League of Legends y qué hace que ese plan sea más o menos sólido. Relaciona los campeones elegidos con sus atributos estratégicos, identifica una identidad cuando hay señales suficientes y explica fortalezas, riesgos y piezas críticas.
+
+Si faltan puestos, orienta la selección con un grupo breve de candidatos afines. Si no hay cohesión suficiente, lo comunica en lugar de presentar una estrategia como segura. El razonamiento es determinista, explicable y limitado a la información disponible. LTA apoya las decisiones del usuario; no juega, no selecciona por él y no analiza todavía al rival.
 
 ## Índice
 
-1. [Objetivo y alcance del producto](#1-objetivo-y-alcance-del-producto)
-2. [Filosofía de LTA](#2-filosofía-de-lta)
-3. [Flujo general de razonamiento](#3-flujo-general-de-razonamiento)
-4. [Información que analiza](#4-información-que-analiza)
-5. [Conclusiones que genera](#5-conclusiones-que-genera)
-6. [Información que muestra al usuario](#6-información-que-muestra-al-usuario)
-7. [Información que permanece interna](#7-información-que-permanece-interna)
-8. [Límites funcionales acordados](#8-límites-funcionales-acordados)
-9. [Principios de diseño aprobados](#9-principios-de-diseño-aprobados)
-10. [Aspectos funcionales pendientes de definir](#10-aspectos-funcionales-pendientes-de-definir)
+1. [Misión y problema](#1-misión-y-problema)
+2. [Alcance: núcleo de v2 y frontera de v3](#2-alcance-núcleo-de-v2-y-frontera-de-v3)
+3. [Filosofía del producto](#3-filosofía-del-producto)
+4. [Flujo general de razonamiento](#4-flujo-general-de-razonamiento)
+5. [Información analizada y conclusiones](#5-información-analizada-y-conclusiones)
+6. [Diagnosticar, corregir y proteger](#6-diagnosticar-corregir-y-proteger)
+7. [Confianza en las conclusiones](#7-confianza-en-las-conclusiones)
+8. [Información visible e interna](#8-información-visible-e-interna)
+9. [Principios de diseño](#9-principios-de-diseño)
+10. [Qué no hará LTA v2](#10-qué-no-hará-lta-v2)
 
-## 1. Objetivo y alcance del producto
+## 1. Misión y problema
 
-League Team Analyzer (LTA) ayuda a entender una composición propia de League of Legends y a responder de forma clara: **«¿Cómo debería jugar esta composición?»**
+La misión de LTA v2 es ayudar al usuario a responder **«¿Cómo debería jugar esta composición?»** con una explicación breve, práctica y coherente con los campeones elegidos.
 
-La aplicación relaciona los campeones elegidos y sus atributos con un plan de partida, y resume los elementos que sostienen o debilitan ese plan. También orienta la elección cuando faltan puestos por completar.
+El problema que resuelve es la dificultad de convertir cinco elecciones individuales en una lectura común: qué identidad puede sostener el equipo, qué plan conviene priorizar, qué riesgos limitarán ese plan y qué campeones son importantes para mantenerlo. Cuando la composición aún está incompleta, también ayuda a entender qué candidatos pueden encajar en los puestos vacíos.
 
-Esta primera versión funcional de v2 documenta el producto y los comportamientos acordados hasta ahora. No introduce requisitos nuevos ni determina cambios funcionales respecto a la base existente.
+LTA analiza únicamente la composición propia. Sus conclusiones describen lo que sugieren los atributos disponibles; no predicen el resultado de una partida.
 
-## 2. Filosofía de LTA
+## 2. Alcance: núcleo de v2 y frontera de v3
 
-- Priorizar una lectura estratégica breve, práctica y fácil de explicar.
-- Relacionar las conclusiones con atributos identificables de los campeones.
-- Mantener un razonamiento determinista: una misma composición y los mismos datos producen las mismas conclusiones.
-- Ayudar al usuario a tomar decisiones; la selección final de campeones sigue siendo suya.
-- Evitar ruido y repeticiones: cada bloque visible debe ayudar a entender la composición o cómo jugarla.
-- No presentar las recomendaciones como un sistema de draft: no se dispone de una composición rival.
-- No basar el análisis en IA, tasas de victoria, estadísticas online ni servicios de datos externos.
+### Núcleo aprobado de v2
 
-## 3. Flujo general de razonamiento
+- Analizar una composición propia de cinco puestos: Top, Jungla, Mid, Botline y Support.
+- Relacionar los atributos disponibles de los campeones con patrones de identidad conocidos.
+- Comunicar identidad principal y secundaria cuando estén suficientemente respaldadas, o explicar que no hay un plan claro.
+- Presentar una lectura estratégica compacta con plan, fortalezas, riesgos y estabilidad de piezas clave.
+- Ayudar a completar puestos vacíos con hasta tres candidatos ordenados por afinidad y acompañados de una explicación.
+- Expresar el grado de respaldo mediante evidencia y límites claros, sin prometer certeza sobre la partida.
 
-1. El usuario elige campeones para los cinco puestos: Top, Jungla, Mid, Botline y Support.
-2. LTA comprueba que no se repitan campeones y que cada elección esté disponible para el puesto indicado.
-3. Mientras falten elecciones válidas, muestra los puestos pendientes y puede orientar cada puesto vacío con candidatos afines a la composición parcial.
-4. Con los cinco puestos completos, LTA contrasta los atributos del equipo con patrones estratégicos conocidos.
-5. Si los atributos convergen, identifica un plan principal y, cuando hay señales suficientes, uno secundario. Si no convergen, lo indica y explica qué elementos de cohesión faltan.
-6. La aplicación presenta una lectura estratégica compacta junto a la composición para ayudar al usuario a entender cómo jugarla.
+### Frontera de v3 o posterior
 
-## 4. Información que analiza
+No hay funcionalidades de v3 aprobadas todavía. El análisis del rival y del draft, los bans, el uso de estadísticas o servicios externos, la IA, los cambios automáticos de campeones y una probabilidad numérica de éxito quedan fuera del núcleo de v2. Podrían evaluarse en una etapa posterior, pero este documento no los compromete ni los define como requisitos.
 
-LTA analiza la composición propia: el puesto y campeón elegidos para cada integrante, junto con los atributos disponibles para esos campeones:
+## 3. Filosofía del producto
 
-- identidad estratégica;
+- **Estrategia antes que volumen:** explicar el plan y sus razones sin llenar la pantalla de conclusiones repetidas.
+- **Explicabilidad:** conectar cada conclusión con atributos reconocibles de la composición.
+- **Honestidad:** admitir cuando las señales no bastan para identificar un plan.
+- **Apoyo, no automatización de decisiones:** ofrecer contexto y opciones; el usuario conserva el control de sus picks.
+- **Determinismo:** las mismas elecciones y los mismos atributos producen conclusiones consistentes.
+- **Simplicidad:** mostrar solo la información que ayuda a entender o completar la composición.
+
+## 4. Flujo general de razonamiento
+
+1. El usuario elige un campeón para cada puesto de su equipo.
+2. LTA comprueba que no haya campeones repetidos y que cada elección esté disponible para el puesto asignado.
+3. Con puestos vacíos, LTA presenta el estado de la composición y compara candidatos para esos puestos con los campeones ya elegidos.
+4. Con cinco elecciones válidas, LTA relaciona los atributos del equipo con patrones estratégicos de referencia.
+5. LTA identifica la identidad mejor respaldada y una secundaria solo cuando hay evidencia suficiente. Si las señales no forman un plan común, explica la falta de cohesión.
+6. El diagnóstico traduce esos resultados en un plan, fortalezas, riesgos y una lectura de estabilidad.
+7. La presentación prioriza la información útil para la decisión actual: completar puestos o entender cómo jugar la composición completa.
+
+## 5. Información analizada y conclusiones
+
+### Información analizada
+
+LTA considera el puesto y el campeón elegido, además de los atributos estratégicos disponibles para ese campeón:
+
+- identidad;
 - función;
 - ritmo de partida;
 - fortalezas;
 - debilidades.
 
-Las señales se contrastan con estas identidades de referencia: Front to Back, Dive, Pick, Poke, Split Push, Teamfight, Escalado y Early Game. Son patrones de referencia, no reglas cerradas que determinen automáticamente la estrategia de una partida.
+En composiciones completas, contrasta las señales con los patrones de referencia Front to Back, Dive, Pick, Poke, Split Push, Teamfight, Escalado y Early Game. Son referencias para interpretar atributos, no reglas que garanticen cómo se desarrollará una partida.
 
-En una composición parcial, el análisis de afinidad compara cada candidato disponible para un puesto vacío con los campeones ya elegidos y sus atributos. Se limita a los puestos que siguen vacíos.
+En composiciones parciales, compara la afinidad de candidatos con las elecciones existentes y con el plan que empieza a tomar forma.
 
-## 5. Conclusiones que genera
+### Conclusiones generadas
 
-Según la composición y los datos disponibles, LTA puede derivar:
+Según la evidencia disponible, LTA puede generar:
 
-- identidad principal y, si las señales lo justifican, identidad secundaria;
-- una orientación o plan de partida asociado a la identidad;
-- fortalezas y debilidades comunes del equipo;
-- riesgos o atributos estratégicos ausentes cuando no hay un plan claro;
-- campeones que sostienen especialmente la identidad y qué cambia si falta una pieza;
-- para cada puesto vacío, hasta tres candidatos ordenados por afinidad, con una indicación de encaje, su contribución y el plan asociado cuando existe información suficiente.
+- una identidad principal y, si corresponde, una identidad secundaria;
+- un plan de partida asociado a esa identidad;
+- fortalezas y debilidades comunes;
+- riesgos o atributos estratégicos ausentes cuando no hay cohesión suficiente;
+- las piezas que sostienen especialmente la identidad y el cambio que implicaría perderlas;
+- recomendaciones breves para puestos vacíos, ordenadas por afinidad, con su encaje y contribución explicados.
 
-Las conclusiones dependen de los atributos disponibles. La herramienta no afirma conocer datos que no estén presentes en ellos.
+Las recomendaciones de composición parcial muestran hasta tres candidatos por puesto vacío. Su afinidad indica ajuste según los atributos disponibles, no rendimiento real en partidas.
 
-## 6. Información que muestra al usuario
+## 6. Diagnosticar, corregir y proteger
 
-### Composición incompleta
+### Diagnosticar
 
-- Los campeones elegidos y los puestos que aún faltan.
-- El progreso de selección y los avisos necesarios para corregir elecciones repetidas o no disponibles.
-- Recomendaciones para cada puesto vacío. Cada lista es breve y explica la afinidad y la aportación del candidato; puede mostrar el plan asociado cuando ayuda a distinguir opciones.
-- No presenta el informe estratégico de composición completa antes de tener cinco elecciones válidas.
+Diagnosticar significa explicar qué plan sugieren los atributos y qué tan bien se apoyan entre sí. El diagnóstico señala fortalezas compartidas, riesgos, carencias de cohesión y dependencias relevantes. Si la composición no sostiene una identidad clara, lo dice y explica qué señales comunes faltan. No atribuye la causa a un rival que no se ha analizado.
 
-### Composición completa
+### Corregir
 
-- La alineación con puesto, campeón, función y ritmo.
-- La identidad detectada, incluida la secundaria cuando existe.
-- El plan de partida, las fortalezas y los riesgos.
-- La pieza o piezas clave y el efecto de perderlas cuando el análisis de estabilidad detecta un cambio relevante. Si la identidad se mantiene al quitar cualquier elección, el informe puede indicarlo.
-- Si no aparece una identidad clara, una explicación breve de la falta de cohesión.
+Corregir significa ayudar al usuario a responder a una carencia identificada sin decidir por él. Mientras falten puestos, LTA propone candidatos para los puestos vacíos y explica qué aportaría cada opción. En una composición completa puede señalar qué debilita el plan; elegir o cambiar un campeón sigue siendo una acción del usuario. LTA no sustituye picks ni aplica cambios automáticamente.
 
-La presentación debe responder primero a cómo jugar la composición y evitar repetir el mismo consejo en varios bloques.
+### Proteger la composición
 
-## 7. Información que permanece interna
+Proteger significa hacer visible qué campeones sostienen de forma crítica la identidad o el plan. LTA compara la lectura de la composición cuando falta una pieza y explica si la identidad cambia, se debilita o deja de estar clara. Si la identidad se mantiene al retirar cualquiera de las piezas, puede comunicar esa estabilidad.
 
-El análisis utiliza señales, puntuaciones y comparaciones entre identidades para ordenar sus conclusiones y evaluar afinidades. Estos valores detallados sirven al razonamiento; no se muestran como una tabla de puntuaciones para el usuario.
+Esta lectura es informativa: no bloquea elecciones, no reserva campeones ni garantiza que la composición mantenga su rendimiento en una partida real.
 
-El motor puede derivar una condición de victoria, sinergia interna, recomendaciones generales y otros datos del informe. En la presentación actual no se ofrecen como bloques independientes cuando repetirían el plan, las fortalezas o los riesgos ya visibles. La sinergia no aparece como sección separada.
+## 7. Confianza en las conclusiones
 
-La información disponible no permite recomendar bans contra un rival. LTA no muestra un bloque de bans ni presenta una recomendación de ban como conclusión.
+La confianza de LTA procede de la calidad y convergencia de la evidencia disponible, no de datos externos ni de una predicción de victoria. Se expresa de forma calibrada:
 
-## 8. Límites funcionales acordados
+- cuando varios atributos respaldan un mismo patrón, LTA comunica la identidad principal y explica el plan;
+- solo añade una identidad secundaria si también tiene señales suficientes;
+- cuando las señales no convergen, evita forzar una identidad y explica la falta de cohesión;
+- las recomendaciones muestran su afinidad y contribución para que el usuario pueda juzgar el encaje.
 
-- El análisis se limita al equipo propio; no incluye selección ni análisis del rival.
-- Las recomendaciones de campeones ayudan a completar puestos y no constituyen un sistema de draft.
-- No se incorporan IA, estadísticas de partidas, tasas de victoria ni consultas online como base de las conclusiones.
-- Las conclusiones se limitan a los atributos y patrones disponibles; no se inventan datos para completar información ausente.
-- Esta especificación no cambia el selector, el informe, el flujo de uso ni la fuente de datos actuales.
+La afinidad visible de los candidatos es una puntuación de ajuste basada en atributos. Sirve para ordenar y comparar opciones dentro de la recomendación; **no es un porcentaje de confianza, una probabilidad de ganar ni una tasa de victoria**. LTA no muestra una probabilidad de éxito ni una garantía de resultado.
 
-## 9. Principios de diseño aprobados
+## 8. Información visible e interna
 
-- **Claridad:** expresar el plan y sus razones con lenguaje directo.
-- **Explicabilidad:** vincular una conclusión con atributos o señales comprensibles.
-- **Determinismo:** evitar resultados variables ante las mismas entradas.
-- **Simplicidad:** mantener los bloques visibles solo cuando añaden valor y evitar duplicados.
-- **Utilidad en partida:** orientar cómo jugar, qué fortalezas aprovechar, qué riesgos evitar y qué piezas sostienen el plan.
-- **Apoyo a la decisión:** ofrecer contexto y afinidad sin quitar al usuario el control de la selección.
-- **Respeto a los límites conocidos:** no presentar análisis de rival, bans o datos externos que LTA no tiene.
+### Lo que ve el usuario
 
-## 10. Aspectos funcionales pendientes de definir
+**Con la composición incompleta:**
 
-No se han acordado cambios funcionales adicionales para v2 más allá de los comportamientos y límites recogidos en este documento. Cualquier flujo, dato o resultado nuevo deberá definirse y aprobarse antes de incorporarse a la especificación.
+- los campeones elegidos, los puestos pendientes y el progreso;
+- avisos si una elección está repetida o no está disponible para el puesto;
+- los atributos disponibles de las elecciones en la tabla;
+- candidatos para cada puesto vacío, su nivel relativo de afinidad, su contribución y el plan asociado cuando aporta claridad.
+
+El informe estratégico de composición completa no aparece mientras falten elecciones válidas.
+
+**Con la composición completa:**
+
+- la alineación de puestos, campeones, función y ritmo;
+- la identidad principal y secundaria, si la hay;
+- el plan de partida, las fortalezas y los riesgos;
+- las piezas clave y qué cambia si falta una de ellas, o que la identidad se mantiene estable;
+- una explicación de falta de cohesión cuando no existe una identidad clara.
+
+La lectura se organiza para responder primero cómo jugar y evita repetir una misma idea en varios bloques.
+
+### Lo que permanece interno
+
+Las señales y puntuaciones detalladas que se utilizan para comparar identidades y ordenar conclusiones no se presentan como un desglose técnico. El usuario recibe la conclusión y las razones útiles para interpretarla, no cada cálculo interno.
+
+La condición de victoria, la sinergia interna y las recomendaciones generales no se convierten en bloques independientes cuando repetirían el plan o el diagnóstico. LTA no muestra bans porque no analiza campeones rivales.
+
+## 9. Principios de diseño
+
+- **Claridad:** usar lenguaje directo y jerarquizar identidad, plan y razones.
+- **Trazabilidad:** relacionar las conclusiones con atributos observables.
+- **Calibración:** limitar cada afirmación a lo que la evidencia permite sostener.
+- **Determinismo:** producir resultados consistentes ante los mismos datos.
+- **Separación de responsabilidades:** distinguir evaluación, diagnóstico de impacto y comunicación al usuario.
+- **Simplicidad:** no exponer métricas internas ni crear secciones que repitan valor existente.
+- **Control del usuario:** mantener en manos del usuario la elección y el cambio de campeones.
+- **Límites explícitos:** no simular información del rival, del resultado o de fuentes que LTA no tiene.
+
+## 10. Qué no hará LTA v2
+
+El núcleo de v2 no:
+
+- analizará una composición rival ni recomendará bans contra ella;
+- funcionará como sistema completo de draft;
+- utilizará IA, tasas de victoria, estadísticas online o servicios externos como base de sus conclusiones;
+- sustituirá campeones o corregirá la selección sin intervención del usuario;
+- afirmará que una composición ganará ni presentará la afinidad como probabilidad de éxito;
+- añadirá conclusiones que no estén respaldadas por los atributos disponibles.
+
+Las capacidades que amplíen estos límites requieren una especificación y aprobación posteriores. No se consideran parte del alcance aprobado de v2 ni un compromiso de v3.
