@@ -6,7 +6,7 @@
   const fallback = {
     version: "v2.0.0",
     track: "Alpha de v2",
-    label: "Versión alpha",
+    label: "Versión",
     updated: "2026-10-12",
     summary: ["Preparar el desarrollo de v2 con documentación inicial"],
     pending: [],
