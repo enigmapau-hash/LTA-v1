@@ -23,12 +23,7 @@ function picks(selection) {
 
 function observation(selection) {
   const diagnosis = diagnoseComposition(selection);
-  return findSecondaryObservation({
-    diagnosis,
-    winCondition: diagnosis.winCondition,
-    coherence: diagnosis.winConditionCoherence,
-    contradiction: diagnosis.contradictions,
-  });
+  return findSecondaryObservation({ diagnosis });
 }
 
 const clear = observation(picks({ top: "Olaf", jungle: "Zyra", mid: "Heimerdinger", botline: "Lucian", support: "Tahm Kench" }));
@@ -45,8 +40,10 @@ assert.equal(incoherent, null, "Una composición sin plan compartido no debe rec
 
 const diagnosis = diagnoseComposition(hybridPicks);
 assert.equal(findSecondaryObservation({
-  diagnosis,
-  coherence: { ...diagnosis.winConditionCoherence, relation: "conflicting" },
+  diagnosis: {
+    ...diagnosis,
+    winConditionCoherence: { ...diagnosis.winConditionCoherence, relation: "conflicting" },
+  },
 }), null, "Una vía secundaria incompatible no cumple el criterio de complemento claro");
 assert.equal(findSecondaryObservation({ diagnosis: { status: "not-assessable" } }), null);
 

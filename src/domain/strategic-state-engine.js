@@ -11,10 +11,10 @@
   function summarizeStrategicState(input = {}) {
     const diagnosis = input.diagnosis || {};
     const diagnosticSummary = input.diagnosticSummary || {};
-    const winCondition = input.winCondition || diagnosis.winCondition || {};
-    const coherence = input.coherence || diagnosis.winConditionCoherence || {};
-    const stability = input.stability || diagnosis.stability || {};
-    const contradiction = input.contradiction || diagnosis.contradictions || {};
+    const winCondition = diagnosis.winCondition || {};
+    const coherence = diagnosis.winConditionCoherence || {};
+    const stability = diagnosis.stability || {};
+    const contradiction = diagnosis.contradictions || {};
     const confidence = input.confidence || {};
     const hasSecondaryObservation = Boolean(String(input.secondaryObservation || "").trim());
 

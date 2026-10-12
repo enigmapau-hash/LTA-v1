@@ -29,10 +29,6 @@ function summaryFor(picks) {
   const confidence = assessConfidence({ diagnosis }).conclusions.diagnosis;
   return buildDiagnosticSummary({
     diagnosis,
-    winCondition: diagnosis.winCondition,
-    coherence: diagnosis.winConditionCoherence,
-    stability: diagnosis.stability,
-    contradiction: diagnosis.contradictions,
     confidence,
   });
 }

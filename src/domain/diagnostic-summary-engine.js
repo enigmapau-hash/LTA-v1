@@ -10,10 +10,10 @@
 
   function buildDiagnosticSummary(input = {}) {
     const diagnosis = input.diagnosis || {};
-    const winCondition = input.winCondition || diagnosis.winCondition || {};
-    const coherence = input.coherence || diagnosis.winConditionCoherence || {};
-    const stability = input.stability || diagnosis.stability || {};
-    const contradiction = input.contradiction || diagnosis.contradictions || {};
+    const winCondition = diagnosis.winCondition || {};
+    const coherence = diagnosis.winConditionCoherence || {};
+    const stability = diagnosis.stability || {};
+    const contradiction = diagnosis.contradictions || {};
     const confidence = input.confidence || {};
 
     if (diagnosis.status !== "assessed") {

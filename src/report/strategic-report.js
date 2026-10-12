@@ -131,17 +131,10 @@
     });
     const diagnosticSummary = diagnosticSummaryEngine.buildDiagnosticSummary({
       diagnosis,
-      winCondition: diagnosis?.winCondition,
-      coherence: diagnosis?.winConditionCoherence,
-      stability: diagnosis?.stability,
-      contradiction: diagnosis?.contradictions,
       confidence: confidence.conclusions.diagnosis,
     });
     const secondaryObservation = secondaryObservationEngine.findSecondaryObservation({
       diagnosis,
-      winCondition: diagnosis?.winCondition,
-      coherence: diagnosis?.winConditionCoherence,
-      contradiction: diagnosis?.contradictions,
     });
     const diagnosisExplanation = [diagnosticSummary.summary, secondaryObservation]
       .filter(Boolean)
@@ -149,10 +142,6 @@
     const strategicState = strategicStateEngine.summarizeStrategicState({
       diagnosis,
       diagnosticSummary,
-      winCondition: diagnosis?.winCondition,
-      coherence: diagnosis?.winConditionCoherence,
-      stability: diagnosis?.stability,
-      contradiction: diagnosis?.contradictions,
       confidence: confidence.conclusions.diagnosis,
       secondaryObservation,
     });
