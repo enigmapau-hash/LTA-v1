@@ -125,6 +125,13 @@ const incoherentPlan = [
   pick("botline", "Draven"),
   pick("support", "Lulu"),
 ];
+const contradictoryPlan = composition({
+  top: "Ambessa",
+  jungle: "Evelynn",
+  mid: "Ziggs",
+  botline: "Tristana",
+  support: "Heimerdinger",
+});
 const incoherentReport = reportFor(incoherentPlan);
 assert.deepEqual(Object.values(incoherentReport.confidence.conclusions).map((item) => item.level), ["baja", "baja", "baja"]);
 assertReport(incoherentReport, [
@@ -135,10 +142,20 @@ assertReport(incoherentReport, [
 assert.match(incoherentReport.sections[0].explanation, /no convergen lo suficiente/i);
 assert.match(incoherentReport.sections[2].action, /^De forma provisional,/i);
 
+const contradictoryReport = reportFor(contradictoryPlan);
+assert.deepEqual(Object.values(contradictoryReport.confidence.conclusions).map((item) => item.level), ["baja", "baja", "baja"]);
+assertReport(contradictoryReport, [
+  "Lectura provisional: Plan principal: Poke",
+  contradictoryReport.sections[1].answer,
+  contradictoryReport.sections[2].answer,
+]);
+assert.match(contradictoryReport.sections[0].explanation, /Poke necesita desgastar.*Dive busca entrar.*Ambessa/);
+assert.match(contradictoryReport.sections[0].answer, /Lectura provisional/);
+
 assert.equal(explainDiagnosis(diagnoseComposition(clearPlan)), clearReport.sections[0].explanation);
 assert.equal(explainCorrection(proposeCorrections({ picks: clearPlan, diagnosis: diagnoseComposition(clearPlan), candidatesByRole })), clearReport.sections[1].explanation);
 assert.equal(explainProtection(protectComposition({ diagnosis: diagnoseComposition(clearPlan) })), clearReport.sections[2].explanation);
-for (const report of [clearReport, hybridReport, incoherentReport]) {
+for (const report of [clearReport, hybridReport, incoherentReport, contradictoryReport]) {
   const explanations = report.sections.map((section) => section.explanation);
   assert.equal(new Set(explanations).size, explanations.length, "Las explicaciones deben aportar razones distintas");
   assert.doesNotMatch(explanations.join(" "), /candidatos|Afinidad|impacto|puntuación|Top:|Jungla:/i, "No expone listas ni datos internos");

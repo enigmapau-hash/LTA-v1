@@ -2,13 +2,16 @@
   const compositionEngine = typeof module === "object" && module.exports
     ? require("./composition-engine.js")
     : root.LTACompositionEngine;
-  const engine = factory(compositionEngine);
+  const contradictionEngine = typeof module === "object" && module.exports
+    ? require("./contradiction-engine.js")
+    : root.LTAContradictionEngine;
+  const engine = factory(compositionEngine, contradictionEngine);
   if (typeof module === "object" && module.exports) {
     module.exports = engine;
   } else {
     root.LTADiagnosticEngine = Object.freeze(engine);
   }
-})(typeof window !== "undefined" ? window : globalThis, function (compositionEngine) {
+})(typeof window !== "undefined" ? window : globalThis, function (compositionEngine, contradictionEngine) {
   "use strict";
 
   const TEAM_SIZE = 5;
@@ -42,7 +45,7 @@
   }
 
   function unavailableDiagnostic(issues) {
-    return {
+    const diagnosis = {
       status: "not-assessable",
       issues,
       plan: { clear: false, primaryIdentity: null, secondaryIdentity: null },
@@ -60,6 +63,8 @@
       },
       explanation: ["El diagnóstico completo está pendiente porque la composición no es válida o está incompleta."],
     };
+    diagnosis.contradictions = contradictionEngine.assessContradictions({ diagnosis });
+    return diagnosis;
   }
 
   function uniquePicks(items) {
@@ -185,7 +190,7 @@
       ...(dependencies.length ? dependencies.map((item) => item.explanation) : []),
     ];
 
-    return {
+    const diagnosis = {
       status: "assessed",
       issues: [],
       plan: { clear: coherent, primaryIdentity, secondaryIdentity },
@@ -195,6 +200,24 @@
       primaryProblem,
       explanation,
     };
+    diagnosis.contradictions = contradictionEngine.assessContradictions({ diagnosis, picks });
+
+    if (diagnosis.contradictions.status === "contradictory") {
+      diagnosis.coherence.status = "contradictory";
+      diagnosis.coherence.explanation = diagnosis.contradictions.explanation;
+      diagnosis.primaryProblem = {
+        type: "strategic-contradiction",
+        explanation: diagnosis.contradictions.explanation,
+        evidence: diagnosis.contradictions.identities,
+      };
+      diagnosis.explanation = [
+        `Problema estructural principal: ${diagnosis.primaryProblem.explanation}`,
+        diagnosis.robustness.explanation,
+        ...diagnosis.dependencies.map((item) => item.explanation),
+      ];
+    }
+
+    return diagnosis;
   }
 
   return { diagnoseComposition };

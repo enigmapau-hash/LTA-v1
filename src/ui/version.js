@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v2.4.0",
+    version: "v2.5.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-12",
-    summary: ["Adaptar el tono del informe según la confianza estratégica"],
+    summary: ["Detectar y diagnosticar contradicciones estratégicas internas"],
     pending: [],
   };
 

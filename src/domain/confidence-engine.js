@@ -15,6 +15,13 @@
   }
 
   function assessDiagnosis(diagnosis) {
+    if (diagnosis?.contradictions?.status === "contradictory") {
+      return {
+        level: LEVEL.low,
+        rationale: "Dos planes estratégicos incompatibles compiten en la composición.",
+      };
+    }
+
     const clearPlan = diagnosis?.status === "assessed"
       && diagnosis.plan?.clear === true
       && Boolean(diagnosis.plan?.primaryIdentity);

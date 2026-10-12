@@ -12,6 +12,9 @@
     if (diagnosis?.status !== "assessed") {
       return "Hace falta una composición completa para valorar el plan.";
     }
+    if (diagnosis?.contradictions?.status === "contradictory") {
+      return diagnosis.contradictions.explanation;
+    }
     if (!diagnosis.plan?.clear || !diagnosis.plan?.primaryIdentity) {
       return "Sus atributos no convergen lo suficiente para sostener un plan compartido.";
     }

@@ -40,6 +40,12 @@ const badgeVersion = extract(
   "el badge de index.html",
   errors
 );
+const accessibleBadgeVersion = extract(
+  /aria-label="Versión (v\d+\.\d+\.\d+)" aria-expanded=/,
+  html,
+  "la etiqueta accesible del badge de index.html",
+  errors
+);
 const readmeVersion = extract(
   /^- Versión visible: \x60([^\x60]+)\x60$/m,
   readme,
@@ -93,6 +99,7 @@ if (packageJson.version !== numericVersion) {
 }
 for (const [label, value] of [
   ["badge", badgeVersion],
+  ["etiqueta accesible del badge", accessibleBadgeVersion],
   ["README", readmeVersion],
   ["fallback version.js", fallbackVersion],
   ["CHANGELOG", changelogVersion],

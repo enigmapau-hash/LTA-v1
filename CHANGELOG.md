@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.5.0
+
+### Added
+- Detectar y diagnosticar contradicciones estratégicas internas
+
+
 ## v2.4.0
 
 ### Added

@@ -6,6 +6,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const XLSX = require("../vendor/xlsx.full.min.js");
 const { diagnoseComposition } = require("../src/domain/diagnostic-engine.js");
+const { assessContradictions } = require("../src/domain/contradiction-engine.js");
 
 const root = path.resolve(__dirname, "..");
 const workbook = XLSX.read(fs.readFileSync(path.join(root, "Draft Pool.xlsx")), { type: "buffer" });
@@ -73,6 +74,13 @@ const incoherent = [
   pick("botline", "Draven"),
   pick("support", "Lulu"),
 ];
+const contradictory = composition({
+  top: "Ambessa",
+  jungle: "Evelynn",
+  mid: "Ziggs",
+  botline: "Tristana",
+  support: "Heimerdinger",
+});
 
 const clearPlan = diagnoseComposition(dive);
 assert.equal(clearPlan.status, "assessed");
@@ -93,6 +101,8 @@ assert.equal(hybridPlan.plan.primaryIdentity, "Front to Back");
 assert.equal(hybridPlan.plan.secondaryIdentity, "Teamfight");
 assert.equal(hybridPlan.coherence.status, "hybrid");
 assert.ok(hybridPlan.coherence.explanation.includes("señales secundarias"));
+assert.equal(hybridPlan.contradictions.status, "coherent-hybrid");
+assert.match(hybridPlan.contradictions.explanation, /complementan Front to Back/);
 
 const dependencyDiagnosis = diagnoseComposition(splitPush);
 assert.equal(dependencyDiagnosis.plan.primaryIdentity, "Split Push");
@@ -108,6 +118,47 @@ assert.equal(incoherentDiagnosis.primaryProblem.type, "cohesion-gap");
 assert.ok(incoherentDiagnosis.primaryProblem.evidence.length);
 assert.equal(incoherentDiagnosis.robustness.status, "not-assessed");
 assert.match(incoherentDiagnosis.primaryProblem.explanation, /No hay un plan de partida claro/i);
+assert.equal(incoherentDiagnosis.contradictions.status, "incoherent");
+
+const contradictoryDiagnosis = diagnoseComposition(contradictory);
+assert.equal(contradictoryDiagnosis.plan.primaryIdentity, "Poke");
+assert.equal(contradictoryDiagnosis.plan.secondaryIdentity, "Dive");
+assert.equal(contradictoryDiagnosis.contradictions.status, "contradictory");
+assert.equal(contradictoryDiagnosis.coherence.status, "contradictory");
+assert.equal(contradictoryDiagnosis.primaryProblem.type, "strategic-contradiction");
+assert.deepEqual(contradictoryDiagnosis.contradictions.identities, ["Poke", "Dive"]);
+assert.ok(contradictoryDiagnosis.contradictions.deviatingPicks.some((item) => item.champion === "Ambessa"));
+assert.match(contradictoryDiagnosis.primaryProblem.explanation, /Poke necesita desgastar.*Dive busca entrar.*Ambessa/);
+assert.ok(contradictoryDiagnosis.contradictions.explanation.split(/\s+/).length <= 24);
+assert.deepEqual(diagnoseComposition(contradictory), contradictoryDiagnosis, "La contradicción debe ser determinista");
+
+const pureHybrid = assessContradictions({
+  diagnosis: {
+    status: "assessed",
+    plan: { primaryIdentity: "Front to Back", secondaryIdentity: "Teamfight" },
+    coherence: { status: "hybrid" },
+  },
+});
+assert.equal(pureHybrid.status, "coherent-hybrid");
+
+const pureConflict = assessContradictions({
+  diagnosis: {
+    status: "assessed",
+    plan: { primaryIdentity: "Poke", secondaryIdentity: "Dive" },
+    coherence: { status: "hybrid" },
+  },
+  picks: [{ role: "top", champion: "Test Pick", identity: "⚔️ Engage" }],
+});
+assert.equal(pureConflict.status, "contradictory");
+assert.ok(pureConflict.explanation.includes("Test Pick"));
+assert.deepEqual(assessContradictions({
+  diagnosis: {
+    status: "assessed",
+    plan: { primaryIdentity: "Poke", secondaryIdentity: "Dive" },
+    coherence: { status: "hybrid" },
+  },
+  picks: [{ role: "top", champion: "Test Pick", identity: "⚔️ Engage" }],
+}), pureConflict, "La capa de contradicciones debe ser determinista sin volver a analizar la composición");
 
 assert.deepEqual(
   diagnoseComposition(frontToBack),
@@ -117,4 +168,4 @@ assert.deepEqual(
 assert.equal(diagnoseComposition(dive.slice(0, 4)).status, "not-assessable");
 assert.ok(diagnoseComposition(dive.slice(0, 4)).issues.includes("five-picks-required"));
 
-console.log("Diagnostic Engine validado: plan claro, composición híbrida, cohesión, dependencias, robustez y determinismo.");
+console.log("Diagnostic Engine validado: plan claro, híbridos coherentes, contradicciones, cohesión, dependencias y determinismo.");
