@@ -154,6 +154,15 @@
   line-height: 1.4;
 }
 
+.result-summary__strategy-card .result-summary__answer {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.result-summary__strategy-card .result-summary__action {
+  margin-top: 6px;
+}
+
 .result-summary__strategy-card ul {
   padding-left: 18px;
 }

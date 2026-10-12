@@ -1,11 +1,10 @@
 {
-  "version": "v2.0.0",
-  "track": "Alpha de v2",
+  "version": "v2.1.0",
+  "track": "Actualización funcional",
   "label": "Versión",
   "updated": "2026-10-12",
   "summary": [
-    "Preparar el desarrollo de v2 con documentación inicial",
-    "Redactar la primera Functional Specification"
+    "Primera versión visible del informe estratégico v2"
   ],
   "pending": []
 }

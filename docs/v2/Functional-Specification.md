@@ -135,16 +135,16 @@ El informe estratégico de composición completa no aparece mientras falten elec
 **Con la composición completa:**
 
 - la alineación de puestos, campeones, función y ritmo;
-- la identidad principal y secundaria, si la hay;
-- el plan de partida, las fortalezas y los riesgos;
-- las piezas clave y qué cambia si falta una de ellas, o que la identidad se mantiene estable;
-- una explicación de falta de cohesión cuando no existe una identidad clara.
+- el diagnóstico principal: identidad y señales secundarias si existen, o falta de un plan claro;
+- la mejora de mayor prioridad, expresada como perfil y vinculada a la carencia detectada;
+- el estilo rival que más amenaza el plan y una pauta general para protegerlo;
+- una explicación breve para cada conclusión.
 
-La lectura se organiza para responder primero cómo jugar y evita repetir una misma idea en varios bloques.
+La lectura aparece en este orden: diagnóstico, corrección y protección. Conserva la tabla de composición y evita repetir candidatos, puntuaciones o señales internas en el informe.
 
 ### Lo que permanece interno
 
-Las señales y puntuaciones detalladas que se utilizan para comparar identidades y ordenar conclusiones no se presentan como un desglose técnico. El usuario recibe la conclusión y las razones útiles para interpretarla, no cada cálculo interno.
+Las señales y puntuaciones detalladas que se utilizan para comparar identidades, perfiles de mejora y estilos amenazantes no se presentan como un desglose técnico. El informe muestra solo la corrección y la amenaza prioritarias; conserva candidatos alternativos, amenazas secundarias y pesos comparativos como información interna.
 
 La condición de victoria, la sinergia interna y las recomendaciones generales no se convierten en bloques independientes cuando repetirían el plan o el diagnóstico. LTA no muestra bans porque no analiza campeones rivales.
 

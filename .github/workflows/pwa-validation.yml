@@ -39,6 +39,9 @@ jobs:
       - name: Validate the internal Protection Engine
         run: node tools/check-protection-engine.cjs
 
+      - name: Validate the v2 strategic report
+        run: node tools/check-strategic-report.cjs
+
       - name: Validate composition logic against the workbook
         run: node tools/check-composition.cjs
 

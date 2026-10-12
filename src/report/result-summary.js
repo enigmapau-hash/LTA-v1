@@ -3,7 +3,10 @@
   if (!result) return;
 
   const escapeHtml = window.LTAUtils?.escapeHtml || ((value) => String(value));
-  const analyzeComposition = window.LTACompositionEngine?.analyzeComposition;
+  const diagnoseComposition = window.LTADiagnosticEngine?.diagnoseComposition;
+  const proposeCorrections = window.LTACorrectionEngine?.proposeCorrections;
+  const protectComposition = window.LTAProtectionEngine?.protectComposition;
+  const buildStrategicReport = window.LTAStrategicReportBuilder?.buildStrategicReport;
 
   let refreshQueued = false;
 
@@ -14,44 +17,9 @@
     result.querySelector(".result-summary")?.remove();
   }
 
-  function renderList(items, emptyText = "No hay información para mostrar.") {
-    if (!items?.length) return `<p class="result-summary__empty">${escapeHtml(emptyText)}</p>`;
-    return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
-  }
-
-  function renderPlanSupport(planSupport) {
-    if (!planSupport) return "";
-    const strongest = planSupport.strongestPicks;
-    const strongestPicks = strongest.map((pick) => pick.champion).join(", ");
-    const scoreLoss = strongest[0]?.scoreLoss || 0;
-    const support = strongestPicks
-      ? `<p><strong>${strongest.length > 1 ? "Piezas clave" : "Pieza clave"}:</strong> ${escapeHtml(strongestPicks)} (−${scoreLoss} puntos de ajuste ${strongest.length > 1 ? "si falta cualquiera" : "si falta"}).</p>`
-      : "";
-    const changes = new Map();
-    for (const item of planSupport.identityChanges) {
-      const identity = item.identityWithout || "sin identidad clara";
-      const gamePlan = item.gamePlanWithout?.join(" ") || "";
-      const key = JSON.stringify([identity, gamePlan]);
-      const group = changes.get(key) || { identity, gamePlan, champions: [] };
-      group.champions.push(item.champion);
-      changes.set(key, group);
-    }
-    const fragility = changes.size
-      ? [...changes.values()].map(({ identity, gamePlan, champions }) =>
-        identity === "sin identidad clara"
-          ? `<li>Si falta ${escapeHtml(champions.join(", "))}, el equipo pierde una identidad principal clara.</li>`
-          : `<li>Si falta ${escapeHtml(champions.join(", "))}, el plan cambia a ${escapeHtml(identity)}: ${escapeHtml(gamePlan)}</li>`
-      ).join("")
-      : "";
-    const stability = changes.size
-      ? `<p><strong>Si falta una pieza:</strong></p><ul>${fragility}</ul>`
-      : "<p><strong>Estabilidad:</strong> la identidad se mantiene aunque falte cualquier pick.</p>";
-    return `<div class="result-summary__strategy-insight">${support}${stability}</div>`;
-  }
-
   function renderStrategicReport(items) {
-    if (typeof analyzeComposition !== "function") return "";
-    const analysis = analyzeComposition(items.map((item) => ({
+    if (![diagnoseComposition, proposeCorrections, protectComposition, buildStrategicReport].every((fn) => typeof fn === "function")) return "";
+    const picks = items.map((item) => ({
       role: item.role,
       champion: item.champion,
       identity: item.identity,
@@ -59,37 +27,31 @@
       tempo: item.tempo,
       strengths: item.strengths,
       weaknesses: item.weaknesses,
-    })));
-    const report = analysis.report;
-    const hasIdentity = Boolean(analysis.identity.primary);
-    const identity = [analysis.identity.primary, analysis.identity.secondary]
-      .filter(Boolean)
-      .map(escapeHtml)
-      .join(" · ") || "Sin identidad clara";
-    const howToPlay = report.gamePlan?.length ? report.gamePlan : report.winCondition ? [report.winCondition] : [];
-    const risks = [...new Set([...(report.weaknesses || []), ...(report.risks || [])])];
+    }));
+    const diagnosis = diagnoseComposition(picks);
+    const correction = proposeCorrections({
+      picks,
+      diagnosis,
+      candidatesByRole: window.LTAStrategicReportCandidatesByRole || {},
+    });
+    const protection = protectComposition({ diagnosis, correction });
+    const report = buildStrategicReport({ diagnosis, correction, protection });
 
     return `
       <section class="result-summary__strategy" aria-labelledby="composition-analysis-title">
         <div class="result-summary__strategy-heading">
-          <p class="result-summary__eyebrow">Lectura estratégica</p>
-          <h3 id="composition-analysis-title">${identity}</h3>
-          ${hasIdentity ? "" : `<p>${escapeHtml(report.executiveSummary)}</p>`}
+          <p class="result-summary__eyebrow">Informe estratégico</p>
+          <h3 id="composition-analysis-title">${escapeHtml(report.title)}</h3>
         </div>
         <div class="result-summary__strategy-grid">
-          <article class="result-summary__strategy-card">
-            <h4>Plan de partida</h4>
-            ${renderList(howToPlay, "Aún no hay un plan claro.")}
-            ${renderPlanSupport(report.planSupport)}
-          </article>
-          <article class="result-summary__strategy-card">
-            <h4>Fortalezas</h4>
-            ${renderList(report.strengths, "No destacan fortalezas comunes.")}
-          </article>
-          <article class="result-summary__strategy-card">
-            <h4>Riesgos</h4>
-            ${renderList(risks, "No se aprecian riesgos principales.")}
-          </article>
+          ${report.sections.map((section) => `
+            <article class="result-summary__strategy-card" data-report-section="${escapeHtml(section.id)}">
+              <h4>${escapeHtml(section.title)}</h4>
+              <p class="result-summary__answer">${escapeHtml(section.answer)}</p>
+              <p>${escapeHtml(section.explanation)}</p>
+              ${section.action ? `<p class="result-summary__action"><strong>Protección:</strong> ${escapeHtml(section.action)}</p>` : ""}
+            </article>
+          `).join("")}
         </div>
       </section>
     `;
