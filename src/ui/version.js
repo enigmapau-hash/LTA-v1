@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v2.10.0",
+    version: "v2.11.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-12",
-    summary: ["Añadir un matiz secundario cuando una identidad complementa claramente el plan"],
+    summary: ["Sintetizar el estado estratégico final como metadato interno del informe"],
     pending: [],
   };
 

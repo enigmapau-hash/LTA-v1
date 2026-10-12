@@ -54,6 +54,9 @@ jobs:
       - name: Validate secondary observations
         run: node tools/check-secondary-observation-engine.cjs
 
+      - name: Validate final strategic state
+        run: node tools/check-strategic-state-engine.cjs
+
       - name: Validate the v2 strategic report
         run: node tools/check-strategic-report.cjs
 
