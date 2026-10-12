@@ -105,7 +105,8 @@ assertReport(hybridReport, [
   "Orientación: reforzar presión lateral",
   "Conviene proteger el plan frente a Split Push",
 ]);
-assert.match(hybridReport.sections[0].explanation, /depende de señales secundarias o piezas clave/i);
+assert.match(hybridReport.sections[0].explanation, /no está del todo alineado/i);
+assert.match(hybridReport.sections[0].explanation, /Matiz: Teamfight amplía las opciones sin desplazar el plan/i);
 assert.match(hybridReport.sections[1].explanation, /poca presión lateral/i);
 assert.match(hybridReport.sections[2].explanation, /presión lateral/i);
 assert.match(hybridReport.sections[2].action, /^Como orientación,/i);

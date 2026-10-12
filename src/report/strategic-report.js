@@ -8,13 +8,16 @@
   const diagnosticSummaryEngine = typeof module === "object" && module.exports
     ? require("../domain/diagnostic-summary-engine.js")
     : root.LTADiagnosticSummaryEngine;
-  const builder = factory(explanations, confidenceEngine, diagnosticSummaryEngine);
+  const secondaryObservationEngine = typeof module === "object" && module.exports
+    ? require("../domain/secondary-observation-engine.js")
+    : root.LTASecondaryObservationEngine;
+  const builder = factory(explanations, confidenceEngine, diagnosticSummaryEngine, secondaryObservationEngine);
   if (typeof module === "object" && module.exports) {
     module.exports = builder;
   } else {
     root.LTAStrategicReportBuilder = Object.freeze(builder);
   }
-})(typeof window !== "undefined" ? window : globalThis, function (explanations, confidenceEngine, diagnosticSummaryEngine) {
+})(typeof window !== "undefined" ? window : globalThis, function (explanations, confidenceEngine, diagnosticSummaryEngine, secondaryObservationEngine) {
   "use strict";
 
   function diagnosisSection(diagnosis, summary) {
@@ -128,8 +131,17 @@
       contradiction: diagnosis?.contradictions,
       confidence: confidence.conclusions.diagnosis,
     });
+    const secondaryObservation = secondaryObservationEngine.findSecondaryObservation({
+      diagnosis,
+      winCondition: diagnosis?.winCondition,
+      coherence: diagnosis?.winConditionCoherence,
+      contradiction: diagnosis?.contradictions,
+    });
+    const diagnosisExplanation = [diagnosticSummary.summary, secondaryObservation]
+      .filter(Boolean)
+      .join(" ");
     const sections = [
-      diagnosisSection(diagnosis, diagnosticSummary),
+      diagnosisSection(diagnosis, { ...diagnosticSummary, summary: diagnosisExplanation }),
       correctionSection(input.correction),
       protectionSection(input.protection),
     ].map((section) => adaptSectionTone(section, confidence.conclusions[section.id]?.level));

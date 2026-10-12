@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v2.9.0",
+    version: "v2.10.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-12",
-    summary: ["Sintetizar plan, win condition, contradicciones, estabilidad y confianza en un diagnóstico compacto"],
+    summary: ["Añadir un matiz secundario cuando una identidad complementa claramente el plan"],
     pending: [],
   };
 

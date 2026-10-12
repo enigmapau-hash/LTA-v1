@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.10.0
+
+### Added
+- Añadir un matiz secundario cuando una identidad complementa claramente el plan
+
+
 ## v2.9.0
 
 ### Added

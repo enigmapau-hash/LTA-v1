@@ -1,6 +1,6 @@
 {
   "name": "lol-team-analyzer",
-  "version": "2.9.0",
+  "version": "2.10.0",
   "private": true,
   "description": "Analizador estratégico de composiciones de League of Legends.",
   "scripts": {
@@ -14,6 +14,7 @@
     "test:protection-engine": "node tools/check-protection-engine.cjs",
     "test:confidence-engine": "node tools/check-confidence-engine.cjs",
     "test:diagnostic-summary": "node tools/check-diagnostic-summary-engine.cjs",
+    "test:secondary-observation": "node tools/check-secondary-observation-engine.cjs",
     "test:strategic-report": "node tools/check-strategic-report.cjs"
   }
 }
