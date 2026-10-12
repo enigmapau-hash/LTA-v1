@@ -53,6 +53,10 @@ Interpreta las conclusiones del análisis para describir qué favorece o limita 
 
 Convierte las conclusiones en una lectura que ayude a responder «¿Cómo debería jugar esta composición?». En una selección incompleta, prioriza el progreso y la orientación de los puestos vacíos. En una completa, ordena el diagnóstico, la mejora prioritaria y la protección estratégica, cada uno con una explicación breve. Muestra solo la mejora y la amenaza prioritarias; mantiene candidaturas alternativas, señales detalladas y pesos comparativos dentro de las capas internas.
 
+### 2.8 Calibración de confianza
+
+Estima por separado la solidez del diagnóstico, la corrección y la protección con niveles cualitativos —alta, media o baja— y una razón breve. Se apoya en la claridad del plan, la convergencia de señales, la estabilidad de la composición y el respaldo disponible para cada conclusión. Recibe resultados ya calculados, no vuelve a analizar la composición y permanece interna en el informe actual.
+
 ## 3. Flujo de información
 
 ### 3.1 Recorrido con composición incompleta
@@ -71,7 +75,8 @@ Convierte las conclusiones en una lectura que ayude a responder «¿Cómo deber�
 4. El diagnóstico explica cómo los atributos sostienen o debilitan el plan y qué cambia si falta una pieza relevante.
 5. La corrección prioriza un perfil que atiende la carencia principal, sin sustituir elecciones.
 6. La protección prioriza estilos que pueden castigar el plan y propone una pauta defensiva general, sin asumir una composición rival concreta.
-7. La presentación ordena diagnóstico, corrección y protección en un informe breve, sin volver a evaluar la composición.
+7. La calibración de confianza estima la solidez de cada conclusión con la evidencia ya disponible.
+8. La presentación ordena diagnóstico, corrección y protección en un informe breve, sin volver a evaluar la composición ni mostrar los niveles internos de confianza.
 
 ## 4. Separación entre análisis, diagnóstico y presentación
 

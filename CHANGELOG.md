@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.3.0
+
+### Added
+- Añadir capa interna de confianza estratégica
+
+
 ## v2.2.0
 
 ### Added

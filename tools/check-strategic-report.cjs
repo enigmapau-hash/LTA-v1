@@ -68,6 +68,9 @@ function reportFor(picks) {
 
 function assertReport(report, answers) {
   assert.equal(report.status, "assessed");
+  assert.ok(report.confidence?.conclusions?.diagnosis, "El builder conserva la confianza interna por conclusión");
+  assert.ok(report.confidence?.conclusions?.correction, "La confianza interna cubre la corrección");
+  assert.ok(report.confidence?.conclusions?.protection, "La confianza interna cubre la protección");
   assert.deepEqual(report.sections.map((section) => section.id), ["diagnosis", "correction", "protection"]);
   assert.deepEqual(report.sections.map((section) => section.answer), answers);
   assert.ok(report.sections.every((section) => section.title && section.explanation));

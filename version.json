@@ -1,10 +1,10 @@
 {
-  "version": "v2.2.0",
+  "version": "v2.3.0",
   "track": "Actualización funcional",
   "label": "Versión",
   "updated": "2026-10-12",
   "summary": [
-    "Añadir explicaciones breves al informe estratégico v2"
+    "Añadir capa interna de confianza estratégica"
   ],
   "pending": []
 }
