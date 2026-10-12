@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.0.0
+
+### Added
+- Inicio de la etapa alpha de v2 con una estructura documental inicial.
+
 ## v1.23.0
 
 ### Added

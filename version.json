@@ -1,10 +1,10 @@
 {
-  "version": "v1.23.0",
-  "track": "Actualización funcional",
+  "version": "v2.0.0",
+  "track": "Alpha de v2",
   "label": "Versión",
-  "updated": "2026-10-10",
+  "updated": "2026-10-12",
   "summary": [
-    "Reducir repetición durante la carga de campeones"
+    "Preparar el desarrollo de v2 con documentación inicial"
   ],
   "pending": []
 }
