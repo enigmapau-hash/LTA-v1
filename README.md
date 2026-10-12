@@ -2,9 +2,13 @@
 
 Analiza composiciones de League of Legends y ofrece una lectura estratégica clara para entender cómo jugarlas.
 
+## Evolución de v2
+
+La versión `v2.0.0` inicia la etapa alpha. Su diseño se documentará primero en `docs/`, que servirá como referencia antes de implementar cambios funcionales.
+
 ## Características
 
-- Versión visible: `v1.23.0`
+- Versión visible: `v2.0.0`
 - No permite campeones repetidos.
 - Muestra iconos oficiales de campeones cuando están disponibles.
 - El selector, la vista rápida y el resultado se actualizan sin recargar.

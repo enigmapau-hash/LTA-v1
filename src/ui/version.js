@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v1.23.0",
-    track: "Actualización funcional",
-    label: "Versión",
-    updated: "2026-10-10",
-    summary: ["Reducir repetición durante la carga de campeones"],
+    version: "v2.0.0",
+    track: "Alpha de v2",
+    label: "Versión alpha",
+    updated: "2026-10-12",
+    summary: ["Preparar el desarrollo de v2 con documentación inicial"],
     pending: [],
   };
 
