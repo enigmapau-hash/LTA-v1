@@ -38,7 +38,6 @@ function evaluate(picks) {
   const state = summarizeStrategicState({
     diagnosis,
     diagnosticSummary,
-    confidence,
     secondaryObservation,
   });
   return { diagnosis, diagnosticSummary, confidence, secondaryObservation, state };
@@ -50,6 +49,13 @@ assert.deepEqual(clear.state, {
   status: "solid",
   reason: "aligned-and-stable",
 });
+assert.deepEqual(summarizeStrategicState({
+  diagnosis: { ...clear.diagnosis, stability: { status: "fragile" } },
+  diagnosticSummary: { status: "risk" },
+}), {
+  status: "risk",
+  reason: "key-pick-dependency",
+}, "Strategic State conserva la clasificación del resumen y solo añade el motivo");
 
 const hybridPicks = composition({ top: "Ornn", jungle: "Sejuani", mid: "Orianna", botline: "Jinx", support: "Lulu" });
 const hybrid = evaluate(hybridPicks);
@@ -82,7 +88,6 @@ const fragileDependency = summarizeStrategicState({
     contradictions: { status: "coherent" },
   },
   diagnosticSummary: { status: "fragile" },
-  confidence: { level: "baja" },
 });
 assert.deepEqual(fragileDependency, { status: "fragile", reason: "key-pick-dependency" });
 

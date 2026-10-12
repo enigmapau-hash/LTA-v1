@@ -68,7 +68,7 @@ assert.match(mismatch.explanation, /Dive contradice la identidad principal Front
 
 const structuralConflict = fixture({
   plan: { clear: true, primaryIdentity: "Poke", secondaryIdentity: "Dive" },
-  coherence: { status: "contradictory" },
+  coherence: { status: "coherent" },
   contradictions: { status: "contradictory" },
   winCondition: {
     status: "assessed",

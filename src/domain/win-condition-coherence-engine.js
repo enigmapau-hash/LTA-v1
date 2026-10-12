@@ -36,8 +36,7 @@
     const secondaryMatches = !secondaryIdentity
       ? !secondaryCondition
       : Boolean(secondaryCondition?.identity === secondaryIdentity && String(secondaryCondition.condition || "").trim());
-    const diagnosedConflict = diagnosis.contradictions?.status === "contradictory"
-      || diagnosis.coherence?.status === "contradictory";
+    const diagnosedConflict = diagnosis.contradictions?.status === "contradictory";
     const conflictingSecondary = secondaryCondition?.relationship === "conflicting";
     const complementarySecondary = secondaryCondition?.relationship === "complementary" && secondaryMatches;
 

@@ -10,7 +10,6 @@
 
   function buildDiagnosticSummary(input = {}) {
     const diagnosis = input.diagnosis || {};
-    const winCondition = diagnosis.winCondition || {};
     const coherence = diagnosis.winConditionCoherence || {};
     const stability = diagnosis.stability || {};
     const contradiction = diagnosis.contradictions || {};
@@ -25,8 +24,7 @@
 
     if (contradiction.status === "contradictory"
       || coherence.status === "contradictory"
-      || stability.status === "fragile"
-      || winCondition.status === "assessed" && coherence.relation === "conflicting") {
+      || stability.status === "fragile") {
       return {
         status: "fragile",
         summary: contradiction.status === "contradictory" || coherence.status === "contradictory"
@@ -37,15 +35,14 @@
 
     if (!diagnosis.plan?.clear || !diagnosis.plan?.primaryIdentity) {
       return {
-        status: "risk",
+        status: "fragile",
         summary: confidence.level === "baja"
           ? "Por ahora, los atributos no apuntan a un plan común."
           : "Los atributos aún no convergen en un plan común.",
       };
     }
 
-    const fullyAligned = coherence.status === "fully-coherent"
-      || coherence.relation === "aligned";
+    const fullyAligned = coherence.status === "fully-coherent";
     const stable = stability.status === "stable";
     if (confidence.level === "alta"
       && diagnosis.coherence?.status === "coherent"
