@@ -2,7 +2,7 @@
 
 ## Índice
 
-- [Especificación funcional de v2](v2/functional-specification.md)
+- [Especificación funcional de v2](v2/Functional-Specification.md)
 - [Arquitectura](architecture/architecture.md)
 - [Roadmap](roadmap/roadmap.md)
 - [Decisiones de arquitectura (ADR)](decisions/README.md)
