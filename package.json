@@ -6,6 +6,7 @@
   "scripts": {
     "version:bump": "node tools/bump-version.cjs",
     "version:check": "node tools/check-version-sync.cjs",
-    "test:composition-engine": "node tools/check-composition-engine.cjs"
+    "test:composition-engine": "node tools/check-composition-engine.cjs",
+    "test:diagnostic-engine": "node tools/check-diagnostic-engine.cjs"
   }
 }

@@ -30,6 +30,9 @@ jobs:
       - name: Validate the Composition Engine against reference archetypes
         run: node tools/check-composition-engine.cjs
 
+      - name: Validate the internal Diagnostic Engine
+        run: node tools/check-diagnostic-engine.cjs
+
       - name: Validate composition logic against the workbook
         run: node tools/check-composition.cjs
 

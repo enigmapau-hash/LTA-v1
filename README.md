@@ -4,7 +4,7 @@ Analiza composiciones de League of Legends y ofrece una lectura estratégica cla
 
 ## Evolución de v2
 
-La versión `v2.0.0` inicia la etapa alpha. Su diseño se documentará primero en `docs/`, que servirá como referencia antes de implementar cambios funcionales.
+La v2 avanza por capacidades pequeñas y revisables sobre la base estable de la v1. La primera capacidad es un núcleo interno de diagnóstico; todavía no cambia la experiencia visible.
 
 ## Características
 
@@ -21,12 +21,14 @@ La versión `v2.0.0` inicia la etapa alpha. Su diseño se documentará primero e
 - `src/data/`: lectura de las listas de campeones de `Draft Pool.xlsx` y normalización de sus atributos.
 - `src/domain/composition-logic.js`: validación y búsquedas puras usadas por la interfaz actual.
 - `src/domain/composition-engine.js`: evaluación determinista y pura de la composición con los atributos del workbook. Informa identidad principal/secundaria, condición de victoria, fortalezas, debilidades y cohesión; alimenta el análisis estratégico del informe visible.
+- `src/domain/diagnostic-engine.js`: diagnóstico interno de composiciones completas a partir del análisis existente. Resume plan, coherencia, robustez, dependencias y problema principal; aún no se integra en la interfaz.
 - `src/report/`: renderizado de la tabla de resultado y resumen visible.
 - `src/utils/`: utilidades compartidas de texto.
 - `sw.js`: caché offline de los recursos de la app, incluida la librería SheetJS.
 - `vendor/xlsx.full.min.js`: versión local de SheetJS para que la lectura del Excel funcione offline.
 - `.github/workflows/pwa-validation.yml`: pruebas de arquetipos del motor y pruebas con Chromium para el ciclo PWA, la lógica de composición, el flujo de teclado y los tamaños responsive.
 - `tools/check-composition-engine.cjs`: compara el análisis con ocho arquetipos de referencia, una composición híbrida y otra descompensada. Se ejecuta con `npm run test:composition-engine`.
+- `tools/check-diagnostic-engine.cjs`: valida diagnósticos de composiciones claras, híbridas e incoherentes. Se ejecuta con `npm run test:diagnostic-engine`.
 - `tools/check-composition.cjs`: compara cada selector con su hoja del Excel y comprueba duplicados, entradas inválidas y actualización en tiempo real.
 - `tools/check-ux.cjs`: verifica el flujo por teclado, las etiquetas, el foco visible y el desbordamiento en 320, 375, 768 y 1280 px.
 - `tools/bump-version.cjs`: sincroniza la versión y el changelog.
