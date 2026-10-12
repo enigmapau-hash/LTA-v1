@@ -11,13 +11,16 @@
   const winConditionCoherenceEngine = typeof module === "object" && module.exports
     ? require("./win-condition-coherence-engine.js")
     : root.LTAWinConditionCoherenceEngine;
-  const engine = factory(compositionEngine, contradictionEngine, winConditionEngine, winConditionCoherenceEngine);
+  const stabilityEngine = typeof module === "object" && module.exports
+    ? require("./composition-stability-engine.js")
+    : root.LTACompositionStabilityEngine;
+  const engine = factory(compositionEngine, contradictionEngine, winConditionEngine, winConditionCoherenceEngine, stabilityEngine);
   if (typeof module === "object" && module.exports) {
     module.exports = engine;
   } else {
     root.LTADiagnosticEngine = Object.freeze(engine);
   }
-})(typeof window !== "undefined" ? window : globalThis, function (compositionEngine, contradictionEngine, winConditionEngine, winConditionCoherenceEngine) {
+})(typeof window !== "undefined" ? window : globalThis, function (compositionEngine, contradictionEngine, winConditionEngine, winConditionCoherenceEngine, stabilityEngine) {
   "use strict";
 
   const TEAM_SIZE = 5;
@@ -75,6 +78,7 @@
       diagnosis,
       winCondition: diagnosis.winCondition,
     });
+    diagnosis.stability = stabilityEngine.assessCompositionStability({ diagnosis });
     return diagnosis;
   }
 
@@ -231,6 +235,10 @@
     diagnosis.winConditionCoherence = winConditionCoherenceEngine.assessWinConditionCoherence({
       diagnosis,
       winCondition: diagnosis.winCondition,
+    });
+    diagnosis.stability = stabilityEngine.assessCompositionStability({
+      diagnosis,
+      removalOutcomes: planSupport?.removalOutcomes,
     });
 
     return diagnosis;

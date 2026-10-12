@@ -36,6 +36,13 @@
       };
     }
 
+    if (diagnosis?.stability?.status === "fragile") {
+      return {
+        level: LEVEL.low,
+        rationale: "La identidad principal depende de una pieza cuya ausencia rompe el plan.",
+      };
+    }
+
     const clearPlan = diagnosis?.status === "assessed"
       && diagnosis.plan?.clear === true
       && Boolean(diagnosis.plan?.primaryIdentity);
@@ -59,6 +66,13 @@
         rationale: winConditionCoherence.secondaryMitigation === "complements-plan"
           ? "La condición secundaria complementa el plan, aunque abre una vía adicional."
           : winConditionCoherence.explanation,
+      };
+    }
+
+    if (diagnosis?.stability?.status === "dependent") {
+      return {
+        level: LEVEL.medium,
+        rationale: "La composición conserva un plan, aunque puede cambiar si falta una pieza clave.",
       };
     }
 

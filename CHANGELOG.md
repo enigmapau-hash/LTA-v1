@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.8.0
+
+### Added
+- Evaluar la estabilidad de la composición ante la pérdida de una pieza
+
+
 ## v2.7.0
 
 ### Added

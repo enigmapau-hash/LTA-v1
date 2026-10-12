@@ -234,6 +234,7 @@
     const greatestScoreLoss = Math.max(0, ...counterfactuals.map((item) => item.scoreLoss));
 
     return {
+      removalOutcomes: counterfactuals,
       strongestPicks: greatestScoreLoss > 0
         ? counterfactuals.filter((item) => item.scoreLoss === greatestScoreLoss)
         : [],

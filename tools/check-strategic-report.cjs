@@ -111,11 +111,11 @@ assert.match(hybridReport.sections[2].action, /^Como orientación,/i);
 
 const splitPushPlan = composition({ top: "Fiora", jungle: "Viego", mid: "Twisted Fate", botline: "Ezreal", support: "Braum" });
 const splitPushReport = reportFor(splitPushPlan);
-assert.deepEqual(Object.values(splitPushReport.confidence.conclusions).map((item) => item.level), ["media", "media", "media"]);
+assert.deepEqual(Object.values(splitPushReport.confidence.conclusions).map((item) => item.level), ["baja", "baja", "baja"]);
 assertReport(splitPushReport, [
-  "Plan probable: Split Push · Cómo ganar: Crear presión lateral y obligar al rival a responder separado.",
-  "Orientación: reforzar pick y control del mapa",
-  "Conviene proteger el plan frente a Teamfight",
+  "Lectura provisional: Plan principal: Split Push · Cómo ganar: Crear presión lateral y obligar al rival a responder separado.",
+  "Posible mejora: reforzar pick y control del mapa",
+  "Protección provisional frente a Teamfight",
 ]);
 
 const incoherentPlan = [

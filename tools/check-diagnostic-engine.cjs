@@ -106,6 +106,9 @@ assert.ok(clearPlan.explanation.some((item) => /problema estructural principal/i
 const stablePlan = diagnoseComposition(frontToBack);
 assert.equal(stablePlan.robustness.status, "stable");
 assert.equal(stablePlan.robustness.identityChanges.length, 0);
+assert.equal(stablePlan.stability.status, "stable");
+assert.equal(stablePlan.stability.removals.length, 5);
+assert.ok(stablePlan.stability.removals.every((item) => item.identityAfter === stablePlan.plan.primaryIdentity));
 
 const hybridPlan = diagnoseComposition(frontToBack);
 assert.equal(hybridPlan.plan.primaryIdentity, "Front to Back");
@@ -117,6 +120,9 @@ assert.match(hybridPlan.contradictions.explanation, /complementan Front to Back/
 
 const dependencyDiagnosis = diagnoseComposition(splitPush);
 assert.equal(dependencyDiagnosis.plan.primaryIdentity, "Split Push");
+assert.ok(["dependent", "fragile"].includes(dependencyDiagnosis.stability.status));
+assert.equal(dependencyDiagnosis.stability.removals.length, 5);
+assert.ok(dependencyDiagnosis.stability.keyPicks.length);
 assert.ok(["dependent", "fragile"].includes(dependencyDiagnosis.robustness.status));
 assert.ok(dependencyDiagnosis.dependencies.some((item) => item.champion === "Fiora"));
 assert.ok(dependencyDiagnosis.dependencies.some((item) => item.champion === "Twisted Fate"));
@@ -128,6 +134,7 @@ assert.equal(incoherentDiagnosis.coherence.status, "incoherent");
 assert.equal(incoherentDiagnosis.primaryProblem.type, "cohesion-gap");
 assert.ok(incoherentDiagnosis.primaryProblem.evidence.length);
 assert.equal(incoherentDiagnosis.robustness.status, "not-assessed");
+assert.equal(incoherentDiagnosis.stability.status, "not-assessed");
 assert.match(incoherentDiagnosis.primaryProblem.explanation, /No hay un plan de partida claro/i);
 assert.equal(incoherentDiagnosis.contradictions.status, "incoherent");
 

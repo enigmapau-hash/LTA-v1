@@ -33,6 +33,9 @@ jobs:
       - name: Validate the internal Diagnostic Engine
         run: node tools/check-diagnostic-engine.cjs
 
+      - name: Validate composition stability
+        run: node tools/check-composition-stability-engine.cjs
+
       - name: Validate win-condition coherence
         run: node tools/check-win-condition-coherence-engine.cjs
 
