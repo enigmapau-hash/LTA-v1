@@ -8,7 +8,7 @@
     track: "Alpha de v2",
     label: "Versión",
     updated: "2026-10-12",
-    summary: ["Preparar el desarrollo de v2 con documentación inicial"],
+    summary: ["Preparar el desarrollo de v2 con documentación inicial", "Redactar la primera Functional Specification"],
     pending: [],
   };
 

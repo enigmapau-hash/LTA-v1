@@ -4,6 +4,7 @@
 
 ### Added
 - Inicio de la etapa alpha de v2 con una estructura documental inicial.
+- Primera versión de la Functional Specification de LTA v2.
 
 ## v1.23.0
 
