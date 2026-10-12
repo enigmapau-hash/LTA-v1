@@ -8,6 +8,7 @@ const XLSX = require("../vendor/xlsx.full.min.js");
 const { diagnoseComposition } = require("../src/domain/diagnostic-engine.js");
 const { proposeCorrections } = require("../src/domain/correction-engine.js");
 const { protectComposition } = require("../src/domain/protection-engine.js");
+const { explainDiagnosis, explainCorrection, explainProtection } = require("../src/report/strategic-explanations.js");
 const { buildStrategicReport } = require("../src/report/strategic-report.js");
 
 const root = path.resolve(__dirname, "..");
@@ -70,6 +71,7 @@ function assertReport(report, answers) {
   assert.deepEqual(report.sections.map((section) => section.id), ["diagnosis", "correction", "protection"]);
   assert.deepEqual(report.sections.map((section) => section.answer), answers);
   assert.ok(report.sections.every((section) => section.title && section.explanation));
+  assert.ok(report.sections.every((section) => section.explanation.split(/\s+/).length <= 22), "Cada explicación debe ser breve");
   const visibleText = report.sections.flatMap((section) => [section.title, section.answer, section.explanation, section.action || ""]).join(" ");
   assert.ok(visibleText.split(/\s+/).length <= 90, "El resumen debe ser breve y escaneable");
   assert.doesNotMatch(visibleText, /Afinidad|candidatos|\bTop:|\bJungla:/i, "No expone puntuaciones ni listas internas");
@@ -85,9 +87,10 @@ assertReport(clearReport, [
   "Reforzar presión lateral",
   "Proteger el plan frente a Split Push",
 ]);
-assert.match(clearReport.sections[0].explanation, /convergen en este plan/i);
-assert.match(clearReport.sections[1].explanation, /Poca presión lateral/i);
+assert.match(clearReport.sections[0].explanation, /convergen en una identidad común/i);
+assert.match(clearReport.sections[1].explanation, /atiende la carencia principal/i);
 assert.match(clearReport.sections[2].action, /línea lateral/i);
+assert.match(clearReport.sections[2].explanation, /amenaza prioritaria porque/i);
 
 const hybridPlan = composition({ top: "Ornn", jungle: "Sejuani", mid: "Orianna", botline: "Jinx", support: "Lulu" });
 const hybridReport = reportFor(hybridPlan);
@@ -96,8 +99,8 @@ assertReport(hybridReport, [
   "Reforzar presión lateral",
   "Proteger el plan frente a Split Push",
 ]);
-assert.match(hybridReport.sections[0].explanation, /señales de Teamfight/i);
-assert.match(hybridReport.sections[1].explanation, /Poca presión lateral/i);
+assert.match(hybridReport.sections[0].explanation, /apoyo para Teamfight/i);
+assert.match(hybridReport.sections[1].explanation, /sin desplazar la identidad/i);
 assert.match(hybridReport.sections[2].explanation, /presión lateral/i);
 
 const splitPushPlan = composition({ top: "Fiora", jungle: "Viego", mid: "Twisted Fate", botline: "Ezreal", support: "Braum" });
@@ -121,11 +124,20 @@ assertReport(incoherentReport, [
   "Reforzar iniciación y seguimiento",
   "Proteger el plan frente a Poke",
 ]);
-assert.match(incoherentReport.sections[0].explanation, /faltan iniciación compartida, frontline/i);
+assert.match(incoherentReport.sections[0].explanation, /no convergen lo suficiente/i);
+
+assert.equal(explainDiagnosis(diagnoseComposition(clearPlan)), clearReport.sections[0].explanation);
+assert.equal(explainCorrection(proposeCorrections({ picks: clearPlan, diagnosis: diagnoseComposition(clearPlan), candidatesByRole })), clearReport.sections[1].explanation);
+assert.equal(explainProtection(protectComposition({ diagnosis: diagnoseComposition(clearPlan) })), clearReport.sections[2].explanation);
+for (const report of [clearReport, hybridReport, incoherentReport]) {
+  const explanations = report.sections.map((section) => section.explanation);
+  assert.equal(new Set(explanations).size, explanations.length, "Las explicaciones deben aportar razones distintas");
+  assert.doesNotMatch(explanations.join(" "), /candidatos|Afinidad|impacto|puntuación|Top:|Jungla:/i, "No expone listas ni datos internos");
+}
 
 assert.deepEqual(reportFor(clearPlan), clearReport, "El informe debe ser determinista");
 const unavailable = buildStrategicReport({ diagnosis: { status: "not-assessable" } });
 assert.equal(unavailable.status, "not-assessable");
 assert.deepEqual(unavailable.sections.map((section) => section.id), ["diagnosis", "correction", "protection"]);
 
-console.log("Informe estratégico v2 validado: diagnóstico, corrección y protección breves, ordenados y deterministas.");
+console.log("Informe estratégico v2 validado: explicaciones breves para planes claros, híbridos e incoherentes; orden y determinismo conservados.");
