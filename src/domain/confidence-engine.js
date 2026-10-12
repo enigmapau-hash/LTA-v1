@@ -15,7 +15,21 @@
   }
 
   function assessDiagnosis(diagnosis) {
+    const winConditionCoherence = diagnosis?.winConditionCoherence;
+    if (winConditionCoherence?.status === "contradictory") {
+      return {
+        level: LEVEL.low,
+        rationale: "La condición de victoria contradice la identidad o mantiene planes incompatibles.",
+      };
+    }
+
     if (diagnosis?.contradictions?.status === "contradictory") {
+      if (winConditionCoherence?.secondaryMitigation === "mitigates-conflict") {
+        return {
+          level: LEVEL.medium,
+          rationale: "La condición secundaria ofrece una vía complementaria, aunque el conflicto no desaparece.",
+        };
+      }
       return {
         level: LEVEL.low,
         rationale: "Dos planes estratégicos incompatibles compiten en la composición.",
@@ -36,6 +50,15 @@
         rationale: diagnosis?.status === "assessed"
           ? "Las señales no convergen en un plan suficientemente claro."
           : "Sin una composición válida no hay evidencia suficiente para valorar el plan.",
+      };
+    }
+
+    if (winConditionCoherence?.status === "partially-coherent") {
+      return {
+        level: LEVEL.medium,
+        rationale: winConditionCoherence.secondaryMitigation === "complements-plan"
+          ? "La condición secundaria complementa el plan, aunque abre una vía adicional."
+          : winConditionCoherence.explanation,
       };
     }
 

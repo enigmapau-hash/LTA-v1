@@ -99,6 +99,45 @@ for (const testCase of cases) {
   assert.doesNotMatch(serialized, /candidate|candidates|score|impact|probability|probabilidad|%/i, "La salida no expone listas, puntuaciones ni probabilidades");
 }
 
+const coherenceAdjusted = evaluate(clearPlan);
+const partialCoherenceDiagnosis = {
+  ...coherenceAdjusted.diagnosis,
+  winConditionCoherence: {
+    status: "partially-coherent",
+    secondaryMitigation: "complements-plan",
+    explanation: "La condición secundaria complementa el plan, aunque abre una vía adicional.",
+  },
+};
+const partialCoherenceConfidence = assessConfidence({
+  diagnosis: partialCoherenceDiagnosis,
+  correction: coherenceAdjusted.correction,
+  protection: coherenceAdjusted.protection,
+});
+assert.deepEqual(
+  Object.values(partialCoherenceConfidence.conclusions).map((item) => item.level),
+  ["media", "media", "media"],
+  "Una condición secundaria complementaria limita la confianza alta y modula el tono del informe"
+);
+
+const conflictingConditionDiagnosis = {
+  ...coherenceAdjusted.diagnosis,
+  winConditionCoherence: {
+    status: "contradictory",
+    secondaryMitigation: "does-not-mitigate",
+    explanation: "La condición de victoria contradice la identidad principal.",
+  },
+};
+const conflictingConditionConfidence = assessConfidence({
+  diagnosis: conflictingConditionDiagnosis,
+  correction: coherenceAdjusted.correction,
+  protection: coherenceAdjusted.protection,
+});
+assert.deepEqual(
+  Object.values(conflictingConditionConfidence.conclusions).map((item) => item.level),
+  ["baja", "baja", "baja"],
+  "Una condición contradictoria reduce la confianza y vuelve provisional el informe"
+);
+
 const unavailable = assessConfidence({ diagnosis: { status: "not-assessable" } });
 assert.equal(unavailable.status, "not-assessable");
 assert.deepEqual(
@@ -106,4 +145,4 @@ assert.deepEqual(
   ["baja", "baja", "baja"]
 );
 
-console.log("Confidence Engine validado: confianza alta, media y baja para planes claros, híbridos e incoherentes; determinismo y salida interna concisa.");
+console.log("Confidence Engine validado: confianza ajustada por coherencia de la condición de victoria, determinismo y salida interna concisa.");

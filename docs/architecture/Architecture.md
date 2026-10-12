@@ -47,7 +47,7 @@ Relaciona los atributos del equipo completo con patrones de composición conocid
 
 ### 2.6 Diagnóstico de la composición
 
-Interpreta las conclusiones del análisis para describir qué favorece o limita el plan. Separa la identidad estratégica de la condición de victoria concreta asociada al plan, y conserva una condición secundaria cuando la identidad secundaria ya está respaldada. Incluye fortalezas, riesgos y atributos ausentes relevantes. Distingue una identidad secundaria compatible de una contradicción entre planes y señala una pieza que empuja hacia el plan opuesto cuando sus atributos lo respaldan. Cuando quitar un campeón cambia de forma significativa la identidad o el plan, identifica esa pieza y explica el efecto; si no ocurre, puede indicar que la identidad se mantiene estable.
+Interpreta las conclusiones del análisis para describir qué favorece o limita el plan. Separa la identidad estratégica de la condición de victoria concreta asociada al plan, conserva una condición secundaria cuando está respaldada y evalúa si ambas condiciones refuerzan, complementan o contradicen la identidad y el diagnóstico. Incluye fortalezas, riesgos y atributos ausentes relevantes. Distingue una identidad secundaria compatible de una contradicción entre planes y señala una pieza que empuja hacia el plan opuesto cuando sus atributos lo respaldan. Cuando quitar un campeón cambia de forma significativa la identidad o el plan, identifica esa pieza y explica el efecto; si no ocurre, puede indicar que la identidad se mantiene estable.
 
 ### 2.7 Presentación de resultados
 
@@ -72,7 +72,7 @@ Estima por separado la solidez del diagnóstico, la corrección y la protección
 1. La interacción entrega cinco elecciones válidas.
 2. El conocimiento de atributos aporta identidad, función, ritmo, fortalezas y debilidades.
 3. El análisis estratégico relaciona esos atributos con los patrones de referencia y determina la identidad o la ausencia de un plan claro.
-4. El diagnóstico distingue la identidad de su condición de victoria, distingue mezclas compatibles de contradicciones, explica cómo los atributos sostienen o debilitan el plan y qué cambia si falta una pieza relevante.
+4. El diagnóstico distingue la identidad de su condición de victoria, evalúa el grado de coherencia entre ambas, distingue mezclas compatibles de contradicciones, explica cómo los atributos sostienen o debilitan el plan y qué cambia si falta una pieza relevante.
 5. La corrección prioriza un perfil que atiende la carencia principal, sin sustituir elecciones.
 6. La protección prioriza estilos que pueden castigar el plan y propone una pauta defensiva general, sin asumir una composición rival concreta.
 7. La calibración de confianza estima la solidez de cada conclusión con la evidencia ya disponible y reduce la confianza cuando el diagnóstico detecta planes incompatibles.

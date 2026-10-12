@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.7.0
+
+### Added
+- Evaluar la coherencia entre condición de victoria e identidad
+
+
 ## v2.6.0
 
 ### Added
