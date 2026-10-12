@@ -51,7 +51,7 @@ Interpreta las conclusiones del análisis para describir qué favorece o limita 
 
 ### 2.7 Presentación de resultados
 
-Convierte las conclusiones en una lectura que ayude a responder «¿Cómo debería jugar esta composición?». En una selección incompleta, prioriza el progreso y la orientación de los puestos vacíos. En una completa, da prioridad a la identidad, el plan y sus razones. Evita exponer puntuaciones detalladas o repetir una misma conclusión en varios bloques.
+Convierte las conclusiones en una lectura que ayude a responder «¿Cómo debería jugar esta composición?». En una selección incompleta, prioriza el progreso y la orientación de los puestos vacíos. En una completa, ordena el diagnóstico, la mejora prioritaria y la protección estratégica, cada uno con una explicación breve. Muestra solo la mejora y la amenaza prioritarias; mantiene candidaturas alternativas, señales detalladas y pesos comparativos dentro de las capas internas.
 
 ## 3. Flujo de información
 
@@ -69,7 +69,9 @@ Convierte las conclusiones en una lectura que ayude a responder «¿Cómo deber�
 2. El conocimiento de atributos aporta identidad, función, ritmo, fortalezas y debilidades.
 3. El análisis estratégico relaciona esos atributos con los patrones de referencia y determina la identidad o la ausencia de un plan claro.
 4. El diagnóstico explica cómo los atributos sostienen o debilitan el plan y qué cambia si falta una pieza relevante.
-5. La presentación organiza las conclusiones en un informe compacto, sin añadir resultados que no procedan del análisis y el diagnóstico.
+5. La corrección prioriza un perfil que atiende la carencia principal, sin sustituir elecciones.
+6. La protección prioriza estilos que pueden castigar el plan y propone una pauta defensiva general, sin asumir una composición rival concreta.
+7. La presentación ordena diagnóstico, corrección y protección en un informe breve, sin volver a evaluar la composición.
 
 ## 4. Separación entre análisis, diagnóstico y presentación
 

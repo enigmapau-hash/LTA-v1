@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.1.0
+
+### Added
+- Primera versión visible del informe estratégico v2
+
+
 ## v2.0.0
 
 ### Added

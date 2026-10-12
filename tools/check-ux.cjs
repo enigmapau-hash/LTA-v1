@@ -50,13 +50,14 @@ async function main(){
   await page.waitForFunction(()=>document.querySelector("#statusPill")?.textContent==="Análisis actualizado");
   await page.waitForFunction(expected=>expected.every(champion=>Array.from(document.querySelectorAll(".composition-table .champion-name")).some(node=>node.textContent.trim()===champion)),Object.values(referencePicks));
   const strategy=page.locator(".result-summary__strategy");await strategy.waitFor({state:"visible"});
-  assert.equal((await strategy.locator(".result-summary__eyebrow").textContent()).trim(),"Lectura estratégica","el informe distingue su lectura estratégica del título del análisis");
-  assert.match(await strategy.locator("h3").first().innerText(),/Front to Back/);
-  for(const heading of ["Plan de partida","Fortalezas","Riesgos"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),1,"el informe muestra "+heading);}
-  for(const heading of ["Win condition","Sinergia interna","Debilidades","Cómo jugarla","Recomendaciones","Picks","Bans"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),0,"el informe no repite el bloque "+heading);}
+  assert.equal((await strategy.locator(".result-summary__eyebrow").textContent()).trim(),"Informe estratégico","el informe presenta el análisis integrado de v2");
+  assert.equal((await strategy.locator("h3").first().innerText()).trim(),"Cómo jugarla");
+  assert.deepEqual(await strategy.locator("[data-report-section]").evaluateAll(nodes=>nodes.map(node=>node.dataset.reportSection)),["diagnosis","correction","protection"],"el informe ordena diagnóstico, corrección y protección");
+  for(const heading of ["Diagnóstico","Mejora prioritaria","Protección estratégica"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),1,"el informe muestra "+heading);}
+  for(const heading of ["Win condition","Sinergia interna","Debilidades","Recomendaciones","Picks","Bans","Plan de partida","Fortalezas","Riesgos"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),0,"el informe no repite el bloque "+heading);}
   assert.equal(await strategy.locator(".result-summary__strategy-card").count(),3,"el resumen estratégico conserva solo tres bloques útiles");
-  assert.match(await strategy.innerText(),/Protege al ADC/i);assert.match(await strategy.innerText(),/Frontline/i);assert.match(await strategy.innerText(),/Poca presión lateral/i);
-  assert.match(await strategy.innerText(),/Pieza clave: Lulu \(−18 puntos de ajuste si falta\)/i);assert.match(await strategy.innerText(),/Estabilidad: la identidad se mantiene aunque falte cualquier pick/i);
+  assert.match(await strategy.innerText(),/Plan principal: Front to Back/i);assert.match(await strategy.innerText(),/señales de Teamfight/i);assert.match(await strategy.innerText(),/Reforzar presión lateral/i);assert.match(await strategy.innerText(),/Poca presión lateral/i);assert.match(await strategy.innerText(),/Split Push/i);
+  assert.equal(await strategy.locator("ul, ol").count(),0,"el informe no vuelve a mostrar listas internas de candidatos o señales");
   assert.equal(await page.locator(".result-summary__header").evaluate(n=>getComputedStyle(n).display),"none","el estado de validación se omite en composiciones completas");
   assert.equal(await page.locator(".result-summary.is-ready").evaluate(n=>getComputedStyle(n).paddingTop),"0px","el informe completo evita un marco exterior redundante");
   assert.equal(await strategy.evaluate(n=>getComputedStyle(n).borderTopWidth),"1px","la tarjeta estratégica mantiene su contorno visible");
@@ -74,8 +75,8 @@ async function main(){
   await page.setViewportSize({width:1280,height:900});
   const splitPushPicks={top:"Fiora",jungle:"Viego",mid:"Twisted Fate",adc:"Ezreal",support:"Braum"};
   for(const [role,champion] of Object.entries(splitPushPicks))await page.locator("#"+role).fill(champion);
-  await page.waitForFunction(expected=>expected.every(champion=>Array.from(document.querySelectorAll(".composition-table .champion-name")).some(node=>node.textContent.trim()===champion))&&document.querySelector(".result-summary__strategy h3")?.textContent.includes("Split Push"),Object.values(splitPushPicks));
-  const splitStrategy=await strategy.innerText();assert.match(splitStrategy,/Fiora.*el equipo pierde una identidad principal clara/i);assert.match(splitStrategy,/Twisted Fate.*plan cambia a Escalado.*picos de poder/i);
+  await page.waitForFunction(expected=>expected.every(champion=>Array.from(document.querySelectorAll(".composition-table .champion-name")).some(node=>node.textContent.trim()===champion))&&document.querySelector('[data-report-section="diagnosis"] .result-summary__answer')?.textContent.includes("Split Push"),Object.values(splitPushPicks));
+  const splitStrategy=await strategy.innerText();assert.match(splitStrategy,/Plan principal: Split Push/i);assert.match(splitStrategy,/Reforzar pick y control del mapa/i);assert.match(splitStrategy,/Proteger el plan frente a Teamfight/i);
   const topInput=page.locator("#top"),selectedTop=await topInput.inputValue();await topInput.click();
   assert.deepEqual(await topInput.evaluate(input=>[input.selectionStart,input.selectionEnd]),[0,selectedTop.length],"al enfocar un pick se selecciona todo el texto para reemplazarlo sin borrarlo");
   const topOptions=page.locator("#topMenu .picker-item");await topOptions.first().waitFor({state:"visible"});
@@ -111,7 +112,7 @@ async function main(){
   assert.match(await supportSuggestions.innerText(),/Lulu/);assert.match(await supportSuggestions.innerText(),/Afinidad/);assert.match(await supportSuggestions.innerText(),/Aporta:/);assert.match(await supportSuggestions.innerText(),/Plan asociado/);
   assert.equal(await supportSuggestions.locator(".pick-recommendations__quality.is-best").count(),2,"las opciones empatadas en la mejor puntuación comparten la etiqueta superior");
   const planItems=await supportSuggestions.locator(".pick-recommendations__plans li").allInnerTexts();assert.equal(planItems.length,2,"el plan se muestra una vez por orientación distinta, no una vez por campeón");assert.equal(new Set(planItems).size,planItems.length,"no se repiten explicaciones de plan");
-  await page.locator("#support").fill("Lulu");await page.waitForFunction(()=>document.querySelector(".result-summary__strategy h3")?.textContent.includes("Front to Back"));
+  await page.locator("#support").fill("Lulu");await page.waitForFunction(()=>document.querySelector('[data-report-section="diagnosis"] .result-summary__answer')?.textContent.includes("Front to Back"));
   assert.equal(await page.locator(".pick-recommendations").count(),0,"las recomendaciones se ocultan al completar la composición");
   assert.deepEqual(pageErrors,[],"sin errores JavaScript");assert.deepEqual(consoleErrors,[],"sin errores en consola");console.log("UX validada: 320, 375, 390, 768, 1280 px; informe estratégico adaptativo; teclado, accesibilidad, tabla y consola.");
  }finally{if(browser)await browser.close();await new Promise((r,j)=>server.close(e=>e?j(e):r()));}

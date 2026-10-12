@@ -421,6 +421,7 @@ async function loadChampionMeta() {
 async function loadWorkbook() {
   draftData = await window.LTAWorkbookReader.loadWorkbook();
   workbookReady = Boolean(draftData);
+  window.LTAStrategicReportCandidatesByRole = draftData?.roles || {};
   if (!workbookReady) {
     closeAllMenus();
     setStatus("Carga interrumpida");
