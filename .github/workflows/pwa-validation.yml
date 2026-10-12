@@ -36,6 +36,9 @@ jobs:
       - name: Validate the internal Correction Engine
         run: node tools/check-correction-engine.cjs
 
+      - name: Validate the internal Protection Engine
+        run: node tools/check-protection-engine.cjs
+
       - name: Validate composition logic against the workbook
         run: node tools/check-composition.cjs
 
