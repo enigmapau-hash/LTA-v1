@@ -117,6 +117,8 @@ La confianza de LTA procede de la calidad y convergencia de la evidencia disponi
 - cuando las señales no convergen, evita forzar una identidad y explica la falta de cohesión;
 - las recomendaciones muestran su afinidad y contribución para que el usuario pueda juzgar el encaje.
 
+Internamente, LTA asigna confianza alta, media o baja al diagnóstico, la corrección y la protección. Tiene en cuenta la claridad del plan, la convergencia de señales y la estabilidad de la composición; en corrección y protección también considera si la conclusión está respaldada por sus propias evidencias. Estos niveles no son porcentajes y no aparecen como un bloque adicional en el informe actual.
+
 La afinidad visible de los candidatos es una puntuación de ajuste basada en atributos. Sirve para ordenar y comparar opciones dentro de la recomendación; **no es un porcentaje de confianza, una probabilidad de ganar ni una tasa de victoria**. LTA no muestra una probabilidad de éxito ni una garantía de resultado.
 
 ## 8. Información visible e interna

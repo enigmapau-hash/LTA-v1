@@ -2,13 +2,16 @@
   const explanations = typeof module === "object" && module.exports
     ? require("./strategic-explanations.js")
     : root.LTAStrategicExplanations;
-  const builder = factory(explanations);
+  const confidenceEngine = typeof module === "object" && module.exports
+    ? require("../domain/confidence-engine.js")
+    : root.LTAConfidenceEngine;
+  const builder = factory(explanations, confidenceEngine);
   if (typeof module === "object" && module.exports) {
     module.exports = builder;
   } else {
     root.LTAStrategicReportBuilder = Object.freeze(builder);
   }
-})(typeof window !== "undefined" ? window : globalThis, function (explanations) {
+})(typeof window !== "undefined" ? window : globalThis, function (explanations, confidenceEngine) {
   "use strict";
 
   function diagnosisSection(diagnosis) {
@@ -79,9 +82,15 @@
 
   function buildStrategicReport(input = {}) {
     const diagnosis = input.diagnosis;
+    const confidence = confidenceEngine.assessConfidence({
+      diagnosis,
+      correction: input.correction,
+      protection: input.protection,
+    });
     return {
       status: diagnosis?.status === "assessed" ? "assessed" : "not-assessable",
       title: "Cómo jugarla",
+      confidence,
       sections: [
         diagnosisSection(diagnosis),
         correctionSection(input.correction),
