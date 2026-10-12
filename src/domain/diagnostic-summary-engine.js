@@ -61,7 +61,7 @@
       status: "risk",
       summary: confidence.level === "baja"
         ? "El plan aún es provisional y puede cambiar si falta una pieza clave."
-        : "El plan se reconoce, aunque depende de señales secundarias o piezas clave.",
+        : "El plan es claro, aunque no está del todo alineado.",
     };
   }
 

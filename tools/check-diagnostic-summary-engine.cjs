@@ -45,7 +45,7 @@ assert.deepEqual(clear, {
 
 const hybrid = summaryFor(composition({ top: "Ornn", jungle: "Sejuani", mid: "Orianna", botline: "Jinx", support: "Lulu" }));
 assert.equal(hybrid.status, "risk");
-assert.match(hybrid.summary, /señales secundarias o piezas clave/);
+assert.match(hybrid.summary, /no está del todo alineado/);
 
 const incoherent = summaryFor([
   pick("top", "Fiora"), pick("jungle", "Elise"), pick("mid", "Xerath"), pick("botline", "Draven"), pick("support", "Lulu"),

@@ -51,6 +51,9 @@ jobs:
       - name: Validate the compact Diagnostic Summary
         run: node tools/check-diagnostic-summary-engine.cjs
 
+      - name: Validate secondary observations
+        run: node tools/check-secondary-observation-engine.cjs
+
       - name: Validate the v2 strategic report
         run: node tools/check-strategic-report.cjs
 
