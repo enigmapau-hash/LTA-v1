@@ -54,7 +54,7 @@ async function main(){
   assert.equal((await strategy.locator("h3").first().innerText()).trim(),"Cómo jugarla");
   assert.deepEqual(await strategy.locator("[data-report-section]").evaluateAll(nodes=>nodes.map(node=>node.dataset.reportSection)),["diagnosis","correction","protection"],"el informe ordena diagnóstico, corrección y protección");
   for(const heading of ["Diagnóstico","Mejora prioritaria","Protección estratégica"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),1,"el informe muestra "+heading);}
-  for(const heading of ["Win condition","Sinergia interna","Debilidades","Cómo jugarla","Recomendaciones","Picks","Bans","Plan de partida","Fortalezas","Riesgos"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),0,"el informe no repite el bloque "+heading);}
+  for(const heading of ["Win condition","Sinergia interna","Debilidades","Recomendaciones","Picks","Bans","Plan de partida","Fortalezas","Riesgos"]){assert.equal(await strategy.getByRole("heading",{name:heading,exact:true}).count(),0,"el informe no repite el bloque "+heading);}
   assert.equal(await strategy.locator(".result-summary__strategy-card").count(),3,"el resumen estratégico conserva solo tres bloques útiles");
   assert.match(await strategy.innerText(),/Plan principal: Front to Back/i);assert.match(await strategy.innerText(),/señales de Teamfight/i);assert.match(await strategy.innerText(),/Reforzar presión lateral/i);assert.match(await strategy.innerText(),/Poca presión lateral/i);assert.match(await strategy.innerText(),/Split Push/i);
   assert.equal(await strategy.locator("ul, ol").count(),0,"el informe no vuelve a mostrar listas internas de candidatos o señales");
