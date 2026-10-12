@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.2.0
+
+### Added
+- Añadir explicaciones breves al informe estratégico v2
+
+
 ## v2.1.0
 
 ### Added

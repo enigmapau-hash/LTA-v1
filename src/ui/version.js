@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v2.1.0",
+    version: "v2.2.0",
     track: "Actualización funcional",
     label: "Versión",
     updated: "2026-10-12",
-    summary: ["Primera versión visible del informe estratégico v2"],
+    summary: ["Añadir explicaciones breves al informe estratégico v2"],
     pending: [],
   };
 

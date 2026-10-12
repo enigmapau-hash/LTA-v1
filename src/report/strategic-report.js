@@ -1,22 +1,24 @@
 (function (root, factory) {
-  const builder = factory();
+  const explanations = typeof module === "object" && module.exports
+    ? require("./strategic-explanations.js")
+    : root.LTAStrategicExplanations;
+  const builder = factory(explanations);
   if (typeof module === "object" && module.exports) {
     module.exports = builder;
   } else {
     root.LTAStrategicReportBuilder = Object.freeze(builder);
   }
-})(typeof window !== "undefined" ? window : globalThis, function () {
+})(typeof window !== "undefined" ? window : globalThis, function (explanations) {
   "use strict";
 
   function diagnosisSection(diagnosis) {
     const primary = diagnosis?.plan?.primaryIdentity;
-    const secondary = diagnosis?.plan?.secondaryIdentity;
     if (!diagnosis || diagnosis.status !== "assessed") {
       return {
         id: "diagnosis",
         title: "Diagnóstico",
         answer: "Diagnóstico pendiente",
-        explanation: diagnosis?.primaryProblem?.explanation || "Se necesita una composición completa para valorar el plan.",
+        explanation: explanations.explainDiagnosis(diagnosis),
       };
     }
     if (!diagnosis.plan?.clear || !primary) {
@@ -24,16 +26,14 @@
         id: "diagnosis",
         title: "Diagnóstico",
         answer: "Sin un plan de partida claro",
-        explanation: diagnosis.primaryProblem?.explanation || diagnosis.coherence?.explanation || "Los atributos no convergen en una identidad principal.",
+        explanation: explanations.explainDiagnosis(diagnosis),
       };
     }
     return {
       id: "diagnosis",
       title: "Diagnóstico",
       answer: `Plan principal: ${primary}`,
-      explanation: secondary
-        ? `También muestra señales de ${secondary}.`
-        : "Los atributos del equipo convergen en este plan.",
+      explanation: explanations.explainDiagnosis(diagnosis),
     };
   }
 
@@ -45,16 +45,15 @@
         id: "correction",
         title: "Corrección",
         answer: "Sin una mejora respaldada",
-        explanation: correction?.explanation || "El diagnóstico no aporta evidencia suficiente para priorizar una mejora.",
+        explanation: explanations.explainCorrection(correction),
       };
     }
     const profile = String(improvement.profile?.label || "un perfil complementario");
-    const factor = String(improvement.limitingFactor || correction?.limitingFactor || "la carencia prioritaria");
     return {
       id: "correction",
       title: "Mejora prioritaria",
       answer: `Reforzar ${profile.toLowerCase()}`,
-      explanation: `Prioriza corregir: ${factor}.`,
+      explanation: explanations.explainCorrection(correction),
     };
   }
 
@@ -66,14 +65,14 @@
         id: "protection",
         title: "Protección",
         answer: "Sin una amenaza prioritaria",
-        explanation: protection?.recommendation || "Los datos disponibles no permiten resumir una protección concreta.",
+        explanation: explanations.explainProtection(protection),
       };
     }
     return {
       id: "protection",
       title: "Protección estratégica",
       answer: `Proteger el plan frente a ${String(threat.style || "la amenaza principal")}`,
-      explanation: String(threat.explanation || "Este estilo puede castigar el plan de la composición."),
+      explanation: explanations.explainProtection(protection),
       action: String(threat.protection || ""),
     };
   }
