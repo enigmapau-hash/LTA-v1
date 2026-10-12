@@ -16,7 +16,7 @@
       return "Sus atributos no convergen lo suficiente para sostener un plan compartido.";
     }
     if (diagnosis.plan.secondaryIdentity) {
-      return `El plan principal concentra más señales; también hay apoyo para ${diagnosis.plan.secondaryIdentity}.`;
+      return `El plan principal concentra más señales y también muestra señales de ${diagnosis.plan.secondaryIdentity}.`;
     }
     return "Las señales de los cinco roles convergen en una identidad común.";
   }
@@ -27,7 +27,12 @@
     if (!improvement) {
       return "El diagnóstico no respalda una mejora prioritaria concreta.";
     }
-    return "Este perfil atiende la carencia principal sin desplazar la identidad del equipo.";
+    const factor = String(improvement.limitingFactor || correction?.limitingFactor || "la carencia principal")
+      .replace(/^faltan?\s+/i, "")
+      .split(/[;,]/, 1)[0]
+      .trim()
+      .toLocaleLowerCase("es");
+    return `La prioridad responde a ${factor} y preserva la identidad del equipo.`;
   }
 
   function explainProtection(protection) {

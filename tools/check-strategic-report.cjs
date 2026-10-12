@@ -88,7 +88,7 @@ assertReport(clearReport, [
   "Proteger el plan frente a Split Push",
 ]);
 assert.match(clearReport.sections[0].explanation, /convergen en una identidad común/i);
-assert.match(clearReport.sections[1].explanation, /atiende la carencia principal/i);
+assert.match(clearReport.sections[1].explanation, /prioridad responde a poca presión lateral/i);
 assert.match(clearReport.sections[2].action, /línea lateral/i);
 assert.match(clearReport.sections[2].explanation, /amenaza prioritaria porque/i);
 
@@ -99,8 +99,8 @@ assertReport(hybridReport, [
   "Reforzar presión lateral",
   "Proteger el plan frente a Split Push",
 ]);
-assert.match(hybridReport.sections[0].explanation, /apoyo para Teamfight/i);
-assert.match(hybridReport.sections[1].explanation, /sin desplazar la identidad/i);
+assert.match(hybridReport.sections[0].explanation, /señales de Teamfight/i);
+assert.match(hybridReport.sections[1].explanation, /poca presión lateral/i);
 assert.match(hybridReport.sections[2].explanation, /presión lateral/i);
 
 const splitPushPlan = composition({ top: "Fiora", jungle: "Viego", mid: "Twisted Fate", botline: "Ezreal", support: "Braum" });
