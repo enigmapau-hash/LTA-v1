@@ -47,7 +47,7 @@ const incoherent = summaryFor([
   pick("top", "Fiora"), pick("jungle", "Elise"), pick("mid", "Xerath"), pick("botline", "Draven"), pick("support", "Lulu"),
 ]);
 assert.deepEqual(incoherent, {
-  status: "risk",
+  status: "fragile",
   summary: "Por ahora, los atributos no apuntan a un plan común.",
 });
 

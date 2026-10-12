@@ -142,7 +142,6 @@
     const strategicState = strategicStateEngine.summarizeStrategicState({
       diagnosis,
       diagnosticSummary,
-      confidence: confidence.conclusions.diagnosis,
       secondaryObservation,
     });
     const closing = strategicClosingEngine.buildStrategicClosing({ strategicState });
