@@ -3,8 +3,8 @@
 ## Índice
 
 - [Especificación funcional de v2](v2/Functional-Specification.md)
-- [Arquitectura](architecture/architecture.md)
+- [Arquitectura](architecture/Architecture.md)
 - [Roadmap](roadmap/roadmap.md)
 - [Decisiones de arquitectura (ADR)](decisions/README.md)
 
-Estos documentos son plantillas iniciales. Sus apartados quedan pendientes de definición.
+La especificación funcional y la arquitectura describen las decisiones acordadas para v2. Los documentos de roadmap y ADR mantienen sus plantillas iniciales y se completarán cuando existan decisiones aprobadas.
