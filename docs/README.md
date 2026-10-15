@@ -3,6 +3,7 @@
 ## Índice
 
 - [Especificación funcional de v2](v2/Functional-Specification.md)
+- [Revisión de Release Candidate v2 (RC1)](v2/RC1-Review.md)
 - [Arquitectura](architecture/Architecture.md)
 - [Roadmap](roadmap/roadmap.md)
 - [Decisiones de arquitectura (ADR)](decisions/README.md)

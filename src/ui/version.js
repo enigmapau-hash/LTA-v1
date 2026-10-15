@@ -4,11 +4,11 @@
   if (!badge || !panel) return;
 
   const fallback = {
-    version: "v2.12.0",
+    version: "v2.12.1",
     track: "Actualización funcional",
     label: "Versión",
-    updated: "2026-10-12",
-    summary: ["Mostrar un cierre estratégico breve solo cuando aporta una acción distinta"],
+    updated: "2026-10-15",
+    summary: ["Precisar la explicación de estabilidad con las piezas clave"],
     pending: [],
   };
 

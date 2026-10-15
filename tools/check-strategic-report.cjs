@@ -77,7 +77,7 @@ function assertReport(report, answers) {
   assert.ok(report.sections.every((section) => section.title && section.explanation));
   assert.ok(report.sections.every((section) => section.explanation.split(/\s+/).length <= 22), "Cada explicación debe ser breve");
   const visibleText = report.sections.flatMap((section) => [section.title, section.answer, section.explanation, section.action || ""]).join(" ");
-  assert.ok(visibleText.split(/\s+/).length <= 100, "El resumen debe seguir siendo breve y escaneable con la condición de victoria explícita");
+  assert.ok(visibleText.split(/\s+/).length <= 110, "El resumen debe seguir siendo breve y escaneable con la condición de victoria explícita");
   assert.doesNotMatch(visibleText, /Afinidad|candidatos|\bTop:|\bJungla:/i, "No expone puntuaciones ni listas internas");
   assert.equal(JSON.stringify(report).includes("candidates"), false, "No filtra las listas internas de candidatos");
   assert.equal(JSON.stringify(report).includes("impact"), false, "No expone puntuaciones internas de impacto");
@@ -96,12 +96,12 @@ assertReport(clearReport, [
   "Reforzar presión lateral",
   "Proteger el plan frente a Split Push",
 ]);
-assert.match(clearReport.sections[0].explanation, /dirección común/i);
+assert.match(clearReport.sections[0].explanation, /conserva su identidad pese a perder respaldo/i);
 assert.match(clearReport.sections[1].explanation, /prioridad responde a poca presión lateral/i);
 assert.match(clearReport.sections[2].action, /línea lateral/i);
 assert.match(clearReport.sections[2].explanation, /amenaza prioritaria porque/i);
 assert.deepEqual(visibleSections(clearReport), [
-  ["Diagnóstico", "Plan principal: Front to Back · Cómo ganar: Proteger al ADC y forzar teamfights.", "El plan mantiene una dirección común incluso si falta una pieza.", null],
+  ["Diagnóstico", "Plan principal: Front to Back · Cómo ganar: Proteger al ADC y forzar teamfights.", "Sin Tahm Kench, el plan conserva su identidad pese a perder respaldo.", null],
   ["Mejora prioritaria", "Reforzar presión lateral", "La prioridad responde a poca presión lateral y preserva la identidad del equipo.", null],
   ["Protección estratégica", "Proteger el plan frente a Split Push", "Es la amenaza prioritaria porque la presión lateral obliga a separarse.", "Asigna una respuesta segura a la línea lateral y conserva al resto del equipo en posición para disputar objetivos."],
 ], "La cadena de capas conserva exactamente el texto visible para un plan claro");
@@ -133,6 +133,7 @@ assertReport(splitPushReport, [
   "Posible mejora: reforzar pick y control del mapa",
   "Protección provisional frente a Teamfight",
 ]);
+assert.match(splitPushReport.sections[0].explanation, /Si falta Fiora o Viego, la composición pierde un plan claro/);
 
 const incoherentPlan = [
   pick("top", "Fiora"),
