@@ -4,11 +4,11 @@ Analiza composiciones de League of Legends y ofrece una lectura estratégica cla
 
 ## Evolución de v2
 
-La v2 avanza por capacidades pequeñas y revisables sobre la base estable de la v1. La primera capacidad es un núcleo interno de diagnóstico; todavía no cambia la experiencia visible.
+La v2 amplía la lectura estratégica de composiciones completas con diagnóstico, corrección prioritaria y protección explicable. En composiciones incompletas mantiene recomendaciones para los puestos vacíos. La evolución se documenta en la especificación funcional y la arquitectura de [`docs/`](docs/README.md).
 
 ## Características
 
-- Versión visible: `v2.12.0`
+- Versión visible: `v2.12.1`
 - No permite campeones repetidos.
 - Muestra iconos oficiales de campeones cuando están disponibles.
 - El selector, la vista rápida y el resultado se actualizan sin recargar.
@@ -21,8 +21,9 @@ La v2 avanza por capacidades pequeñas y revisables sobre la base estable de la 
 - `src/data/`: lectura de las listas de campeones de `Draft Pool.xlsx` y normalización de sus atributos.
 - `src/domain/composition-logic.js`: validación y búsquedas puras usadas por la interfaz actual.
 - `src/domain/composition-engine.js`: evaluación determinista y pura de la composición con los atributos del workbook. Informa identidad principal/secundaria, condición de victoria, fortalezas, debilidades y cohesión; alimenta el análisis estratégico del informe visible.
-- `src/domain/diagnostic-engine.js`: diagnóstico interno de composiciones completas a partir del análisis existente. Resume plan, coherencia, robustez, dependencias y problema principal; aún no se integra en la interfaz.
-- `src/report/`: renderizado de la tabla de resultado y resumen visible.
+- `src/domain/diagnostic-engine.js`: diagnóstico de composiciones completas, con plan, coherencia, robustez, dependencias y problema principal.
+- `src/domain/*-engine.js`: capas estratégicas deterministas para corrección, protección, confianza, contradicción, condición de victoria, estabilidad y síntesis.
+- `src/report/`: presentación de la tabla de composición y del informe estratégico construido a partir de las capas internas.
 - `src/utils/`: utilidades compartidas de texto.
 - `sw.js`: caché offline de los recursos de la app, incluida la librería SheetJS.
 - `vendor/xlsx.full.min.js`: versión local de SheetJS para que la lectura del Excel funcione offline.

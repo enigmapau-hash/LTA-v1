@@ -36,7 +36,7 @@ function summaryFor(picks) {
 const clear = summaryFor(composition({ top: "Olaf", jungle: "Zyra", mid: "Heimerdinger", botline: "Lucian", support: "Tahm Kench" }));
 assert.deepEqual(clear, {
   status: "solid",
-  summary: "El plan mantiene una dirección común incluso si falta una pieza.",
+  summary: "Sin Tahm Kench, el plan conserva su identidad pese a perder respaldo.",
 });
 
 const hybrid = summaryFor(composition({ top: "Ornn", jungle: "Sejuani", mid: "Orianna", botline: "Jinx", support: "Lulu" }));
@@ -54,6 +54,25 @@ assert.deepEqual(incoherent, {
 const contradictory = summaryFor(composition({ top: "Ambessa", jungle: "Evelynn", mid: "Ziggs", botline: "Tristana", support: "Heimerdinger" }));
 assert.equal(contradictory.status, "fragile");
 assert.match(contradictory.summary, /parece frágil porque sus planes compiten/);
+
+const dependent = buildDiagnosticSummary({
+  diagnosis: {
+    status: "assessed",
+    plan: { clear: true, primaryIdentity: "Front to Back" },
+    coherence: { status: "coherent" },
+    winConditionCoherence: { status: "fully-coherent" },
+    contradictions: { status: "coherent" },
+    stability: {
+      status: "dependent",
+      removals: [{ champion: "Fiora", identityAfter: "Split Push" }],
+    },
+  },
+  confidence: { level: "media" },
+});
+assert.deepEqual(dependent, {
+  status: "risk",
+  summary: "Si falta Fiora, la identidad cambia a Split Push.",
+});
 
 for (const result of [clear, hybrid, incoherent, contradictory]) {
   assert.ok(result.summary.split(/\s+/).length <= 13, "El resumen debe ser breve");

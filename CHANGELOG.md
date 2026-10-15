@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.12.1
+
+### Fixed
+- Precisar la explicación de estabilidad con las piezas clave
+
+
 ## v2.12.0
 
 ### Added
